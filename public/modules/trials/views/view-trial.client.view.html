@@ -1,21 +1,26 @@
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
 	<div class="page-header">
-		<h1 data-ng-bind="trial.name"></h1>
+		<h1 data-ng-bind="trial.nctId"></h1>
 	</div>
 	<div class="pull-right" data-ng-show="authentication.user._id == trial.user._id">
-		<a class="btn btn-primary" href="/#!/trials/{{trial._id}}/edit">
+		<a class="btn btn-primary" href="/#!/trials/{{trial.nctId}}/edit">
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
 		<a class="btn btn-primary" data-ng-click="remove();">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 	</div>
+	<div>
+		<table class="table">
+			<tr ng-repeat="(key, value) in trial">
+				<td>{{key}}</td>
+				<td>{{value}}</td>
+			</tr>
+		</table>
+	</div>
 	<small>
 		<em class="text-muted">
-			Posted on
-			<span data-ng-bind="trial.created | date:'mediumDate'"></span>
-			by
-			<span data-ng-bind="trial.user.displayName"></span>
+			Powered by OncoKB
 		</em>
 	</small>
 </section>

@@ -5,7 +5,7 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors'),
-	Trial = mongoose.model('Trial'),
+	Trial = mongoose.model('clinicaltrial'),
 	_ = require('lodash');
 
 /**
@@ -72,7 +72,7 @@ exports.delete = function(req, res) {
 /**
  * List of Trials
  */
-exports.list = function(req, res) { Trial.find().sort('-created').populate('user', 'displayName').exec(function(err, trials) {
+exports.list = function(req, res) { Trial.find().limit(10).exec(function(err, trials) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -86,10 +86,10 @@ exports.list = function(req, res) { Trial.find().sort('-created').populate('user
 /**
  * Trial middleware
  */
-exports.trialByID = function(req, res, next, id) { Trial.findById(id).populate('user', 'displayName').exec(function(err, trial) {
+exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).exec(function(err, trial) {
 		if (err) return next(err);
 		if (! trial) return next(new Error('Failed to load Trial ' + id));
-		req.trial = trial ;
+		req.trial = trial;
 		next();
 	});
 };

@@ -4,26 +4,52 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+    autoIncrement = require('mongoose-auto-increment');
+
+var connection = mongoose.createConnection('mongodb://localhost/clinicaltrials-dev');
+
+autoIncrement.initialize(connection);
 
 /**
  * Trial Schema
  */
 var TrialSchema = new Schema({
-	name: {
+	nctId: {
 		type: String,
-		default: '',
-		required: 'Please fill Trial name',
+		required: 'Please fill NCT ID',
 		trim: true
 	},
-	created: {
-		type: Date,
-		default: Date.now
+	title: {
+		type: String,
+		trim: true
 	},
-	user: {
-		type: Schema.ObjectId,
-		ref: 'User'
+	purpose: {
+		type: String,
+		trim: true
+	},
+	recruitingStatus: {
+		type: String,
+		trim: true
+	},
+	eligibilityCriteria: {
+		type: String,
+		trim: true
+	},
+	phase: {
+		type: String,
+		trim: true
+	},
+	diseaseCondition: {
+		type: String,
+		trim: true
+	},
+	lastChangeDate: {
+		type: String,
+		trim: true
 	}
 });
 
-mongoose.model('Trial', TrialSchema);
+
+TrialSchema.plugin(autoIncrement.plugin, {model: 'clinicaltrial', field: 'trialId'});
+mongoose.model('clinicaltrial', TrialSchema);

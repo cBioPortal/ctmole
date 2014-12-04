@@ -4,12 +4,13 @@
 angular.module('trials').controller('TrialsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Trials',
 	function($scope, $stateParams, $location, Authentication, Trials ) {
 		$scope.authentication = Authentication;
-
+		$scope.nctId = '';
+		
 		// Create new Trial
 		$scope.create = function() {
 			// Create new Trial object
 			var trial = new Trials ({
-				name: this.name
+				nctId: this.name
 			});
 
 			// Redirect after save
@@ -44,7 +45,7 @@ angular.module('trials').controller('TrialsController', ['$scope', '$stateParams
 			var trial = $scope.trial ;
 
 			trial.$update(function() {
-				$location.path('trials/' + trial._id);
+				$location.path('trials/' + trial.nctId);
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -58,8 +59,12 @@ angular.module('trials').controller('TrialsController', ['$scope', '$stateParams
 		// Find existing Trial
 		$scope.findOne = function() {
 			$scope.trial = Trials.get({ 
-				trialId: $stateParams.trialId
+				nctId: $stateParams.nctId
 			});
+		};
+
+		$scope.searchTrail = function() {
+			$location.path('trials/' + $scope.nctId);
 		};
 	}
 ]);

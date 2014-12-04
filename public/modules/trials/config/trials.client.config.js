@@ -6,6 +6,6 @@ angular.module('trials').run(['Menus',
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Trials', 'trials', 'dropdown', '/trials(/create)?');
 		Menus.addSubMenuItem('topbar', 'trials', 'List Trials', 'trials');
-		Menus.addSubMenuItem('topbar', 'trials', 'New Trial', 'trials/create');
+		Menus.addSubMenuItem('topbar', 'trials', 'Search Trial', 'trials/search');
 	}
 ]);

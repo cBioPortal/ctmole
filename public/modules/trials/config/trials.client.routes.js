@@ -13,12 +13,16 @@ angular.module('trials').config(['$stateProvider',
 			url: '/trials/create',
 			templateUrl: 'modules/trials/views/create-trial.client.view.html'
 		}).
+		state('searchTrial', {
+			url: '/trials/search',
+			templateUrl: 'modules/trials/views/search-trial.client.view.html'
+		}).
 		state('viewTrial', {
-			url: '/trials/:trialId',
+			url: '/trials/:nctId',
 			templateUrl: 'modules/trials/views/view-trial.client.view.html'
 		}).
 		state('editTrial', {
-			url: '/trials/:trialId/edit',
+			url: '/trials/:nctId/edit',
 			templateUrl: 'modules/trials/views/edit-trial.client.view.html'
 		});
 	}
