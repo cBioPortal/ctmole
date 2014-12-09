@@ -72,7 +72,7 @@ exports.delete = function(req, res) {
 /**
  * List of Trials
  */
-exports.list = function(req, res) { Trial.find().limit(10).exec(function(err, trials) {
+exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recruitingStatus drugs countries').limit(10).exec(function(err, trials) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -83,6 +83,9 @@ exports.list = function(req, res) { Trial.find().limit(10).exec(function(err, tr
 	});
 };
 
+exports.search = function(req, res) {
+	res.jsonp(req.trials);
+};
 /**
  * Trial middleware
  */
@@ -90,6 +93,18 @@ exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).
 		if (err) return next(err);
 		if (! trial) return next(new Error('Failed to load Trial ' + id));
 		req.trial = trial;
+		next();
+	});
+};
+
+/**
+ * Search trial by keywords
+ */
+exports.searchByKeyword = function(req, res, next, keyword) {
+	Trial.find({'tumorTypes.clinicalTrialKeywords': keyword}, 'nctId').limit(10).exec(function(err, trials) {
+		if (err) return next(err);
+		if (! trials) return next(new Error('Failed to load Trial ' + keyword));
+		req.trials = trials;
 		next();
 	});
 };

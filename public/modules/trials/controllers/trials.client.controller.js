@@ -53,18 +53,29 @@ angular.module('trials').controller('TrialsController', ['$scope', '$stateParams
 
 		// Find a list of Trials
 		$scope.find = function() {
-			$scope.trials = Trials.query();
+			$scope.trials = Trials.nctId.query();
 		};
 
 		// Find existing Trial
 		$scope.findOne = function() {
-			$scope.trial = Trials.get({ 
+			$scope.trial = Trials.nctId.get({ 
 				nctId: $stateParams.nctId
 			});
 		};
 
-		$scope.searchTrail = function() {
+		$scope.searchByKeyword = function() {
+			$scope.trials = Trials.keyword.query({
+				keyword: $scope.keyword
+			});
+			console.log($scope.trials);
+		};
+
+		$scope.searchTrailBynctId = function() {
 			$location.path('trials/' + $scope.nctId);
 		};
+
+		$scope.getDrugs = function(drugs) {
+			return drugs.map(function(e){return e.drugName}).join(', ');
+		}
 	}
 ]);

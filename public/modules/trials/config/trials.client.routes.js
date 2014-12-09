@@ -17,6 +17,10 @@ angular.module('trials').config(['$stateProvider',
 			url: '/trials/search',
 			templateUrl: 'modules/trials/views/search-trial.client.view.html'
 		}).
+		state('searchByKeyword', {
+			url: '/trials/search/:keyword',
+			templateUrl: 'modules/trials/views/search-trial.client.view.html'
+		}).
 		state('viewTrial', {
 			url: '/trials/:nctId',
 			templateUrl: 'modules/trials/views/view-trial.client.view.html'

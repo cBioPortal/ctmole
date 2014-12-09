@@ -3,11 +3,15 @@
 //Trials service used to communicate Trials REST endpoints
 angular.module('trials').factory('Trials', ['$resource',
 	function($resource) {
-		return $resource('trials/:nctId', { nctId: '@_id'
-		}, {
-			update: {
-				method: 'PUT'
-			}
-		});
+		return  {
+			nctId: $resource('trials/:nctId', { nctId: '@_id'
+				}, {
+					update: {
+						method: 'PUT'
+					}
+				}),
+			keyword: $resource('trials/search/:keyword', { keyword: '@_id'
+				})
+		};
 	}
 ]);

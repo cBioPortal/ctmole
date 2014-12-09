@@ -13,6 +13,11 @@ module.exports = function(app) {
 		.put(trials.update)
 		.delete(trials.delete);
 
+	app.route('/trials/search/:keyword')
+		.get(trials.search);
+
+
 	// Finish by binding the Trial middleware
 	app.param('nctId', trials.trialByID);
+	app.param('keyword', trials.searchByKeyword);
 };
