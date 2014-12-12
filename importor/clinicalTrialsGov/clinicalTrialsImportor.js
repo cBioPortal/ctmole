@@ -9,12 +9,17 @@ var nctIdLocks = 0;
 var urlIndex = 0;
 var clinicalTrials = [];
 var savingToDB = false;
+var fs = require('fs');
+
+mongoose.connect('mongodb://localhost/clinicaltrials-dev');
+var db = mongoose.connection;
 
 main();
 
 function main() {
 	// getUrlsConditions(getListOfCancerTrialsFromClinicalTrialsGov);
 	readNctIdsFile();
+	// removeDuplicateNctIdFromFiles();
 }
 
 function getListOfCancerTrialsFromClinicalTrialsGov(urls) {
@@ -48,7 +53,6 @@ function checkNctLocks(urls) {
 }
 
 function writeNctIdsIntoFile(nctIds) {
-	var fs = require('fs');
 	fs.writeFile("./nctIds.txt", JSON.stringify(nctIds), function(err) {
 	    if(err) {
 	        console.log(err);
@@ -59,8 +63,7 @@ function writeNctIdsIntoFile(nctIds) {
 }
 
 function readNctIdsFile() {
-	var fs = require('fs');
-	fs.readFile('./nctIds.txt', 'utf8', function (err,data) {
+	fs.readFile('./nctIdsUnique.txt', 'utf8', function (err,data) {
 	  	if (err) {
 		    return console.log(err);
 	  	}
@@ -108,14 +111,41 @@ function getUrlsConditions(callback) {
 	);
 }
 
+function removeDuplicateNctIdFromFiles() {
+	var nctIds = [];
+	fs.readFile('./nctIds.txt', 'utf8', function (err,data) {
+	  	if (err) {
+		    return console.log(err);
+	  	}
+	  	nctIds = JSON.parse(data);
+	  	console.log('Total', nctIds.length , 'nct ids.');
+	  	var uniqueNctIds = nctIds.filter(function(item, pos) {
+		    return nctIds.indexOf(item) == pos;
+		});
+	  	console.log('Total unique', uniqueNctIds.length , 'nct ids.');
+
+	  	fs.writeFile("./nctIdsUnique.txt", JSON.stringify(uniqueNctIds), function(err) {
+		    if(err) {
+		        console.log(err);
+		    } else {
+		        console.log("The file was saved!");
+		    }
+		}); 
+	});
+}
+
 function importTrials(nctIds) {
-	mongoose.connect('mongodb://localhost/clinicaltrials-dev');
-	var db = mongoose.connection;
 	db.on('error', console.error.bind(console, 'connection error:'));
 	db.once('open', function callback () {
 		if(nctIds instanceof Array) {
 			checkNctIndex(nctIds, 0);
 		}
+	});
+}
+
+function failToFindTrialXML(nctId) {
+	fs.appendFile('./failedNctId.txt', nctId + '\n' , function (err) {
+		return console.log(err);
 	});
 }
 
@@ -137,37 +167,55 @@ function checkNctIndex(nctIds, nctIdIndex) {
 		console.log('Final saving data to MongoDB....');
 		savingToDB = true;
 		saveClinicalTrialMetadata(clinicalTrials,function(){
-			mongoose.connection.close();
+			db.close();
 		});
 	}
 }
 
 function saveClinicalTrialMetadata(clinicalTrials, callback) {
-	var thing = new clinicalTrialMetaData(clinicalTrials.pop());
-	thing.save(function(err, news){
-	 	if(err) return console.error("Error while saving data to MongoDB: " + err); // <- this gets executed when there's an error
-    	// console.error(news); // <- this never gets logged, even if there's no error.
-		if(clinicalTrials.length !== 0) {
-			saveClinicalTrialMetadata(clinicalTrials);
-		}else {
-			console.log('Done.');
-			savingToDB = false;
-			if(typeof callback === 'function') {
-				callback();
+	if(clinicalTrials.length > 0) {
+		var clinicalTrial = clinicalTrials.pop();
+		var thing = new clinicalTrialMetaData(clinicalTrial);
+		thing.save(function(err, news){
+		 	if(err) return console.error("Error while saving data to MongoDB: " + err); // <- this gets executed when there's an error
+	    	// console.error(news); // <- this never gets logged, even if there's no error.
+			if(clinicalTrials.length !== 0) {
+				saveClinicalTrialMetadata(clinicalTrials);
+			}else {
+				console.log('Done.');
+				savingToDB = false;
+				if(typeof callback === 'function') {
+					callback();
+				}
 			}
-		}
-	});
+		});
+	}else {
+		savingToDB = false;
+	}
 }
 
 function parseClinicalTrialsGov(nctIds, nctIdIndex, callback) {
-	var url = 'http://clinicaltrials.gov/show/' + nctIds[nctIdIndex] + '?displayxml=true';
-	request(url, function(error, response, body){
-		parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
-			clinicalTrials.push(result.clinical_study);
-			if((nctIdIndex+1) % 100 === 0) {
-				console.log('\t\t', nctIdIndex+1, ' trials have been parsed.');
-			}
+	clinicalTrialMetaData.findOne({'id_info.nct_id': nctIds[nctIdIndex]}, 'id_info',function(err, result){
+		if(result === null) {
+			var url = 'http://clinicaltrials.gov/show/' + nctIds[nctIdIndex] + '?displayxml=true';
+			request(url, function(error, response, body){
+				parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+					if(result.hasOwnProperty('clinical_study')) {
+						clinicalTrials.push(result.clinical_study);
+						if((nctIdIndex+1) % 100 === 0) {
+							console.log('\t', nctIdIndex+1, ' trials have been parsed.');
+						}
+					}else {
+						console.log('\t\t',nctIds[nctIdIndex], 'does not have clinical study attribute.');
+						failToFindTrialXML(nctIds[nctIdIndex]);
+					}
+					callback(nctIds, ++nctIdIndex);
+				});
+			});
+		}else {
+			console.log('\t\t', nctIds[nctIdIndex], ' exists in database, skip...');
 			callback(nctIds, ++nctIdIndex);
-		});
+		}
 	});
+	
 }
