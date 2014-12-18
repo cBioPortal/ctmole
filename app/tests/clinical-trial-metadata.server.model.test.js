@@ -6,12 +6,12 @@
 var should = require('should'),
 	mongoose = require('mongoose'),
 	User = mongoose.model('User'),
-	ClinicalTrialMetaData = mongoose.model('ClinicalTrialMetaData');
+	ClinicalTrialMetadata = mongoose.model('ClinicalTrialMetadata');
 
 /**
  * Globals
  */
-var user, clinicalTrialMetaData;
+var user, clinicalTrialMetadata;
 
 /**
  * Unit tests
@@ -28,7 +28,7 @@ describe('Clinical trial meta data Model Unit Tests:', function() {
 		});
 
 		user.save(function() { 
-			clinicalTrialMetaData = new ClinicalTrialMetaData({
+			ClinicalTrialMetadata = new ClinicalTrialMetadata({
 				// Add model fields
 				// ...
 			});
@@ -39,7 +39,7 @@ describe('Clinical trial meta data Model Unit Tests:', function() {
 
 	describe('Method Save', function() {
 		it('should be able to save without problems', function(done) {
-			return clinicalTrialMetaData.save(function(err) {
+			return ClinicalTrialMetadata.save(function(err) {
 				should.not.exist(err);
 				done();
 			});
@@ -47,7 +47,7 @@ describe('Clinical trial meta data Model Unit Tests:', function() {
 	});
 
 	afterEach(function(done) { 
-		ClinicalTrialMetaData.remove().exec();
+		ClinicalTrialMetadata.remove().exec();
 		User.remove().exec();
 
 		done();

@@ -7,9 +7,9 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 /**
- * ClinicalTrialMetaData Schema
+ * ClinicalTrialMetadata Schema
  */
-var ClinicalTrialMetaDataSchema = new Schema({
+var ClinicalTrialMetadataSchema = new Schema({
 	'required_header': Array,
 	'id_info': Array,
 	'brief_title': Array,
@@ -47,4 +47,4 @@ var ClinicalTrialMetaDataSchema = new Schema({
 	'condition_browse': Array
 }, { strict: false });
 
-module.exports = mongoose.model('ClinicalTrialMetaData', ClinicalTrialMetaDataSchema);
+module.exports = mongoose.model('ClinicalTrialMetadata', ClinicalTrialMetadataSchema);

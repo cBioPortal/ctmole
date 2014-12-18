@@ -3,7 +3,7 @@ var parseString = require('xml2js').parseString;
 var jsdom = require('jsdom');
 var colors = require('colors');
 var mongoose = require('mongoose');
-var	clinicalTrialMetaData = require('../../app/models/clinical-trial-meta-data.server.model');
+var	ClinicalTrialMetadata = require('../../app/models/clinical-trial-meta-data.server.model');
 var nctIds = [];
 var nctIdLocks = 0;
 var urlIndex = 0;
@@ -11,8 +11,6 @@ var clinicalTrials = [];
 var savingToDB = false;
 var fs = require('fs');
 
-mongoose.connect('mongodb://localhost/clinicaltrials-dev');
-var db = mongoose.connection;
 
 main();
 
@@ -34,17 +32,19 @@ function checkNctLocks(urls) {
 			if(urlIndex < urls.length) {
 				checkNctLocks(urls);
 				console.log('\n-----------------------------------------------');
-				console.log('URL: ', urls[urlIndex]);
-				console.log('URL index: ', urlIndex, ' Fnished: ', urlIndex/urls.length * 100, '%');
+				console.log('URL: ', urls[urlIndex].url);
+				console.log('Number of conditions: ', urls[urlIndex].count);
+				console.log('URL index: ', urlIndex, ' Fnished: ', (urlIndex/urls.length * 100).toFixed(2), '%');
 				getNctIds(urls[urlIndex], 1, function(){
 					--nctIdLocks;
 					++urlIndex;
 				});
 			}else {
+				console.log('\n\nFINISHIED. Total number of nctIds is', nctIds.length);
 				var uniqueNctIds = nctIds.filter(function(item, pos) {
 				    return nctIds.indexOf(item) == pos;
 				});
-				console.log('\n\nFINISHIED. Total number of nctIds is', nctIds.length, '.', nctIds.length, ' unique trials have been found.\n');
+				console.log(uniqueNctIds.length, ' unique trials have been found.\n');
 				// importTrials(uniqueNctIds);
 				writeNctIdsIntoFile(uniqueNctIds);
 			}
@@ -63,24 +63,24 @@ function writeNctIdsIntoFile(nctIds) {
 }
 
 function readNctIdsFile() {
-	fs.readFile('./nctIdsUnique.txt', 'utf8', function (err,data) {
+	fs.readFile('./nctIds.txt', 'utf8', function (err,data) {
 	  	if (err) {
 		    return console.log(err);
 	  	}
 	  	var nctIds = JSON.parse(data);
 	  	console.log(nctIds.length);
-	  	importTrials(nctIds.slice(0,10000));
+	  	importTrials(nctIds.slice(32000));
 	});
 }
 function getNctIds(url, page, callback) {
-	var _url = 'http://clinicaltrials.gov'+url+'&displayxml=true&pg='+page;
+	var _url = 'http://clinicaltrials.gov'+url.url+'&displayxml=true&pg='+page;
 	++nctIdLocks;
 	request(_url, function(error, response, body){
 		parseString(body, {trim: true}, function (err, result) {
 			var searchResults = result.search_results || {};
 		    if(searchResults.hasOwnProperty('clinical_study') && searchResults.clinical_study instanceof Array && searchResults.clinical_study.length > 0) {
 		    	searchResults.clinical_study.forEach(function(e, i) {
-		    		nctIds.push(e.nct_id);
+		    		nctIds.push(e.nct_id[0]);
 		    	});
 
 		    	getNctIds(url, ++page, function(){--nctIdLocks;});
@@ -100,7 +100,11 @@ function getUrlsConditions(callback) {
 				var _attr = window.$(this).find('a').attr('href');
 
 				if (typeof _attr !== 'undefined' && _attr !== false) {
-				    urlConditions.push(_attr);
+					var _datum = {
+						url: _attr,
+						count: window.$(this).text().trim().match(/\d* study|\d* studies/)[0].replace(/studies|study/, '').trim()
+					}
+				    urlConditions.push(_datum);
 				}else {
 					console.log('There is not any href link in:'.color, window.$(this).html());
 				}
@@ -135,8 +139,9 @@ function removeDuplicateNctIdFromFiles() {
 }
 
 function importTrials(nctIds) {
-	db.on('error', console.error.bind(console, 'connection error:'));
-	db.once('open', function callback () {
+	mongoose.connect('mongodb://localhost/clinicaltrials-dev');
+	mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+	mongoose.connection.once('open', function callback () {
 		if(nctIds instanceof Array) {
 			checkNctIndex(nctIds, 0);
 		}
@@ -167,7 +172,7 @@ function checkNctIndex(nctIds, nctIdIndex) {
 		console.log('Final saving data to MongoDB....');
 		savingToDB = true;
 		saveClinicalTrialMetadata(clinicalTrials,function(){
-			db.close();
+			mongoose.connection.close();
 		});
 	}
 }
@@ -175,7 +180,7 @@ function checkNctIndex(nctIds, nctIdIndex) {
 function saveClinicalTrialMetadata(clinicalTrials, callback) {
 	if(clinicalTrials.length > 0) {
 		var clinicalTrial = clinicalTrials.pop();
-		var thing = new clinicalTrialMetaData(clinicalTrial);
+		var thing = new ClinicalTrialMetadata(clinicalTrial);
 		thing.save(function(err, news){
 		 	if(err) return console.error("Error while saving data to MongoDB: " + err); // <- this gets executed when there's an error
 	    	// console.error(news); // <- this never gets logged, even if there's no error.
@@ -195,8 +200,8 @@ function saveClinicalTrialMetadata(clinicalTrials, callback) {
 }
 
 function parseClinicalTrialsGov(nctIds, nctIdIndex, callback) {
-	clinicalTrialMetaData.findOne({'id_info.nct_id': nctIds[nctIdIndex]}, 'id_info',function(err, result){
-		if(result === null) {
+	// ClinicalTrialMetadata.findOne({'id_info.nct_id': nctIds[nctIdIndex]}, 'id_info',function(err, result){
+	// 	if(result === null) {
 			var url = 'http://clinicaltrials.gov/show/' + nctIds[nctIdIndex] + '?displayxml=true';
 			request(url, function(error, response, body){
 				parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
@@ -212,10 +217,9 @@ function parseClinicalTrialsGov(nctIds, nctIdIndex, callback) {
 					callback(nctIds, ++nctIdIndex);
 				});
 			});
-		}else {
-			console.log('\t\t', nctIds[nctIdIndex], ' exists in database, skip...');
-			callback(nctIds, ++nctIdIndex);
-		}
-	});
-	
+	// 	}else {
+	// 		console.log('\t\t', nctIds[nctIdIndex], ' exists in database, skip...');
+	// 		callback(nctIds, ++nctIdIndex);
+	// 	}
+	// });
 }

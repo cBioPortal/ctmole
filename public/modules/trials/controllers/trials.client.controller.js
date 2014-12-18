@@ -1,7 +1,13 @@
 'use strict';
 
 // Trials controller
-angular.module('trials').controller('TrialsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Trials',
+angular.module('trials').controller('TrialsController', 
+	['$scope', 
+	'$stateParams', 
+	'$location', 
+	'Authentication', 
+	'Trials', 
+	'Genes'
 	function($scope, $stateParams, $location, Authentication, Trials ) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
@@ -54,6 +60,7 @@ angular.module('trials').controller('TrialsController', ['$scope', '$stateParams
 		// Find a list of Trials
 		$scope.find = function() {
 			$scope.trials = Trials.nctId.query();
+			$scope.genes = Genes.symbol.query();
 		};
 
 		// Find existing Trial
@@ -75,7 +82,7 @@ angular.module('trials').controller('TrialsController', ['$scope', '$stateParams
 		};
 
 		$scope.getDrugs = function(drugs) {
-			return drugs.map(function(e){return e.drugName}).join(', ');
-		}
+			return drugs.map(function(e){return e.drugName;}).join(', ');
+		};
 	}
 ]);
