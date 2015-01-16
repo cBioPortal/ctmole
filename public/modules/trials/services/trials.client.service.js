@@ -10,8 +10,10 @@ angular.module('trials').factory('Trials', ['$resource',
 						method: 'PUT'
 					}
 				}),
-			keyword: $resource('trials/search/:keyword', { keyword: '@_id'
-				})
+			keyword: $resource('trials/search/:keyword', { keyword: '@_id'}),
+			listWithnctIds: $resource('trials/list', {nctIds: []}, {
+				search: {method: 'POST', isArray: true}
+			})
 		};
 	}
 ]);

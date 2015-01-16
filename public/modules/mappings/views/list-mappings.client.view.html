@@ -1,17 +1,14 @@
-<section data-ng-controller="MappingsController" data-ng-init="find()">
+<section data-ng-controller="MappingsController" data-ng-init="showTrials()">
     <div class="page-header">
         <h1>Mappings</h1>
     </div>
     <div class="list-group">
-        <a data-ng-repeat="mapping in mappings" data-ng-href="#!/mappings/{{mapping._id}}" class="list-group-item">
-			<small class="list-group-item-text">
-				Posted on
-				<span data-ng-bind="mapping.created | date:'medium'"></span>
-				by
-				<span data-ng-bind="mapping.user.displayName"></span>
-			</small>
-			<h4 class="list-group-item-heading" data-ng-bind="mapping.name"></h4>
-        </a>
+        <a data-ng-repeat="trial in trials" data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+                <div>
+                    <h4 class="list-group-item-heading" data-ng-bind="trial.nctId"></h4>
+                    <p>Title: {{trial.title}} <br/>Phase: {{trial.phase}}<br/>Recruiting Status: {{trial.recruitingStatus}}<br/>Country: {{trial.countries.join(', ')}}<br/>Drugs: {{getDrugs(trial.drugs)}}</p>
+                </div>
+            </a>
     </div>
     <div class="alert alert-warning text-center" data-ng-hide="!mappings.$resolved || mappings.length">
     	No Mappings yet, why don't you <a href="/#!/mappings/create">create one</a>?

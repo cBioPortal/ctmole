@@ -86,8 +86,8 @@ function searchNct(db, documents, collectionName, callback) {
 				{'intervention.intervention_name':{$regex: regex}},
 				{'intervention_browse.mesh_term':{$regex: regex}}
 			], 
-			'overall_status': 'Recruiting',
-			'location_countries.country':{$in:['United States', 'US', 'us', 'america']}
+			'overall_status': {$in:['Recruiting', 'Not yet recruiting', 'Enrolling by invitation', 'Active, not recruiting']},
+			'location_countries.country': {$in:['United States', 'US', 'us', 'america']}
 		},{'_id':0, 'id_info.nct_id':1}).toArray(function(err,result){
 			var nctIds = [];
 

@@ -1,8 +1,8 @@
 'use strict';
 
 // Mappings controller
-angular.module('mappings').controller('MappingsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs',
-	function($scope, $stateParams, $location, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs) {
+angular.module('mappings').controller('MappingsController', ['$scope', '$stateParams', '$location', '$window', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials',
+	function($scope, $stateParams, $location, $window, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials) {
 		$scope.authentication = Authentication;
 
 		$scope.init = function() {
@@ -14,9 +14,13 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 			console.log($scope);
 		};
 
+		$scope.findList = function(group) {
+			$scope.selectedGroup = group;
+			$scope.trials = Trials.listWithnctIds.search($scope.selectedGroup.nctIds);
+			$window.open('#!/mappings/list');
+		};
 		// Find a list of Mappings
 		$scope.find = function() {
-			$scope.mappings = Mappings.query();
 		};
 
 		$scope.search = function () {
@@ -27,45 +31,56 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 			groups.push($scope.selectedAlt);
 			groups.push($scope.selectedCancerType);
 
-			combined.push(merge(groups[0],groups[1],groups[2]));
-			combined.push(merge(groups[0],groups[1]));
-			combined.push(merge(groups[1],groups[2]));
-			combined.push(merge(groups[0],groups[2]));
-
-			groups.forEach(function(e){
-				combined.push({name: e.symbol, nctIds: e.nctIds});
-			});
+			groups = $scope.compact(groups);
+			combined = combination(groups);
 
 			$scope.trailGroups = combined;
 		};
 
-		function merge(a1, a2, a3) {
-			var content = {},
-			name = [],
-			nctIds = [];
+		$scope.showTrials = function() {
+			console.log($scope);
+		};
 
-
-			name.push(a1.symbol);
-			name.push(a2.symbol);
-
-
-			if(angular.isObject(a3)) {
-				name.push(a3.symbol);
-				nctIds = $scope.intersection(a1.nctIds, a2.nctIds, a3.nctIds);
-			}else {
-				nctIds = $scope.intersection(a1.nctIds, a2.nctIds);
+		function combination(array) {
+			var len = array.length;
+			var n = 1<<len;
+			var result = [];
+			for(var i=1;i<n;i++)    //从 1 循环到 2^len -1
+			{
+				var content = {},
+					name = [],
+					nctIds = [];
+				for(var j=0;j<len;j++)
+				{
+					var temp = i;
+					if(temp & (1<<j))   //对应位上为1，则输出对应的字符
+					{
+						name.push(array[j].symbol);
+						if(nctIds.length === 0) {
+							nctIds = array[j].nctIds;
+						}else {
+							nctIds = $scope.intersection(nctIds, array[j].nctIds);
+						}
+					}
+				}
+				content.name = name;
+				content.nctIds = nctIds;
+				result.push(content);
 			}
-
-			content.name = name.join(', ');
-			content.nctIds = nctIds;
-
-			return content;
+			return result.sort(function(a,b){
+				if(a.name.length > b.name.length) {
+					return -1;
+				}else {
+					return 1;
+				}
+			}).map(function(e){e.name = e.name.join(', '); return e;});
 		}
 
 		function initParams() {
 			$scope.selectedGene = '';
 			$scope.selectedAlt = '';
 			$scope.selectedCancerType = '';
+			$scope.selectedGroup = {name: 'NA', nctIds: []};
 			$scope.trailGroups = []; //The item should have following structure {name:'', nctIds: []}
 		}
 

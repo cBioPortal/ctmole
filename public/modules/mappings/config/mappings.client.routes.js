@@ -9,6 +9,11 @@ angular.module('mappings').config(['$stateProvider',
 			url: '/mappings',
 			controller: 'MappingsController',
 			templateUrl: 'modules/mappings/views/search-mappings.client.view.html'
+		}).
+		state('list', {
+			url: '/mappings/list',
+			controller: 'MappingsController',
+			templateUrl: 'modules/mappings/views/list-mappings.client.view.html'
 		});
 	}
 ]);

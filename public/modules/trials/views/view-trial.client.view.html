@@ -14,7 +14,7 @@
 		<table class="table">
 			<tr ng-repeat="(key, value) in trial">
 				<td>{{key}}</td>
-				<td>{{value}}</td>
+				<td ng-bind-html="beautify(value)"></td>
 			</tr>
 		</table>
 	</div>

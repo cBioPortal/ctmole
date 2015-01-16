@@ -16,6 +16,8 @@ module.exports = function(app) {
 	app.route('/trials/search/:keyword')
 		.get(trials.search);
 
+	app.route('/trials/list')
+		.post(trials.searchList);
 
 	// Finish by binding the Trial middleware
 	app.param('nctId', trials.trialByID);

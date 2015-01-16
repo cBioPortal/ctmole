@@ -2,6 +2,7 @@
 	<div style="margin-top: 30px;">
 		<select chosen
 	        data-placeholder="Pick one of Genes"
+	        allow-single-deselect="true"
 	        ng-model="selectedGene"
 	        ng-options="gene.symbol for gene in genes" style='width:24%'>
 	        <option></option>
@@ -9,6 +10,7 @@
 
 		<select chosen
 	        data-placeholder="Pick one of Alterations"
+	        allow-single-deselect="true"
 	        ng-model="selectedAlt"
 	        ng-options="alt.symbol for alt in alts" style='width:24%'>
 	        <option></option>
@@ -16,6 +18,7 @@
 
 		<select chosen
 	        data-placeholder="Pick one of Tumor Types"
+	        allow-single-deselect="true"
 	        ng-model="selectedCancerType"
 	        ng-options="cancerType.symbol group by cancerType.tissue for cancerType in cancerTypes" style='width:24%'>
 	        <option></option>

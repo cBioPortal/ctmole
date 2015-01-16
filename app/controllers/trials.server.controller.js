@@ -98,6 +98,26 @@ exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).
 };
 
 /**
+ * Search list trials
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @param  {[type]}   list [description]
+ * @return {[type]}        [description]
+ */
+exports.searchList = function(req, res) {
+	Trial.find({'nctId': {$in: req.body}}).exec(function(err, trials) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(trials);
+		}
+	});
+};
+
+/**
  * Search trial by keywords
  */
 exports.searchByKeyword = function(req, res, next, keyword) {
