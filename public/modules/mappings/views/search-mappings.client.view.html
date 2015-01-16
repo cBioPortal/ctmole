@@ -1,0 +1,38 @@
+<section data-ng-controller="MappingsController" ng-init="init()">
+	<div style="margin-top: 30px;">
+		<select chosen
+	        data-placeholder="Pick one of Genes"
+	        ng-model="selectedGene"
+	        ng-options="gene.symbol for gene in genes" style='width:24%'>
+	        <option></option>
+		</select>
+
+		<select chosen
+	        data-placeholder="Pick one of Alterations"
+	        ng-model="selectedAlt"
+	        ng-options="alt.symbol for alt in alts" style='width:24%'>
+	        <option></option>
+		</select>
+
+		<select chosen
+	        data-placeholder="Pick one of Tumor Types"
+	        ng-model="selectedCancerType"
+	        ng-options="cancerType.symbol group by cancerType.tissue for cancerType in cancerTypes" style='width:24%'>
+	        <option></option>
+		</select>
+
+		<button class="btn btn-info" ng-click="search()">Search</button>
+		<!-- <select chosen
+	        data-placeholder="Pick one of Drug"
+	        disable-search="true"
+	        ng-model="selectedCancerType"
+	        ng-options="drug.symbol for drug in drugs" style='width:24%'>
+		</select> -->
+	</div>
+	<div class="list-group" style="margin-top:20px;">
+        <div data-ng-repeat="group in trailGroups" class="list-group-item">
+			<h4 class="list-group-item-heading" data-ng-bind="group.name"></h4>
+            <p>{{group.nctIds.join(', ')}}</p>
+        </div>
+    </div>
+</section>

@@ -13,3 +13,8 @@
 .ng-valid.ng-dirty{
     border-color:#78FA89;
 }
+
+h1 span {
+	font-size: 20px;
+	margin: 0 10px;
+}

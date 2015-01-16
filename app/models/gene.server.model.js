@@ -10,7 +10,8 @@ var mongoose = require('mongoose'),
  * Gene Schema
  */
 var GeneSchema = new Schema({
-	symbol: String
+	symbol: String,
+	nctIds: Array
 });
 
 mongoose.model('Gene', GeneSchema);

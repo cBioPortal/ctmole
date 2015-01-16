@@ -7,10 +7,11 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 /**
- * CancerType Schema
+ * Drug Schema
  */
-var CancerTypeSchema = new Schema({
-	symbol: String
+var DrugSchema = new Schema({
+	symbol: String,
+	nctIds: Array
 });
 
-mongoose.model('CancerType', CancerTypeSchema);
+mongoose.model('Drug', DrugSchema);

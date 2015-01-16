@@ -25,6 +25,7 @@ function readFile(filePath, schema, callback) {
 function xmlText(dbKey, fieldData) {
 	if(fieldData instanceof Array) {
 		for (var i = fieldData.length - 1; i >= 0; i--) {
+			console.log(fieldData[i].attr);
 			if(fieldData[i].attr.name === dbKey) {
 				return fieldData[i].text;
 			}
@@ -62,32 +63,33 @@ function insertDocuments(collection, documents, callback) {
 
 function main() {
 	var queue = {
-		genes: {
-			filePath: './data/gene.xml',
-			dbSchema: {
-				symbol: 'hugo_symbol'
-			}
-		},
-		alterations: {
-			filePath: './data/alteration.xml',
-			dbSchema: {
-				symbol: 'alteration',
-				name: 'name'
-			}
-		},
+		// genes: {
+		// 	filePath: './data/gene.xml',
+		// 	dbSchema: {
+		// 		symbol: 'hugo_symbol'
+		// 	}
+		// },
+		// alterations: {
+		// 	filePath: './data/alteration.xml',
+		// 	dbSchema: {
+		// 		symbol: 'alteration',
+		// 		name: 'name'
+		// 	}
+		// },
 		cancertypes: {
 			filePath: './data/tumor_type.xml',
 			dbSchema: {
-				symbol: 'tumor_type_id',
-				name: 'name'
-			}
-		},
-		drugs: {
-			filePath: './data/drug.xml',
-			dbSchema: {
-				symbol: 'drug_name'
+				symbol: 'name',
+				shortName: 'tumor_type_id',
+				tissue: 'tissue'
 			}
 		}
+		// drugs: {
+		// 	filePath: './data/drug.xml',
+		// 	dbSchema: {
+		// 		symbol: 'drug_name'
+		// 	}
+		// }
 	};
 
 	var queueKeys = Object.keys(queue);

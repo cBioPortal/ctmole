@@ -6,9 +6,8 @@ angular.module('trials').controller('TrialsController',
 	'$stateParams', 
 	'$location', 
 	'Authentication', 
-	'Trials', 
-	'Genes'
-	function($scope, $stateParams, $location, Authentication, Trials ) {
+	'Trials',
+	function($scope, $stateParams, $location, Authentication, Trials) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
 		
@@ -60,7 +59,6 @@ angular.module('trials').controller('TrialsController',
 		// Find a list of Trials
 		$scope.find = function() {
 			$scope.trials = Trials.nctId.query();
-			$scope.genes = Genes.symbol.query();
 		};
 
 		// Find existing Trial

@@ -29,8 +29,8 @@ describe('Gene Model Unit Tests:', function() {
 
 		user.save(function() { 
 			gene = new Gene({
-				// Add model fields
-				// ...
+				name: 'Gene Name',
+				user: user
 			});
 
 			done();
@@ -41,6 +41,15 @@ describe('Gene Model Unit Tests:', function() {
 		it('should be able to save without problems', function(done) {
 			return gene.save(function(err) {
 				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should be able to show an error when try to save without name', function(done) { 
+			gene.name = '';
+
+			return gene.save(function(err) {
+				should.exist(err);
 				done();
 			});
 		});

@@ -86,7 +86,8 @@ function searchNct(db, documents, collectionName, callback) {
 				{'intervention.intervention_name':{$regex: regex}},
 				{'intervention_browse.mesh_term':{$regex: regex}}
 			], 
-			'overall_status': 'Recruiting'
+			'overall_status': 'Recruiting',
+			'location_countries.country':{$in:['United States', 'US', 'us', 'america']}
 		},{'_id':0, 'id_info.nct_id':1}).toArray(function(err,result){
 			var nctIds = [];
 
@@ -106,5 +107,5 @@ function main() {
 	connectDB(update);
 }
 
-var queue = ['alterations'];
+var queue = ['drugs', 'genes','alterations','cancertypes'];
 main();

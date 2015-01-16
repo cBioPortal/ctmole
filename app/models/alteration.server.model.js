@@ -10,7 +10,8 @@ var mongoose = require('mongoose'),
  * Alteration Schema
  */
 var AlterationSchema = new Schema({
-	symbol: String
+	symbol: String,
+	nctIds: Array
 });
 
 mongoose.model('Alteration', AlterationSchema);

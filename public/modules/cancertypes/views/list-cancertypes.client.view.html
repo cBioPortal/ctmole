@@ -1,0 +1,14 @@
+<section data-ng-controller="CancertypesController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Cancer Types</h1>
+    </div>
+    <div class="list-group">
+       <a data-ng-repeat="cancertype in cancertypes | orderBy: 'symbol'" data-ng-href="#!/cancertypes/{{cancertype.symbol}}" class="list-group-item">
+            <h4 class="list-group-item-heading" data-ng-bind="cancertype.symbol"></h4>
+            <p>{{cancertype.nctIds.join(', ')}}</p>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!cancertypes.$resolved || cancertypes.length">
+    	No Cancertypes yet, why don't you <a href="/#!/cancertypes/create">create one</a>?
+    </div>
+</section>
