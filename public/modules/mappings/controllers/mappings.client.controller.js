@@ -1,8 +1,8 @@
 'use strict';
 
 // Mappings controller
-angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '$stateParams', '$location', '$window', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials', 'Venn', 'D3',
-	function($scope, $sce, $stateParams, $location, $window, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials, Venn, D3) {
+angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '$stateParams', '$location', '$window', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials', 'Venn', 'D3', 'S',
+	function($scope, $sce, $stateParams, $location, $window, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials, Venn, D3, S) {
 		$scope.authentication = Authentication;
 
 		$scope.init = function() {
@@ -49,7 +49,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 				}
 			});
 			$scope.cancerTypes.forEach(function(d){
-				if (d.symbol === 'melanoma'){
+				if (d.symbol === 'colorectal cancer'){
 					$scope.selectedCancerType = d;
 				}
 			});
@@ -60,9 +60,18 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 			$scope.selectedGroup = group;
 			Trials.listWithnctIds.search($scope.selectedGroup.nctIds, function(data){
 				$scope.trials =  data.map(function(d){
-					d.eligibilityCriteria = $sce.trustAsHtml(d.eligibilityCriteria.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+					var regex = new RegExp($scope.selectedGroup.label.replace(/,\s*/g, '|'), 'gi');
+					d.eligibilityCriteria = S(d.eligibilityCriteria.replace(/[\n\r]{2}\s+/g, 'zhxzhx').replace(/[\n\r]{1}\s+/g, ' ').replace(/zhxzhx/g, '\n')).lines().filter(function(e){
+						if(regexIndexOf(e, regex, 0, d) !== -1) {
+							return true;
+						}else {
+							return false;
+						}
+					});
+					d.intervention = d.drugs.map(function(e){ return e.drugName}).join(', ');
 					return d;
 				});
+				console.log($scope);
 			});
 		}
 
@@ -70,6 +79,10 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 			$window.open('#!/mappings/list');
 		}
 
+		function regexIndexOf(string, regex, startpos, d) {
+		    var indexOf = string.substring(startpos || 0).search(regex);
+		    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
+		}
 		function venn(groups, combined) {
 			var sets = groups.map(function(e){
 				var datum = {};
@@ -172,6 +185,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    .append('path')
 		    .attr('d', function(d) {
 		    	var _data = Venn.intersectionAreaPath(d.sets.map(function(j) { return sets[j]; }));
+		        console.log(_data);
 		        return _data;
 		    })
 		    .style('fill-opacity','0')

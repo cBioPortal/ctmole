@@ -4,6 +4,7 @@
 angular.module('mappings',['localytics.directives', 'angular-underscore'])
 .constant('Venn', venn)
 .constant('D3', d3)
+.constant('S', S)
 .run(['Menus',
 	function(Menus) {
 		// Set top bar menu items

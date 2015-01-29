@@ -32,7 +32,8 @@ module.exports = {
 				'public/lib/underscore/underscore.js',
 				'public/lib/angular-underscore/angular-underscore.js',
 				'public/lib/d3/d3.min.js',
-				'public/lib/venn.js/venn.js'
+				'public/lib/venn.js/venn.js',
+				'public/lib/string/lib/string.js'
 			]
 		},
 		css: [

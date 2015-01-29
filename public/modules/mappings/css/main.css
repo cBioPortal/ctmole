@@ -10,3 +10,8 @@
   border-radius: 8px;
   opacity: 0;
 }
+
+/*Bold table first column*/
+.boldTFC tr td:nth-child(1){
+  font-weight: bold;
+}

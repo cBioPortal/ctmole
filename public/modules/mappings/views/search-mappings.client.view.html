@@ -42,21 +42,25 @@
             <p>{{group.nctIds.join(', ')}}</p>
         </div>
     </div> -->
-    <div ng-if="selectedGroup.nctIds.length > 0">
+    <div ng-if="trials.length > 0">
 		<h4>{{selectedGroup.label}} ({{selectedGroup.size}} element<span ng-if="selectedGroup.nctIds.length > 1">s)</span></h4>
 		<div>
             <table class="table">
-                <thead><tr><th>Status</th><th>Study</th></tr></thead>
+                <thead><tr><th>ID</th><th>Status</th><th>Study</th><th></th></tr></thead>
                 <tbody>
                     <tr data-ng-repeat="trial in trials" data-ng-href="#!/trials/{{trial.nctId}}">
-                        <td><b>{{trial.recruitingStatus}}</b></td>
+                        <td>{{$index + 1}}</td>
+                        <td style="color: green"><b>{{trial.recruitingStatus}}</b></td>
                         <td>
-                            <p><b><a ng-href="#!/trials/{{trial.nctId}}">{{trial.title}}</b></a></p>
-                            <p><b>NCT ID:</b> {{trial.nctId}}</p>
-                            <p><b>Phase:</b> {{trial.phase}}</p>
-                            <p><b>Intervention:</b> {{getDrugs(trial.drugs)}}</p>
-                            <p ng-bind-html="trial.eligibilityCriteria"></p>
+                            <p><b><a ng-href="#!/trials/{{trial.nctId}}" target="_blank">{{trial.title}}</b></a></p>
+                            <p><table class="table boldTFC">
+                            <tr><td>NCT ID:</td><td>{{trial.nctId}}</td></tr>
+                            <tr><td>Phase:</td><td>{{trial.phase}}</td></tr>
+                            <tr><td>Intervention:</td><td>{{trial.intervention}}<span ng-if="trial.intervention === ''">None.</span></td></tr>
+                            <tr><td>Eligibility Criteria:</td><td><span ng-repeat="criteria in trial.eligibilityCriteria" ng-bind-html="criteria"></span><span ng-if="trial.eligibilityCriteria.length === 0">None.</span></td></tr>
+                            </table></p>
                         </td>
+                        <td><button class="btn btn-info">Assign</button></td>
                     </tr>
                 </tbody>
             </table>
