@@ -1,0 +1,18 @@
+<section data-ng-controller="TrialsController">
+    <div class="row">
+        <div class="input-group col-lg-6 col-md-6" style="margin-top:50px" >
+    	  	<input type="text" class="form-control" ng-model='nctId' placeholder='Please input NCT ID'>
+    	  	<span class="input-group-addon" ng-click='assignTrailBynctId()'>Assign Trial</span>
+    	</div>
+    </div>
+    <div class="row">
+        <div ng-if="trialGenes.length > 0" class="col-lg-4 col-md-4" style="border: 1px sold grey">
+            <h3>Associate gene</h3>
+            <div >
+                <ul class="nav nav-list">
+                    <li ng-repeat="trailGene in trialGenes"><label><input type="checkbox"  value="trailGene.symbol" ng-bind="trailGene.symbol" name="trailGene.symbol"></label></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

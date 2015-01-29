@@ -52,12 +52,12 @@ angular.module('genes').controller('GenesController', ['$scope', '$stateParams',
 
 		// Find a list of Genes
 		$scope.find = function() {
-			$scope.genes = Genes.query();
+			$scope.genes = Genes.gene.query();
 		};
 
 		// Find existing Gene
 		$scope.findOne = function() {
-			$scope.gene = Genes.get({ 
+			$scope.gene = Genes.gene.get({ 
 				geneId: $stateParams.geneId
 			});
 		};

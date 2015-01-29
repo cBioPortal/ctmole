@@ -80,9 +80,13 @@ ApplicationConfiguration.registerModule('users');
 angular.module('alterations').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Alterations', 'alterations', 'dropdown', '/alterations(/create)?');
-		Menus.addSubMenuItem('topbar', 'alterations', 'List Alterations', 'alterations');
-		// Menus.addSubMenuItem('topbar', 'alterations', 'New Alteration', 'alterations/create');
+		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', '/');
+        Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
+		Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
+		Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
+        Menus.addSubMenuItem('topbar', '/', 'List Drugs', 'drugs');
+        Menus.addSubMenuItem('topbar', '/', 'List Trials', 'trials');
+        Menus.addSubMenuItem('topbar', '/', 'Search Trial', 'trials/search');
 	}
 ]);
 'use strict';
@@ -194,8 +198,8 @@ angular.module('alterations').factory('Alterations', ['$resource',
 angular.module('cancertypes').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Cancer Types', 'cancertypes', 'dropdown', '/cancertypes(/create)?');
-		Menus.addSubMenuItem('topbar', 'cancertypes', 'List Cancer Types', 'cancertypes');
+		// Menus.addMenuItem('topbar', 'Cancer Types', 'cancertypes', 'dropdown', '/cancertypes(/create)?');
+		// Menus.addSubMenuItem('topbar', 'cancertypes', 'List Cancer Types', 'cancertypes');
 		// Menus.addSubMenuItem('topbar', 'cancertypes', 'New Cancertype', 'cancertypes/create');
 	}
 ]);
@@ -521,8 +525,8 @@ angular.module('core').service('Menus', [
 angular.module('drugs').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Drugs', 'drugs', 'dropdown', '/drugs(/create)?');
-		Menus.addSubMenuItem('topbar', 'drugs', 'List Drugs', 'drugs');
+		// Menus.addMenuItem('topbar', 'Drugs', 'drugs', 'dropdown', '/drugs(/create)?');
+		// Menus.addSubMenuItem('topbar', 'drugs', 'List Drugs', 'drugs');
 		// Menus.addSubMenuItem('topbar', 'drugs', 'New Drug', 'drugs/create');
 	}
 ]);
@@ -643,8 +647,8 @@ angular.module('drugs').factory('Drugs', ['$resource',
 angular.module('genes').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Genes', 'genes', 'dropdown', '/genes(/create)?');
-		Menus.addSubMenuItem('topbar', 'genes', 'List Genes', 'genes');
+		// Menus.addMenuItem('topbar', 'Genes', 'genes', 'dropdown', '/genes(/create)?');
+		// Menus.addSubMenuItem('topbar', 'genes', 'List Genes', 'genes');
 		// Menus.addSubMenuItem('topbar', 'genes', 'New Gene', 'genes/create');
 	}
 ]);
@@ -727,12 +731,12 @@ angular.module('genes').controller('GenesController', ['$scope', '$stateParams',
 
 		// Find a list of Genes
 		$scope.find = function() {
-			$scope.genes = Genes.query();
+			$scope.genes = Genes.gene.query();
 		};
 
 		// Find existing Gene
 		$scope.findOne = function() {
-			$scope.gene = Genes.get({ 
+			$scope.gene = Genes.gene.get({ 
 				geneId: $stateParams.geneId
 			});
 		};
@@ -755,29 +759,34 @@ angular.module('genes').filter('asc', [
 //Genes service used to communicate Genes REST endpoints
 angular.module('genes').factory('Genes', ['$resource',
 	function($resource) {
-		return $resource('genes/:geneId', { geneId: '@_id'
-		}, {
-			update: {
-				method: 'PUT'
-			}
-		});
+		return {
+            gene: $resource('genes/:geneId', { geneId: '@_id'
+    		}, {
+    			update: {
+    				method: 'PUT'
+    			},
+                query: {isArray: true}
+    		}),
+            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+        };
 	}
 ]);
 'use strict';
 
 // Configuring the Articles module
-angular.module('mappings').run(['Menus',
+angular.module('mappings',['localytics.directives', 'angular-underscore']).run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Mappings', 'mappings', 'item', '/mappings', true, ['*'], -1);
-		// Menus.addSubMenuItem('topbar', 'mappings', 'List Mappings', 'mappings');
+		Menus.addMenuItem('topbar', 'Mappings', 'mappings', 'dropdown', '/', true, ['*'], -1);
+		Menus.addSubMenuItem('topbar', 'mappings', 'Find common trials', 'mappings');
+        Menus.addSubMenuItem('topbar', 'mappings', 'Assign trial', 'trials/assign');
 		// Menus.addSubMenuItem('topbar', 'mappings', 'New Mapping', 'mappings/create');
 	}
 ]);
 'use strict';
 
 //Setting up route
-angular.module('mappings',['localytics.directives']).config(['$stateProvider',
+angular.module('mappings').config(['$stateProvider',
 	function($stateProvider) {
 		// Mappings state routing
 		$stateProvider.
@@ -785,42 +794,131 @@ angular.module('mappings',['localytics.directives']).config(['$stateProvider',
 			url: '/mappings',
 			controller: 'MappingsController',
 			templateUrl: 'modules/mappings/views/search-mappings.client.view.html'
+		}).
+		state('list', {
+			url: '/mappings/list',
+			controller: 'MappingsController',
+			templateUrl: 'modules/mappings/views/list-mappings.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
 // Mappings controller
-angular.module('mappings').controller('MappingsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs',
-	function($scope, $stateParams, $location, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs) {
+angular.module('mappings').controller('MappingsController', ['$scope', '$stateParams', '$location', '$window', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials',
+	function($scope, $stateParams, $location, $window, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials) {
 		$scope.authentication = Authentication;
-		console.log('can print something');
+
 		$scope.init = function() {
+			initParams();
 			geneList();
 			altList();
 			cancerTypeList();
 			drugList();
+		};
+
+		$scope.findList = function(group) {
+			$scope.selectedGroup = group;
+			$scope.trials = Trials.listWithnctIds.search($scope.selectedGroup.nctIds);
+			$window.open('#!/mappings/list');
+		};
+		// Find a list of Mappings
+		$scope.find = function() {
+		};
+
+		$scope.search = function () {
+			var groups = [],
+				combined = [];
+
+			groups.push($scope.selectedGene);
+			groups.push($scope.selectedAlt);
+			groups.push($scope.selectedCancerType);
+
+			groups = $scope.compact(groups);
+			combined = combination(groups);
+
+			$scope.trailGroups = combined;
+		};
+
+		$scope.example = function() {
+			$scope.genes.forEach(function(d){
+				if (d.symbol === 'BRAF'){
+					$scope.selectedGene = d;
+				}
+			});
+			$scope.alts.forEach(function(d){
+				if (d.symbol === 'V600E'){
+					$scope.selectedAlt = d;
+				}
+			});
+			$scope.cancerTypes.forEach(function(d){
+				if (d.symbol === 'melanoma'){
+					$scope.selectedCancerType = d;
+				}
+			});
+			$scope.search();
+		};
+
+		$scope.showTrials = function() {
 			console.log($scope);
 		};
 
-		// Find a list of Mappings
-		$scope.find = function() {
-			$scope.mappings = Mappings.query();
-		};
-
-		function  geneList() {
-			$scope.genes = Genes.query();
+		function combination(array) {
+			var len = array.length;
+			var n = 1<<len;
+			var result = [];
+			for(var i=1;i<n;i++)    //从 1 循环到 2^len -1
+			{
+				var content = {},
+					name = [],
+					nctIds = [];
+				for(var j=0;j<len;j++)
+				{
+					var temp = i;
+					if(temp & (1<<j))   //对应位上为1，则输出对应的字符
+					{
+						name.push(array[j].symbol);
+						if(nctIds.length === 0) {
+							nctIds = array[j].nctIds;
+						}else {
+							nctIds = $scope.intersection(nctIds, array[j].nctIds);
+						}
+					}
+				}
+				content.name = name;
+				content.nctIds = nctIds;
+				result.push(content);
+			}
+			return result.sort(function(a,b){
+				if(a.name.length > b.name.length) {
+					return -1;
+				}else {
+					return 1;
+				}
+			}).map(function(e){e.name = e.name.join(', '); return e;});
 		}
 
-		function  altList() {
+		function initParams() {
+			$scope.selectedGene = '';
+			$scope.selectedAlt = '';
+			$scope.selectedCancerType = '';
+			$scope.selectedGroup = {name: 'NA', nctIds: []};
+			$scope.trailGroups = []; //The item should have following structure {name:'', nctIds: []}
+		}
+
+		function geneList() {
+			$scope.genes = Genes.gene.query();
+		}
+
+		function altList() {
 			$scope.alts = Alterations.query();
 		}
 
-		function  cancerTypeList() {
+		function cancerTypeList() {
 			$scope.cancerTypes = CancerTypes.query();
 		}
 
-		function  drugList() {
+		function drugList() {
 			$scope.drugs = Drugs.full.query();
 		}
 	}
@@ -844,9 +942,9 @@ angular.module('mappings').factory('Mappings', ['$resource',
 angular.module('trials').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Trials', 'trials', 'dropdown', '/trials(/create)?');
-		Menus.addSubMenuItem('topbar', 'trials', 'List Trials', 'trials');
-		Menus.addSubMenuItem('topbar', 'trials', 'Search Trial', 'trials/search');
+		// Menus.addMenuItem('topbar', 'Trials', 'trials', 'dropdown', '/trials(/create)?');
+		// Menus.addSubMenuItem('topbar', 'trials', 'List Trials', 'trials');
+		// Menus.addSubMenuItem('topbar', 'trials', 'Search Trial', 'trials/search');
 	}
 ]);
 'use strict';
@@ -872,6 +970,14 @@ angular.module('trials').config(['$stateProvider',
 			url: '/trials/search/:keyword',
 			templateUrl: 'modules/trials/views/search-trial.client.view.html'
 		}).
+		state('assignTrial', {
+			url: '/trials/assign',
+			templateUrl: 'modules/trials/views/assign-trial.client.view.html'
+		}).
+		state('assignTrialByKeyword', {
+			url: '/trials/assign/:keyword',
+			templateUrl: 'modules/trials/views/assign-trial.client.view.html'
+		}).
 		state('viewTrial', {
 			url: '/trials/:nctId',
 			templateUrl: 'modules/trials/views/view-trial.client.view.html'
@@ -891,10 +997,34 @@ angular.module('trials').controller('TrialsController',
 	'$location', 
 	'Authentication', 
 	'Trials',
-	function($scope, $stateParams, $location, Authentication, Trials) {
+	'Genes',
+	'Alterations',
+	'Cancertypes',
+	'Drugs',
+	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
-		
+
+		function syntaxHighlight(json) {
+			json = JSON.stringify(json, undefined, 4);
+		    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+		        var cls = 'number';
+		        if (/^"/.test(match)) {
+		            if (/:$/.test(match)) {
+		                cls = 'key';
+		            } else {
+		                cls = 'string';
+		            }
+		        } else if (/true|false/.test(match)) {
+		            cls = 'boolean';
+		        } else if (/null/.test(match)) {
+		            cls = 'null';
+		        }
+		        return '<span class="' + cls + '">' + match + '</span>';
+		    });
+		}
+
+		$scope.beautify = syntaxHighlight;
 		// Create new Trial
 		$scope.create = function() {
 			// Create new Trial object
@@ -963,6 +1093,16 @@ angular.module('trials').controller('TrialsController',
 			$location.path('trials/' + $scope.nctId);
 		};
 
+		$scope.assignTrailBynctId = function() {
+			$scope.trial = Trials.nctId.get({ 
+				nctId: $scope.nctId
+			});
+			$scope.trialGenes = Genes.nctIds.get({ 
+				nctIds: [$scope.nctId]
+			});
+			console.log($scope.trialGenes);
+		};
+
 		$scope.getDrugs = function(drugs) {
 			return drugs.map(function(e){return e.drugName;}).join(', ');
 		};
@@ -980,8 +1120,10 @@ angular.module('trials').factory('Trials', ['$resource',
 						method: 'PUT'
 					}
 				}),
-			keyword: $resource('trials/search/:keyword', { keyword: '@_id'
-				})
+			keyword: $resource('trials/search/:keyword', { keyword: '@_id'}),
+			listWithnctIds: $resource('trials/list', {nctIds: []}, {
+				search: {method: 'POST', isArray: true}
+			})
 		};
 	}
 ]);

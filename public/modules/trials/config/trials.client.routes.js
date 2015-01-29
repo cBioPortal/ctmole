@@ -21,6 +21,14 @@ angular.module('trials').config(['$stateProvider',
 			url: '/trials/search/:keyword',
 			templateUrl: 'modules/trials/views/search-trial.client.view.html'
 		}).
+		state('assignTrial', {
+			url: '/trials/assign',
+			templateUrl: 'modules/trials/views/assign-trial.client.view.html'
+		}).
+		state('assignTrialByKeyword', {
+			url: '/trials/assign/:keyword',
+			templateUrl: 'modules/trials/views/assign-trial.client.view.html'
+		}).
 		state('viewTrial', {
 			url: '/trials/:nctId',
 			templateUrl: 'modules/trials/views/view-trial.client.view.html'

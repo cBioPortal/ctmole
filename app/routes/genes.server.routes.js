@@ -14,6 +14,10 @@ module.exports = function(app) {
 		.put(users.requiresLogin, genes.hasAuthorization, genes.update)
 		.delete(users.requiresLogin, genes.hasAuthorization, genes.delete);
 
+	app.route('/genes/trials/:nctIds')
+		.get(genes.readGenes);
+
 	// Finish by binding the Gene middleware
 	app.param('geneId', genes.geneByID);
+	app.param('nctIds', genes.geneByNctIds);
 };

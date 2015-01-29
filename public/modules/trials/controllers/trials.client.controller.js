@@ -7,7 +7,11 @@ angular.module('trials').controller('TrialsController',
 	'$location', 
 	'Authentication', 
 	'Trials',
-	function($scope, $stateParams, $location, Authentication, Trials) {
+	'Genes',
+	'Alterations',
+	'Cancertypes',
+	'Drugs',
+	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
 
@@ -97,6 +101,16 @@ angular.module('trials').controller('TrialsController',
 
 		$scope.searchTrailBynctId = function() {
 			$location.path('trials/' + $scope.nctId);
+		};
+
+		$scope.assignTrailBynctId = function() {
+			$scope.trial = Trials.nctId.get({ 
+				nctId: $scope.nctId
+			});
+			$scope.trialGenes = Genes.nctIds.get({ 
+				nctIds: [$scope.nctId]
+			});
+			console.log($scope.trialGenes);
 		};
 
 		$scope.getDrugs = function(drugs) {

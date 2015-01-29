@@ -30,7 +30,9 @@ module.exports = {
 				'public/lib/chosen/chosen.jquery.js',
 				'public/lib/angular-chosen-localytics/chosen.js',
 				'public/lib/underscore/underscore.js',
-				'public/lib/angular-underscore/angular-underscore.js'
+				'public/lib/angular-underscore/angular-underscore.js',
+				'public/lib/d3/d3.min.js',
+				'public/lib/venn.js/venn.js'
 			]
 		},
 		css: [

@@ -34,6 +34,13 @@ exports.read = function(req, res) {
 };
 
 /**
+ * Show the current Gene
+ */
+exports.readGenes = function(req, res) {
+	res.jsonp(req.genes);
+};
+
+/**
  * Update a Gene
  */
 exports.update = function(req, res) {
@@ -90,6 +97,22 @@ exports.geneByID = function(req, res, next, id) { Gene.findOne({'symbol': id}).p
 		if (err) return next(err);
 		if (! gene) return next(new Error('Failed to load Gene ' + id));
 		req.gene = gene ;
+		next();
+	});
+};
+
+/**
+ * Gene middleware
+ */
+exports.geneByNctIds = function(req, res, next, ids) {
+
+	if(!(ids instanceof Array)) {
+		ids = [ids];
+	}
+	Gene.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, genes) {
+		if (err) return next(err);
+		if (! genes) return next(new Error('Failed to load Gene ' + ids));
+		req.genes = genes ;
 		next();
 	});
 };

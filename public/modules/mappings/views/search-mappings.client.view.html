@@ -1,5 +1,5 @@
 <section data-ng-controller="MappingsController" ng-init="init()">
-	<div style="margin-top: 30px;">
+	<div style="margin-top: 30px;" class="row">
 		<select chosen
 	        data-placeholder="Pick one of Genes"
 	        allow-single-deselect="true"
@@ -25,6 +25,7 @@
 		</select>
 
 		<button class="btn btn-info" ng-click="search()">Search</button>
+		<button ng-if="authentication.user.username === 'zhx'" class="btn btn-info" ng-click="example()">Example</button>
 		<!-- <select chosen
 	        data-placeholder="Pick one of Drug"
 	        disable-search="true"
@@ -32,10 +33,24 @@
 	        ng-options="drug.symbol for drug in drugs" style='width:24%'>
 		</select> -->
 	</div>
-	<div class="list-group" style="margin-top:20px;">
+	<div class="row">
+		<div id="venn"></div>
+	</div>
+	<!-- <div class="list-group row" style="margin-top:20px;">
         <div data-ng-repeat="group in trailGroups" class="list-group-item">
-			<h4 class="list-group-item-heading" data-ng-bind="group.name"></h4>
+			<h4 class="list-group-item-heading">{{group.name}}&nbsp;&nbsp;({{group.nctIds.length}} elements)</h4>
             <p>{{group.nctIds.join(', ')}}</p>
+        </div>
+    </div> -->
+    <div ng-if="selectedGroup.nctIds.length > 0">
+		<h4>{{selectedGroup.label}} ({{selectedGroup.size}} element<span ng-if="selectedGroup.nctIds.length > 1">s)</span></h4>
+		<div class="list-group">
+            <a data-ng-repeat="trial in trials" data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+                <div>
+                    <h4 class="list-group-item-heading" data-ng-bind="trial.title"></h4>
+                    <p>NCT ID: {{trial.nctId}} <br/>Phase: {{trial.phase}}<br/>Recruiting Status: {{trial.recruitingStatus}}<br/>Drugs: {{getDrugs(trial.drugs)}}<br/><span ng-bind-html="trial.eligibilityCriteria"></span></p>
+                </div>
+            </a>
         </div>
     </div>
 </section>
