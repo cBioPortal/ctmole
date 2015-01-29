@@ -76,13 +76,24 @@ function searchNct(db, documents, collectionName, callback) {
 	var _document = documents.pop();
 	if(typeof _document !== 'undefined') {
 		var metadata = db.collection('clinicaltrialmetadatas');
-		var regex = new RegExp(_document.symbol);
-		console.log('\t', _document.symbol);
+		var symbol = _document.symbol;
+		var regex = new RegExp(symbol);
+		var regexS = new RegExp(symbol);
+		var ssRegex = /([a-zA-Z]+\d+)[a-zA-Z]+/g;
+		var subGene;
+
+		console.log('\t', symbol);
+		if((subGene = ssRegex.exec(symbol)) !== null && collectionName === 'alterations') {
+			regex = new RegExp(symbol + '|' + subGene[1]);
+			regexS = new RegExp(symbol + '|\\s*' + subGene[1] + '\\s');
+		}
+
 		metadata.find({
 			$or:[
 				{'keyword':{$regex: regex}},
+				{'eligibilityCriteria': {$regex: regexS}},
 				{'condition_browse.mesh_term':{$regex: regex}},
-				{'official_title':{$regex: regex}},
+				{'official_title':{$regex: regexS}},
 				{'intervention.intervention_name':{$regex: regex}},
 				{'intervention_browse.mesh_term':{$regex: regex}}
 			], 
@@ -106,6 +117,6 @@ function searchNct(db, documents, collectionName, callback) {
 function main() {
 	connectDB(update);
 }
-
+// var queue = ['alterations'];
 var queue = ['drugs', 'genes','alterations','cancertypes'];
 main();

@@ -64,7 +64,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 					return d;
 				});
 			});
-		};
+		}
 
 		function openMappingList() {
 			$window.open('#!/mappings/list');
