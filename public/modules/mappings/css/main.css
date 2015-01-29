@@ -15,3 +15,20 @@
 .boldTFC tr td:nth-child(1){
   font-weight: bold;
 }
+
+/*** custom checkboxes ***/
+
+input[type=checkbox] { display:none; } /* to hide the checkbox itself */
+input[type=checkbox] + label:before {
+  font-family: FontAwesome;
+  display: inline-block;
+  margin: 0 0 0 3px;
+}
+input[type=checkbox] + label:hover {
+  cursor: pointer;
+}
+input[type=checkbox] + label:before { content: "\f096"; } /* unchecked icon */
+input[type=checkbox] + label:before { letter-spacing: 5px; } /* space between checkbox and label */
+
+input[type=checkbox]:checked + label:before { content: "\f046"; } /* checked icon */
+input[type=checkbox]:checked + label:before { letter-spacing: 5px; } /* allow space for check mark */

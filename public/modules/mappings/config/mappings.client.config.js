@@ -1,10 +1,11 @@
 'use strict';
 
 // Configuring the Articles module
-angular.module('mappings',['localytics.directives', 'angular-underscore'])
-.constant('Venn', venn)
-.constant('D3', d3)
-.constant('S', S)
+angular.module('mappings',['localytics.directives', 'angular-underscore', 'datatables', 'datatables.bootstrap'])
+.constant('Venn', window.venn)
+.constant('D3', window.d3)
+.constant('S', window.S)
+.constant('_', window._)
 .run(['Menus',
 	function(Menus) {
 		// Set top bar menu items

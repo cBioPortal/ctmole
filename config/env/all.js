@@ -13,17 +13,20 @@ module.exports = {
 	assets: {
 		lib: {
 			css: [
-				'public/lib/bootstrap/dist/css/bootstrap.css',
-				'public/lib/bootstrap/dist/css/bootstrap-theme.css'
+				'public/_lib/bootstrap/css/bootstrap.css',
+				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
+				'public/lib/fontawesome/css/font-awesome.css',
+				'public/lib/datatables/media/css/jquery.dataTables.css',
+				'public/lib/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css'
 			],
 			js: [
 				'public/lib/jquery/dist/jquery.js',
 				'public/lib/angular/angular.js',
-				'public/lib/angular-resource/angular-resource.js', 
-				'public/lib/angular-cookies/angular-cookies.js', 
-				'public/lib/angular-animate/angular-animate.js', 
-				'public/lib/angular-touch/angular-touch.js', 
-				'public/lib/angular-sanitize/angular-sanitize.js', 
+				'public/lib/angular-resource/angular-resource.js',
+				'public/lib/angular-cookies/angular-cookies.js',
+				'public/lib/angular-animate/angular-animate.js',
+				'public/lib/angular-touch/angular-touch.js',
+				'public/lib/angular-sanitize/angular-sanitize.js',
 				'public/lib/angular-ui-router/release/angular-ui-router.js',
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
@@ -33,7 +36,10 @@ module.exports = {
 				'public/lib/angular-underscore/angular-underscore.js',
 				'public/lib/d3/d3.min.js',
 				'public/lib/venn.js/venn.js',
-				'public/lib/string/lib/string.js'
+				'public/lib/string/lib/string.js',
+				'public/lib/datatables/media/js/jquery.dataTables.js',
+				'public/lib/angular-datatables/dist/angular-datatables.js',
+				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js'
 			]
 		},
 		css: [

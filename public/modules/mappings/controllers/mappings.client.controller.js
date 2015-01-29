@@ -1,8 +1,8 @@
 'use strict';
 
 // Mappings controller
-angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '$stateParams', '$location', '$window', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials', 'Venn', 'D3', 'S',
-	function($scope, $sce, $stateParams, $location, $window, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials, Venn, D3, S) {
+angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '_', '$stateParams', '$location', '$window', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials', 'Venn', 'D3', 'S',
+	function($scope, $sce, _, $stateParams, $location, $window, DTOptionsBuilder, DTColumnDefBuilder, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials, Venn, D3, S) {
 		$scope.authentication = Authentication;
 
 		$scope.init = function() {
@@ -14,8 +14,9 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		};
 
 		$scope.findList = function(group) {
-			searchTrialsBySelectedGroup(group);
-			openMappingList();
+			searchTrialsBySelectedGroup(group, function(){
+				openMappingList();
+			});
 		};
 
 		// Find a list of Mappings
@@ -26,37 +27,70 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 			var groups = [],
 				combined = [];
 
-			groups.push($scope.selectedGene);
-			groups.push($scope.selectedAlt);
-			groups.push($scope.selectedCancerType);
+			$scope.trials = [];
 
+			initCheckboxVal();
+
+			groups.push($scope.selectedVariants.gene);
+			groups.push($scope.selectedVariants.alt);
+			groups.push($scope.selectedVariants.cancerType);
 			groups = $scope.compact(groups);
-			combined = combination(groups);
 
+			combined = combination(groups);
 			venn(groups, angular.copy(combined));
+			
 			$scope.trailGroups = combined.map(function(e){e.name = e.name.join(', '); return e;});
+			$scope.$watch('checkboxVal', function(n, o){
+				if($scope.trials && $scope.trials.length > 0){
+					var nctIds = $scope.trials.map(function(d){return d.nctId;});
+					for(var key in n) {
+						if(!n[key]) {
+							nctIds = _.difference(nctIds, $scope.selectedVariants[key].nctIds);
+						}
+					}
+					$scope.selectedTrials = $scope.trials.filter(function(d){
+						if(nctIds.indexOf(d.nctId) !== -1) {
+							return true;
+						}else {
+							return false;
+						}
+					});
+				}
+			}, true);
 		};
 
 		$scope.example = function() {
 			$scope.genes.forEach(function(d){
 				if (d.symbol === 'BRAF'){
-					$scope.selectedGene = d;
+					$scope.selectedVariants.gene = d;
 				}
 			});
 			$scope.alts.forEach(function(d){
 				if (d.symbol === 'V600E'){
-					$scope.selectedAlt = d;
+					$scope.selectedVariants.alt = d;
 				}
 			});
 			$scope.cancerTypes.forEach(function(d){
-				if (d.symbol === 'colorectal cancer'){
-					$scope.selectedCancerType = d;
+				// if (d.symbol === 'colorectal cancer'){
+				if (d.symbol === 'melanoma'){
+					$scope.selectedVariants.cancerType = d;
 				}
 			});
 			$scope.search();
 		};
 
-		function searchTrialsBySelectedGroup(group) {
+		$scope.showCheckbox = function(variant) {
+			if(!variant) {
+				return false;
+			}
+			if($scope.selectedGroup.variants.indexOf(variant) === -1) {
+				return true;
+			}else {
+				return false;
+			}
+		};
+
+		function searchTrialsBySelectedGroup(group, callback) {
 			$scope.selectedGroup = group;
 			Trials.listWithnctIds.search($scope.selectedGroup.nctIds, function(data){
 				$scope.trials =  data.map(function(d){
@@ -68,11 +102,22 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 							return false;
 						}
 					});
-					d.intervention = d.drugs.map(function(e){ return e.drugName}).join(', ');
+					d.intervention = d.drugs.map(function(e){ return e.drugName;}).join(', ');
 					return d;
 				});
-				console.log($scope);
+				$scope.selectedTrials = angular.copy($scope.trials);
+				initCheckboxVal();
+				if(angular.isFunction(callback)) {
+					callback();
+				}
 			});
+		}
+
+		function initCheckboxVal() {
+		    $scope.checkboxVal = {};
+			for(var key in $scope.selectedVariants){
+				$scope.checkboxVal[key] = true;
+			}
 		}
 
 		function openMappingList() {
@@ -89,6 +134,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 				datum.label = e.symbol;
 				datum.size = e.nctIds.length;
 				datum.nctIds = e.nctIds;
+				datum.variants = [e.symbol];
 				return datum;
 			});
 
@@ -96,7 +142,8 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    	var datum = {
 		    		sets: [],
 		    		size: 0,
-		    		label: [],
+		    		label: '',
+		    		variants: [],
 		    		nctIds: []
 		    	};
 
@@ -111,12 +158,12 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    		}
 		    		if(_index !== -1) {
 		    			datum.sets.push(_index);
-		    			datum.label.push(e);
+		    			datum.variants.push(e);
 		    		}
 		    	});
 		    	datum.size = d.nctIds.length;
 		    	datum.nctIds = d.nctIds;
-		    	datum.label = datum.label.join(', ');
+		    	datum.label = datum.variants.join(', ');
 		    	return datum;
 		    }).filter(function(e){
 		    	if(e.sets.length > 1) {
@@ -129,8 +176,6 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    var tooltip = D3.select('#venn').append('div')
     			.attr('class', 'venntooltip');
 
-			console.log(sets, overlaps);
-
 		    // get positions for each set
 			sets = Venn.venn(sets, overlaps);
 
@@ -141,8 +186,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 			.style('display', 'block')
 			.style('margin', 'auto');
 
-			//Default color are ['#FF7F0E', '#2CA02C', '#1F77B4']
-			
+			//Default color are ['#FF7F0E', '#2CA02C', '#1F77B4']]
 			
 			D3.selection.prototype.moveParentToFront = function() {
 			  	return this.each(function(){
@@ -184,9 +228,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    .enter()
 		    .append('path')
 		    .attr('d', function(d) {
-		    	var _data = Venn.intersectionAreaPath(d.sets.map(function(j) { return sets[j]; }));
-		        console.log(_data);
-		        return _data;
+		        return Venn.intersectionAreaPath(d.sets.map(function(j) { return sets[j]; }));
 		    })
 		    .style('fill-opacity','0')
 		    .style('fill', 'black')
@@ -252,11 +294,24 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		}
 
 		function initParams() {
-			$scope.selectedGene = '';
-			$scope.selectedAlt = '';
-			$scope.selectedCancerType = '';
+			$scope.selectedVariants = {
+				gene: '',
+				alt: '',
+				cancerType: ''
+			};
+
 			$scope.selectedGroup = {name: 'NA', nctIds: []};
 			$scope.trailGroups = []; //The item should have following structure {name:'', nctIds: []}
+			$scope.dtOptions = DTOptionsBuilder
+				.newOptions()
+				.withDOM('lifrtp')
+				.withBootstrap();
+			$scope.dtColumns =  [
+		        DTColumnDefBuilder.newColumnDef(0),
+		        DTColumnDefBuilder.newColumnDef(1),
+		        DTColumnDefBuilder.newColumnDef(2),
+		        DTColumnDefBuilder.newColumnDef(3).notSortable()
+		    ];
 		}
 
 		function geneList() {
