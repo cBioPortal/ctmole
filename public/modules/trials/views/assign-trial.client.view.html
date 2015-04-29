@@ -5,12 +5,13 @@
     	  	<span class="input-group-addon" ng-click='assignTrailBynctId()'>Assign Trial</span>
     	</div>
     </div>
-    <div class="row">
-        <div ng-if="trialGenes.length > 0" class="col-lg-4 col-md-4" style="border: 1px sold grey">
-            <h3>Associate gene</h3>
-            <div >
+    <div class="row assign">
+        <div ng-if="trialGenes.length > 0" class="col-lg-4 col-md-4">
+            <p>Associate gene</p>
+            <div>
                 <ul class="nav nav-list">
-                    <li ng-repeat="trailGene in trialGenes"><label><input type="checkbox"  value="trailGene.symbol" ng-bind="trailGene.symbol" name="trailGene.symbol"></label></li>
+                    <li ng-repeat="trailGene in trialGenes">
+                    <input id="box{{$index}}" type="checkbox" ng-model="checkboxVal[key]" checked><label for="box{{$index}}">{{trailGene.symbol}}</label></li>
                 </ul>
             </div>
         </div>

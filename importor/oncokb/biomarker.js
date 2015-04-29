@@ -77,28 +77,29 @@ function searchNct(db, documents, collectionName, callback) {
 	if(typeof _document !== 'undefined') {
 		var metadata = db.collection('clinicaltrialmetadatas');
 		var symbol = _document.symbol;
-		var regex = new RegExp(symbol);
-		var regexS = new RegExp(symbol);
-		var ssRegex = /([a-zA-Z]+\d+)[a-zA-Z]+/g;
+		var regex = new RegExp(symbol, 'i');
+		var regexS = new RegExp(symbol, 'i');
+		var ssRegex = /([a-zA-Z]+\d+)[a-zA-Z]+/;
 		var subGene;
 
 		console.log('\t', symbol);
 		if((subGene = ssRegex.exec(symbol)) !== null && collectionName === 'alterations') {
-			regex = new RegExp(symbol + '|' + subGene[1]);
-			regexS = new RegExp(symbol + '|\\s*' + subGene[1] + '\\s');
+			regex = new RegExp(symbol + '|' + subGene[1], 'i');
+			regexS = new RegExp(symbol + '|\\s*' + subGene[1] + '\\s', 'i');
 		}
 
 		metadata.find({
+			'overall_status': {$in:['Recruiting', 'Not yet recruiting', 'Enrolling by invitation', 'Active, not recruiting']},
+			'location_countries.country': {$in:['United States', 'US', 'us', 'america']},
 			$or:[
 				{'keyword':{$regex: regex}},
-				{'eligibilityCriteria': {$regex: regexS}},
 				{'condition_browse.mesh_term':{$regex: regex}},
 				{'official_title':{$regex: regexS}},
+				{'brief_summary.textblock':{$regex: regexS}},
 				{'intervention.intervention_name':{$regex: regex}},
-				{'intervention_browse.mesh_term':{$regex: regex}}
-			], 
-			'overall_status': {$in:['Recruiting', 'Not yet recruiting', 'Enrolling by invitation', 'Active, not recruiting']},
-			'location_countries.country': {$in:['United States', 'US', 'us', 'america']}
+				{'intervention_browse.mesh_term':{$regex: regex}},
+				{'eligibility.criteria.textblock': {$regex: regexS}}
+			]
 		},{'_id':0, 'id_info.nct_id':1}).toArray(function(err,result){
 			var nctIds = [];
 

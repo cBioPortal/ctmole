@@ -4,3 +4,15 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 .boolean { color: blue; }
 .null { color: magenta; }
 .key { color: red; }
+
+.assign div p{
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 5px;
+}
+
+.assign>div{
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-top: 5px;
+}

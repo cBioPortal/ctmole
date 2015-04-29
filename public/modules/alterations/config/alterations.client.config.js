@@ -4,7 +4,7 @@
 angular.module('alterations').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', '/');
+		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', false);
         Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
 		Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
 		Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');

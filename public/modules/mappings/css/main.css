@@ -32,3 +32,8 @@ input[type=checkbox] + label:before { letter-spacing: 5px; } /* space between ch
 
 input[type=checkbox]:checked + label:before { content: "\f046"; } /* checked icon */
 input[type=checkbox]:checked + label:before { letter-spacing: 5px; } /* allow space for check mark */
+
+.highlight {
+  color: green;
+  font-weight: bold;
+}

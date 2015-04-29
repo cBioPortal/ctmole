@@ -95,7 +95,21 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 			Trials.listWithnctIds.search($scope.selectedGroup.nctIds, function(data){
 				$scope.trials =  data.map(function(d){
 					var regex = new RegExp($scope.selectedGroup.label.replace(/,\s*/g, '|'), 'gi');
-					d.eligibilityCriteria = S(d.eligibilityCriteria.replace(/[\n\r]{2}\s+/g, 'zhxzhx').replace(/[\n\r]{1}\s+/g, ' ').replace(/zhxzhx/g, '\n')).lines().filter(function(e){
+					var ec = d.eligibilityCriteria.replace(/[\n\r]{2}\s+/g, 'zhxzhx').replace(/[\n\r]{1}\s+/g, ' ').replace(/zhxzhx/g, '\n');
+					
+					for(var key in $scope.selectedVariants) {
+						var _symbol = $scope.selectedVariants[key].symbol;
+						var _regex = new RegExp(_symbol, 'g');
+						if(key === 'alt') {
+							var subGene = /([a-zA-Z]+\d+)[a-zA-Z]+/.exec(_symbol);
+							_regex = new RegExp(_symbol + '|' + subGene[1], 'g');
+						}
+						var _html = '<span class="highlight">' + _symbol + '</span>';
+						// console.log(_regex, _html);
+						ec = ec.replace(_regex, _html);
+					}
+
+					d.eligibilityCriteria = S(ec).lines().filter(function(e){
 						if(regexIndexOf(e, regex, 0, d) !== -1) {
 							return true;
 						}else {
@@ -107,6 +121,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 				});
 				$scope.selectedTrials = angular.copy($scope.trials);
 				initCheckboxVal();
+				console.log($scope.selectedTrials.map(function(d){ return d.nctId;}));
 				if(angular.isFunction(callback)) {
 					callback();
 				}
@@ -181,7 +196,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 
 			// draw the diagram in the 'simple_example' div
 			D3.select('#venn svg').remove();
-			var diagram = Venn.drawD3Diagram(D3.select('#venn'), sets, 300, 300);
+			var diagram = Venn.drawD3Diagram(D3.select('#venn'), sets, 500, 300);
 			diagram.svg
 			.style('display', 'block')
 			.style('margin', 'auto');

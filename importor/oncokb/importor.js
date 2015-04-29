@@ -100,6 +100,13 @@ function main() {
 		var key = queueKeys.pop();
 		if(typeof key !== 'undefined') {
 			readFile(queue[key].filePath, queue[key].dbSchema, function(data){
+				for (var i = 0; i < data.length; i++) {
+					for (var j = i+1; j < data.length; j++) {
+						if(data[j].symbol === data[i].symbol) {
+							data.splice(j, 1);
+						}
+					}
+				}
 				insertDocuments(db.collection(key), data, function(){
 					worker(db);
 				});
