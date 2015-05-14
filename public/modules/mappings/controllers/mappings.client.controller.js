@@ -176,8 +176,10 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
 		}
 		function venn(groups, combined) {
-			var sets = groups.map(function(e){
+			var sets = groups.map(function(e,i){
 				var datum = {};
+                datum.name = e.symbol;
+                datum.sets = [i];
 				datum.label = e.symbol;
 				datum.size = e.nctIds.length;
 				datum.nctIds = e.nctIds;
@@ -190,6 +192,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    		sets: [],
 		    		size: 0,
 		    		label: '',
+                    name: '',
 		    		variants: [],
 		    		nctIds: []
 		    	};
@@ -210,7 +213,8 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    	});
 		    	datum.size = d.nctIds.length;
 		    	datum.nctIds = d.nctIds;
-		    	datum.label = datum.variants.join(', ');
+		    	datum.label = '';
+                datum.name = datum.variants.join(', ');
 		    	return datum;
 		    }).filter(function(e){
 		    	if(e.sets.length > 1) {
@@ -219,97 +223,80 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 		    		return false;
 		    	}
 		    }).reverse();
-		    
+
+            sets = sets.concat(overlaps);
+
 		    var tooltip = D3.select('#venn').append('div')
     			.attr('class', 'venntooltip');
 
 		    // get positions for each set
-			sets = Venn.venn(sets, overlaps);
+            //sets = Venn.venn(sets);
 
 			// draw the diagram in the 'simple_example' div
 			D3.select('#venn svg').remove();
-			var diagram = Venn.drawD3Diagram(D3.select('#venn'), sets, 500, 300);
-			diagram.svg
-			.style('display', 'block')
-			.style('margin', 'auto');
 
-			//Default color are ['#FF7F0E', '#2CA02C', '#1F77B4']]
-			
-			D3.selection.prototype.moveParentToFront = function() {
-			  	return this.each(function(){
-			    	this.parentNode.parentNode.appendChild(this.parentNode);
-			  	});
-			};
-			// hover on all the circles
-			diagram.circles
-			    .style('stroke-opacity', 0)
-			    .style('stroke', 'white')
-			    .style('stroke-width', '2');
+            D3.selection.prototype.moveParentToFront = function() {
+                return this.each(function(){
+                    this.parentNode.parentNode.appendChild(this.parentNode);
+                });
+            };
 
-			diagram.nodes
-			    .on('mousemove', function() {
-			        tooltip.style('left', (D3.event.pageX) + 'px')
-			               .style('top', (D3.event.pageY - 28) + 'px');
-			    })
-			    .on('mouseover', function(d, i) {
-			        var selection = D3.select(this).select('circle');
-			        selection.moveParentToFront()
-			            .transition()
-			            .style('fill-opacity', 0.5)
-			            .style('cursor', 'pointer')
-			            .style('stroke-opacity', 1);
-			        tooltip.transition().style('opacity', 0.9);
-			        tooltip.text(d.size + ' trials');
-			    })
-			    .on('mouseout', function(d, i) {
-			        D3.select(this).select('circle').transition()
-			            .style('fill-opacity', 0.3)
-			            .style('stroke-opacity', 0);
-			        tooltip.transition().style('opacity', 0);
-			    })
-			    .on('click',function(d, i) {
-			    	searchTrialsBySelectedGroup(d);
-			    });
-			diagram.svg.select('g').selectAll('path')
-		    .data(overlaps)
-		    .enter()
-		    .append('path')
-		    .attr('d', function(d) {
-		        return Venn.intersectionAreaPath(d.sets.map(function(j) { return sets[j]; }));
-		    })
-		    .style('fill-opacity','0')
-		    .style('fill', 'black')
-		    .style('stroke-opacity', 0)
-		    .style('stroke', 'white')
-		    .style('stroke-width', '2')
-            .style('cursor', 'pointer')
-		    .on('mouseover', function(d, i) {
-		        D3.select(this).transition()
-		            .style('fill-opacity', 0.1)
-		            .style('stroke-opacity', 1);
-		        tooltip.transition().style('opacity', 0.9);
-		        tooltip.text(d.size + ' trials');
-		    })
-		    .on('mouseout', function(d, i) {
-		        D3.select(this).transition()
-		            .style('fill-opacity', 0)
-		            .style('stroke-opacity', 0);
-		        tooltip.transition().style('opacity', 0);
-		    })
-		    .on('mousemove', function() {
-		        tooltip.style('left', (D3.event.pageX) + 'px')
-		               .style('top', (D3.event.pageY - 28) + 'px');
-		    })
-		    .on('click',function(d, i) {
-		    	searchTrialsBySelectedGroup(d);
-		    });
+            var chart = Venn.VennDiagram()
+                .width(500)
+                .height(300);
+			var div = D3.select('#venn');
+            div.datum(sets).call(chart);
+
+            div.selectAll('path')
+                .style('stroke-opacity', 0)
+                .style('stroke', '#fff')
+                .style('stroke-width', 0);
+
+            div.selectAll('g')
+                .on('mouseover', function(d, i) {
+                    // sort all the areas relative to the current item
+                    Venn.sortAreas(div, d);
+
+                    var selection = D3.select(this).select('circle');
+
+                    selection.moveParentToFront()
+                       .transition()
+                       .style('fill-opacity', 0.5)
+                       .style('cursor', 'pointer')
+                       .style('stroke-opacity', 1);
+
+                    // Display a tooltip with the current size
+                    tooltip.transition().duration(400).style('opacity', 0.9);
+                    tooltip.text(d.size + ' users');
+                    // highlight the current path
+                    selection = D3.select(this).transition('tooltip').duration(400);
+                    selection.select('path')
+                        .style('stroke-width', 3)
+                        .style('fill-opacity', d.sets.length === 1 ? 0.4 : 0.1)
+                        .style('stroke-opacity', 1);
+                })
+                .on('mousemove', function() {
+                    tooltip.style('left', (D3.event.pageX) + 'px')
+                        .style('top', (D3.event.pageY - 28) + 'px');
+                })
+                .on('mouseout', function(d, i) {
+                    tooltip.transition().duration(400).style('opacity', 0);
+                    var selection = D3.select(this).transition('tooltip').duration(400);
+                    selection.select('path')
+                        .style('stroke-width', 0)
+                        .style('fill-opacity', d.sets.length === 1 ? 0.25 : 0.0)
+                        .style('stroke-opacity', 0);
+                })
+                .on('click',function(d, i) {
+                    searchTrialsBySelectedGroup(d);
+                });
 		}
 
 		function combination(array) {
 			var len = array.length;
 			var n = 1<<len;
 			var result = [];
-			for(var i=1;i<n;i++)    //从 1 循环到 2^len -1
+			for(var i=1;i<n;i++)
 			{
 				var content = {},
 					name = [],
@@ -317,7 +304,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '
 				for(var j=0;j<len;j++)
 				{
 					var temp = i;
-					if(temp & (1<<j))   //对应位上为1，则输出对应的字符
+					if(temp & (1<<j))
 					{
 						name.push(array[j].symbol);
 						if(nctIds.length === 0) {

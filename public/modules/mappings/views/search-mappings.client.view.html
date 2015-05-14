@@ -43,7 +43,7 @@
         </div>
     </div> -->
     <div ng-if="trials.length > 0">
-		<p><span style="font-size: 18px;font-weight: bold">{{selectedGroup.label}} ({{selectedGroup.size}} element<span ng-if="selectedGroup.nctIds.length > 1">s)</span></span><span ng-if="showCheckbox(value.symbol)" ng-repeat="(key, value) in selectedVariants" ><input id="box{{$index}}" type="checkbox" ng-model="checkboxVal[key]"><label for="box{{$index}}">{{value.symbol}}</label></span></p>
+		<p><span style="font-size: 18px;font-weight: bold">{{selectedGroup.name}} ({{selectedGroup.size}} element<span ng-if="selectedGroup.nctIds.length > 1">s)</span></span><span ng-if="showCheckbox(value.symbol)" ng-repeat="(key, value) in selectedVariants" ><input id="box{{$index}}" type="checkbox" ng-model="checkboxVal[key]"><label for="box{{$index}}">{{value.symbol}}</label></span></p>
 		<div>
             <table class="table" datatable="ng" dt-options="dtOptions" dt-columns="dtColumns">
                 <thead><tr><th>ID</th><th>Status</th><th>Study</th><th></th></tr></thead>
