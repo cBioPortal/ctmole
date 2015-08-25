@@ -4,7 +4,7 @@
   "description": "Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js",
   "dependencies": {
     "bootstrap": "~3",
-    "angular": "~1.2",
+    "angular": "~1.2.28",
     "angular-resource": "~1.2",
     "angular-mocks": "~1.2",
     "angular-cookies": "~1.2",
@@ -25,5 +25,8 @@
     "angular-datatables": "~0.4.0",
     "fontawesome": "~4.3.0",
     "animate.css": "~3.2.0"
+  },
+  "resolutions": {
+    "angular": "~1.2.28"
   }
 }
