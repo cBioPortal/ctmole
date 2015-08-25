@@ -69,7 +69,8 @@ Please set the node environment, currently supports all/development/production/t
 * On Windows: SET NODE_ENV=development
 * On OS X or Linux: export NODE_ENV=development
 
-## Install MongoDB
+## Create MongoDB schema
+Please contact cbioportal@cbio.mskcc.org for a data dump
 
 ## Running Your Application
 After the install process is over, you'll be able to run your application using Grunt, just run grunt default task:
