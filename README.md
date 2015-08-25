@@ -64,6 +64,11 @@ This command does a few things:
 * If you're running in a development environment, it will then also install development dependencies needed for testing and running your application.
 * Finally, when the install process is over, npm will initiate a bower installcommand to install all the front-end modules needed for the application
 
+## Set NODE_ENV
+Please set the node environment, currently supports all/development/production/test. If no NODE_ENV presets, CT-mole will use development by default.
+* On Windows: SET NODE_ENV=development
+* On OS X or Linux: export NODE_ENV=development
+
 ## Running Your Application
 After the install process is over, you'll be able to run your application using Grunt, just run grunt default task:
 
