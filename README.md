@@ -28,25 +28,11 @@ $ npm install -g bower
 $ sudo npm install -g grunt-cli
 ```
 
-## Downloading MEAN.JS
-There are several ways you can get the MEAN.JS boilerplate: 
+## Create MongoDB schema
+Please contact cbioportal@cbio.mskcc.org for a data dump
 
-### Yo Generator 
-The recommended way would be to use the [Official Yo Generator](http://meanjs.org/generator.html) which will generate the latest stable copy of the MEAN.JS boilerplate and supplies multiple sub-generators to ease your daily development cycles.
-
-### Cloning The GitHub Repository
-You can also use Git to directly clone the MEAN.JS repository:
-```
-$ git clone https://github.com/meanjs/mean.git meanjs
-```
-This will clone the latest version of the MEAN.JS repository to a **meanjs** folder.
-
-### Downloading The Repository Zip File
-Another way to use the MEAN.JS boilerplate is to download a zip copy from the [master branch on github](https://github.com/meanjs/mean/archive/master.zip). You can also do this using `wget` command:
-```
-$ wget https://github.com/meanjs/mean/archive/master.zip -O meanjs.zip; unzip meanjs.zip; rm meanjs.zip
-```
-Don't forget to rename **mean-master** after your project name.
+## Clone the repository
+Please folk the CT-MOLE from cBioPortal repository and clone to your local. For more inforamtion, please take a look at [Getting a Git Repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository) [Fork a Repo](https://help.github.com/articles/fork-a-repo/)
 
 ## Quick Install
 Once you've downloaded the boilerplate and installed all the prerequisites, you're just a few steps away from starting to develop you MEAN application.
@@ -68,9 +54,6 @@ This command does a few things:
 Please set the node environment, currently supports all/development/production/test. If no NODE_ENV presets, CT-mole will use development by default.
 * On Windows: SET NODE_ENV=development
 * On OS X or Linux: export NODE_ENV=development
-
-## Create MongoDB schema
-Please contact cbioportal@cbio.mskcc.org for a data dump
 
 ## Running Your Application
 After the install process is over, you'll be able to run your application using Grunt, just run grunt default task:
