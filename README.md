@@ -35,9 +35,9 @@ Please contact cbioportal@cbio.mskcc.org for a data dump
 Please folk the CT-MOLE from cBioPortal repository and clone to your local. For more inforamtion, please take a look at [Getting a Git Repository](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository) [Fork a Repo](https://help.github.com/articles/fork-a-repo/)
 
 ## Quick Install
-Once you've downloaded the boilerplate and installed all the prerequisites, you're just a few steps away from starting to develop you MEAN application.
+Once you've downloaded the repository and installed all the prerequisites, you're just a few steps away from starting to develop CT-MOLE.
 
-The first thing you should do is install the Node.js dependencies. The boilerplate comes pre-bundled with a package.json file that contains the list of modules you need to start your application, to learn more about the modules installed visit the NPM & Package.json section.
+The first thing you should do is install the Node.js dependencies. The project comes pre-bundled with a package.json file that contains the list of modules you need to start your application, to learn more about the modules installed visit the NPM & Package.json section.
 
 To install Node.js dependencies you're going to use npm again, in the application folder run this in the command-line:
 
