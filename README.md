@@ -28,6 +28,8 @@ $ npm install -g bower
 $ sudo npm install -g grunt-cli
 ```
 
+* Yeoman (Optional) - You can use yeoman as generator, for more information please see here http://yeoman.io/
+
 ## Create MongoDB schema
 Please contact cbioportal@cbio.mskcc.org for a data dump
 
