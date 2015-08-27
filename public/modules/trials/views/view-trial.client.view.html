@@ -1,3 +1,22 @@
+<head>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<style>
+		table, th , td  {
+			border-collapse: collapse;
+			padding: 5px;
+		}
+		table tr:nth-child(odd)	{
+			background-color: #f1f1f1;
+		}
+		table tr:nth-child(even) {
+			background-color: #ffffff;
+		}
+	</style>
+</head>
+<!--
+
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="trial.nctId"></h1>
@@ -14,10 +33,129 @@
 		<table class="table">
 			<tr ng-repeat="(key, value) in trial">
 				<td>{{key}}</td>
-				<td ng-bind-html="beautify(value)"></td>
+				 <td ng-bind-html="beautify(value)"></td>
+
 			</tr>
 		</table>
 	</div>
+	<small>
+		<em class="text-muted">
+			Powered by OncoKB
+		</em>
+	</small>
+</section>
+-->
+<section data-ng-controller="TrialsController" data-ng-init="findOne()">
+	<div class="page-header">
+		<h1 data-ng-bind="trial.nctId"></h1>
+	</div>
+
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#home">INTRODUCTION</a></li>
+			<li><a data-toggle="tab" href="#menu1">ELIGIBILITY</a></li>
+			<li><a data-toggle="tab" href="#menu2">OTHERS</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="home" class="tab-pane fade in active">
+				<div class="row">
+					<div class="col-sm-4 panel panel-default">
+						<div class="panel-body">
+							<h1>Overview</h1>
+							<hr>
+							<h4>ALTERATIONS</h4>
+							<h2><small><p data-ng-bind="trial.alterations"></p></small>
+							<h4>COUNTRIES</h4>
+							<h2><small>
+								<ul>
+									<li ng-repeat="x in trial.countries">
+										{{ x }}
+									</li>
+								</ul>
+							</small></h2>
+							<h4>DIEASECONDITION</h4>
+								<h2><small><p data-ng-bind="trial.diseaseCondition"></p></small></h2>
+
+							<h4>LASTCHANGEDATE</h4>
+								<h2><small><p data-ng-bind="trial.lastChangedDate"></p></small></h2>
+							<h4>NCTID</h4>
+								<h2><small><p data-ng-bind="trial.nctId"></p></small></h2>
+							<h4>PHASE</h4>
+								<h2><small><p data-ng-bind="trial.phase"></p></small></h2>
+							<h4>RECRUITINGSTATUS</h4>
+								<h2><small><p data-ng-bind="trial.recruitingStatus"></p></small></h2>
+							<h4>TRAILID</h4>
+								<h2><small><p data-ng-bind="trial.trailId"></p></small></h2>
+						</div>
+					</div>
+					<div class="col-sm-8">
+						<h4>TITLE</h4>
+						<blockquote><p data-ng-bind="trial.title"></p></blockquote>
+						<h4>PURPOSE</h4>
+						<blockquote><p data-ng-bind="trial.purpose"></p></blockquote>
+
+					</div>
+				</div>
+			</div>
+			<div id="menu1" class="tab-pane fade">
+				<h2>IS THIS STUDY RIGHT FOR ME?</h2>
+				<ul class="nav nav-tabs">
+					<li class="active"><a data-toggle="tab" href="#inclusion">Inclusion Criteria</a></li>
+					<li><a data-toggle="tab" href="#exclusion">Exclusion Criteria</a></li>
+				</ul>
+
+				<div class="tab-content">
+					<div id="inclusion" class="tab-pane fade in active">
+						<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"inclusion")}}</p></blockquote>
+					</div>
+					<div id="exclusion" class="tab-pane fade">
+						<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"exclusion")}}</p></blockquote>
+					</div>
+				</div>
+			</div>
+			<div id="menu2" class="tab-pane fade">
+				<h3>DRUGS </h3>
+				<table class="table">
+					<tr>
+						<th>drugId</th>
+						<th>drugName</th>
+						<th>synonyms</th>
+						<th>fdaApproved</th>
+						<th>atcCodes</th>
+						<th>description</th>
+					</tr>
+					<tr ng-repeat="x in trial.drugs">
+						<td>{{x.drugId}}</td>
+						<td>{{x.drugName}}</td>
+						<td ng-bind="x.synonyms ? : x.synonyms"></td>
+						<td ng-bind="x.fdaApproved ? : x.fdaApproved"></td>
+						<td ng-bind="x.atcCodes ? : x.atcCodes"></td>
+						<td ng-bind="x.description"></td>
+
+					</tr>
+				</table>
+				<br/>
+				<h3>TUMORTYPES</h3>
+				<table class="table">
+					<tr>
+						<th>tumorTypeId</th>
+						<th>name</th>
+						<th>tissue</th>
+						<th>clinicalTrialKeywords</th>
+					</tr>
+					<tr ng-repeat="x in trial.tumorTypes">
+						<td>{{x.tumorTypeId}}</td>
+						<td>{{x.name}}</td>
+						<td>{{x.tissue}}</td>
+						<td ng-if="x.clinicalTrialKeywords">{{x.clinicalTrialKeywords}}</td>
+
+					</tr>
+				</table>
+				</div>
+
+		</div>
+
+
 	<small>
 		<em class="text-muted">
 			Powered by OncoKB

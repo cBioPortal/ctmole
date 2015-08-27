@@ -122,6 +122,8 @@ angular.module('trials').controller('TrialsController',
 			$scope.trial = Trials.nctId.get({ 
 				nctId: $stateParams.nctId
 			});
+
+			//Analysis trial
 		};
 
 		$scope.searchByKeyword = function() {
@@ -147,6 +149,18 @@ angular.module('trials').controller('TrialsController',
 
 		$scope.getDrugs = function(drugs) {
 			return drugs.map(function(e){return e.drugName;}).join(', ');
+		};
+
+		$scope.getEligibility = function(eligibility, elgType){
+			var m = eligibility.indexOf("Inclusion Criteria");
+			var n = eligibility.indexOf("Exclusion Criteria");
+			var inEligi = eligibility.substr(m,n-m);
+			var exEligi = eligibility.substr(n);
+			if(elgType == "exclusion")
+				return exEligi;
+			else if(elgType == "inclusion")
+				return inEligi;
+
 		};
 	}
 ]);

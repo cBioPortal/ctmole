@@ -33,7 +33,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/clinicaltrials-dev',
+	db: 'mongodb://localhost/firstDB',
 	app: {
 		title: 'ClinicalTrials - Development Environment'
 	},
