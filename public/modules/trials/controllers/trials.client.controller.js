@@ -46,6 +46,11 @@ angular.module('trials').controller('TrialsController',
 	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
+        $scope.drugHeader = ["DrugID","DrugName","Synonyms","FDAApproved","ATCCodes","Description"];
+        $scope.drugItems = ["drugId","drugName","synonyms","fdaApproved","atcCodes","description"];
+        $scope.tumorHeader = ["TumorTypeID","Name","Tissue","ClinicalTrialKeywords"];
+        $scope.tumorItems = ["tumorTypeId","name","tissue","clinicalTrialKeywords"];
+        $scope.overviewItems = ["trailId","alterations","diseaseCondition","lastChangedDate","nctId","phase","recruitingStatus"];
 
 		function syntaxHighlight(json) {
 			json = JSON.stringify(json, undefined, 4);
@@ -152,8 +157,8 @@ angular.module('trials').controller('TrialsController',
 		};
 
 		$scope.getEligibility = function(eligibility, elgType){
-			var m = eligibility.indexOf("Inclusion Criteria");
-			var n = eligibility.indexOf("Exclusion Criteria");
+			var m = eligibility.indexOf("Inclusion Criteria") + 30;
+			var n = eligibility.indexOf("Exclusion Criteria") + 30;
 			var inEligi = eligibility.substr(m,n-m);
 			var exEligi = eligibility.substr(n);
 			if(elgType == "exclusion")

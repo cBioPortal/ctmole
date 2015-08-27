@@ -63,8 +63,7 @@
 						<div class="panel-body">
 							<h1>Overview</h1>
 							<hr>
-							<h4>ALTERATIONS</h4>
-							<h2><small><p data-ng-bind="trial.alterations"></p></small>
+
 							<h4>COUNTRIES</h4>
 							<h2><small>
 								<ul>
@@ -73,19 +72,11 @@
 									</li>
 								</ul>
 							</small></h2>
-							<h4>DIEASECONDITION</h4>
-								<h2><small><p data-ng-bind="trial.diseaseCondition"></p></small></h2>
+							<div ng-repeat="x in overviewItems">
+								<h4>{{x | uppercase}}</h4>
+								<h2><small><p ng-if="trial[x]" data-ng-bind="trial[x]"></p></small></h2>
+							</div>
 
-							<h4>LASTCHANGEDATE</h4>
-								<h2><small><p data-ng-bind="trial.lastChangedDate"></p></small></h2>
-							<h4>NCTID</h4>
-								<h2><small><p data-ng-bind="trial.nctId"></p></small></h2>
-							<h4>PHASE</h4>
-								<h2><small><p data-ng-bind="trial.phase"></p></small></h2>
-							<h4>RECRUITINGSTATUS</h4>
-								<h2><small><p data-ng-bind="trial.recruitingStatus"></p></small></h2>
-							<h4>TRAILID</h4>
-								<h2><small><p data-ng-bind="trial.trailId"></p></small></h2>
 						</div>
 					</div>
 					<div class="col-sm-8">
@@ -117,38 +108,20 @@
 				<h3>DRUGS </h3>
 				<table class="table">
 					<tr>
-						<th>drugId</th>
-						<th>drugName</th>
-						<th>synonyms</th>
-						<th>fdaApproved</th>
-						<th>atcCodes</th>
-						<th>description</th>
+						<th ng-repeat="x in drugHeader">{{x}}</th>
 					</tr>
 					<tr ng-repeat="x in trial.drugs">
-						<td>{{x.drugId}}</td>
-						<td>{{x.drugName}}</td>
-						<td ng-bind="x.synonyms ? : x.synonyms"></td>
-						<td ng-bind="x.fdaApproved ? : x.fdaApproved"></td>
-						<td ng-bind="x.atcCodes ? : x.atcCodes"></td>
-						<td ng-bind="x.description"></td>
-
+						<td ng-repeat="y in drugItems" data-ng-bind="x[y]"></td>
 					</tr>
 				</table>
 				<br/>
 				<h3>TUMORTYPES</h3>
 				<table class="table">
 					<tr>
-						<th>tumorTypeId</th>
-						<th>name</th>
-						<th>tissue</th>
-						<th>clinicalTrialKeywords</th>
+						<th ng-repeat="x in tumorHeader">{{x}}</th>
 					</tr>
 					<tr ng-repeat="x in trial.tumorTypes">
-						<td>{{x.tumorTypeId}}</td>
-						<td>{{x.name}}</td>
-						<td>{{x.tissue}}</td>
-						<td ng-if="x.clinicalTrialKeywords">{{x.clinicalTrialKeywords}}</td>
-
+						<td ng-repeat="y in tumorItems" data-ng-bind="x[y]"></td>
 					</tr>
 				</table>
 				</div>
