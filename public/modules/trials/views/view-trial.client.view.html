@@ -13,6 +13,11 @@
 		table tr:nth-child(even) {
 			background-color: #ffffff;
 		}
+		.the-table {
+			table-layout: fixed;
+			word-wrap: break-word;
+		}
+
 	</style>
 </head>
 <!--
@@ -64,7 +69,7 @@
 							<h1>Overview</h1>
 							<hr>
 
-							<h4>COUNTRIES</h4>
+							<h4 ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></h4>
 							<h2><small>
 								<ul>
 									<li ng-repeat="x in trial.countries">
@@ -72,10 +77,13 @@
 									</li>
 								</ul>
 							</small></h2>
-							<div ng-repeat="x in overviewItems">
-								<h4>{{x | uppercase}}</h4>
-								<h2><small><p ng-if="trial[x]" data-ng-bind="trial[x]"></p></small></h2>
+							<div  ng-repeat="x in overviewItems">
+								<h4>{{overviewHeader[$index] | uppercase}}</h4>
+								<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
 							</div>
+
+
+
 
 						</div>
 					</div>
@@ -89,24 +97,17 @@
 				</div>
 			</div>
 			<div id="menu1" class="tab-pane fade">
-				<h2>IS THIS STUDY RIGHT FOR ME?</h2>
-				<ul class="nav nav-tabs">
-					<li class="active"><a data-toggle="tab" href="#inclusion">Inclusion Criteria</a></li>
-					<li><a data-toggle="tab" href="#exclusion">Exclusion Criteria</a></li>
-				</ul>
 
-				<div class="tab-content">
-					<div id="inclusion" class="tab-pane fade in active">
-						<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"inclusion")}}</p></blockquote>
-					</div>
-					<div id="exclusion" class="tab-pane fade">
-						<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"exclusion")}}</p></blockquote>
-					</div>
-				</div>
+				<h3>Inclusion Criteria</h3>
+				<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"inclusion")}}</p></blockquote>
+				<h3>Exclusion Criteria</h3>
+				<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"exclusion")}}</p></blockquote>
 			</div>
 			<div id="menu2" class="tab-pane fade">
+
 				<h3>DRUGS </h3>
-				<table class="table">
+				<p ng-show="trial.drugs.length == 0 && true || false">No information available</p>
+				<table ng-show="trial.drugs.length > 0 && true || false" class="table the-table">
 					<tr>
 						<th ng-repeat="x in drugHeader">{{x}}</th>
 					</tr>
@@ -116,7 +117,8 @@
 				</table>
 				<br/>
 				<h3>TUMORTYPES</h3>
-				<table class="table">
+				<p ng-show="trial.tumorTypes.length == 0 && true || false">No information available</p>
+				<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table the-table">
 					<tr>
 						<th ng-repeat="x in tumorHeader">{{x}}</th>
 					</tr>
@@ -124,7 +126,7 @@
 						<td ng-repeat="y in tumorItems" data-ng-bind="x[y]"></td>
 					</tr>
 				</table>
-				</div>
+			</div>
 
 		</div>
 

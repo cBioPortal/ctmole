@@ -46,11 +46,12 @@ angular.module('trials').controller('TrialsController',
 	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
-        $scope.drugHeader = ["DrugID","DrugName","Synonyms","FDAApproved","ATCCodes","Description"];
-        $scope.drugItems = ["drugId","drugName","synonyms","fdaApproved","atcCodes","description"];
-        $scope.tumorHeader = ["TumorTypeID","Name","Tissue","ClinicalTrialKeywords"];
-        $scope.tumorItems = ["tumorTypeId","name","tissue","clinicalTrialKeywords"];
-        $scope.overviewItems = ["trailId","alterations","diseaseCondition","lastChangedDate","nctId","phase","recruitingStatus"];
+        $scope.drugHeader = ["Drug Name","Synonyms","FDA Approved","ATC Codes","Description"];
+        $scope.drugItems = ["drugName","synonyms","fdaApproved","atcCodes","description"];
+        $scope.tumorHeader = ["Name","Tissue","Clinical TrialKeywords"];
+        $scope.tumorItems = ["name","tissue","clinicalTrialKeywords"];
+        $scope.overviewHeader = ["alterations","disease Condition","last Changed Date","nct Id","phase","recruiting Status"];
+        $scope.overviewItems = ["alterations","diseaseCondition","lastChangedDate","nctId","phase","recruitingStatus"];
 
 		function syntaxHighlight(json) {
 			json = JSON.stringify(json, undefined, 4);
