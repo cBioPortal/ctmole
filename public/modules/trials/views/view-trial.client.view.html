@@ -52,7 +52,7 @@
 
 				<h3>DRUGS </h3>
 				<p ng-show="trial.drugs.length == 0 && true || false">No information available</p>
-				<table ng-show="trial.drugs.length > 0 && true || false" class="table trialTable">
+				<table ng-show="trial.drugs.length > 0 && true || false" class="table trialTableStyle trialTable">
 					<tr>
 						<th ng-repeat="x in drugHeader">{{x}}</th>
 					</tr>
@@ -63,7 +63,7 @@
 				<br/>
 				<h3>TUMORTYPES</h3>
 				<p ng-show="trial.tumorTypes.length == 0 && true || false">No information available</p>
-				<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table trialTable">
+				<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table trialTableStyle trialTable">
 					<tr>
 						<th ng-repeat="x in tumorHeader">{{x}}</th>
 					</tr>

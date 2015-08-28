@@ -18,10 +18,10 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 }
 
 
-table.table tr:nth-child(odd)	{
+table.table.trialTableStyle tr:nth-child(odd)	{
     background-color: #f1f1f1;
 }
-table.table tr:nth-child(even) {
+table.table.trialTableStyle tr:nth-child(even) {
     background-color: #ffffff;
 }
 .trialTable {
