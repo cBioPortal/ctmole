@@ -1,55 +1,4 @@
-<head>
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<style>
-		table, th , td  {
-			border-collapse: collapse;
-			padding: 5px;
-		}
-		table tr:nth-child(odd)	{
-			background-color: #f1f1f1;
-		}
-		table tr:nth-child(even) {
-			background-color: #ffffff;
-		}
-		.the-table {
-			table-layout: fixed;
-			word-wrap: break-word;
-		}
 
-	</style>
-</head>
-<!--
-
-<section data-ng-controller="TrialsController" data-ng-init="findOne()">
-	<div class="page-header">
-		<h1 data-ng-bind="trial.nctId"></h1>
-	</div>
-	<div class="pull-right" data-ng-show="authentication.user._id == trial.user._id">
-		<a class="btn btn-primary" href="/#!/trials/{{trial.nctId}}/edit">
-			<i class="glyphicon glyphicon-edit"></i>
-		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i>
-		</a>
-	</div>
-	<div>
-		<table class="table">
-			<tr ng-repeat="(key, value) in trial">
-				<td>{{key}}</td>
-				 <td ng-bind-html="beautify(value)"></td>
-
-			</tr>
-		</table>
-	</div>
-	<small>
-		<em class="text-muted">
-			Powered by OncoKB
-		</em>
-	</small>
-</section>
--->
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="trial.nctId"></h1>
@@ -81,10 +30,6 @@
 								<h4>{{overviewHeader[$index] | uppercase}}</h4>
 								<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
 							</div>
-
-
-
-
 						</div>
 					</div>
 					<div class="col-sm-8">
@@ -107,7 +52,7 @@
 
 				<h3>DRUGS </h3>
 				<p ng-show="trial.drugs.length == 0 && true || false">No information available</p>
-				<table ng-show="trial.drugs.length > 0 && true || false" class="table the-table">
+				<table ng-show="trial.drugs.length > 0 && true || false" class="table trialTable">
 					<tr>
 						<th ng-repeat="x in drugHeader">{{x}}</th>
 					</tr>
@@ -118,7 +63,7 @@
 				<br/>
 				<h3>TUMORTYPES</h3>
 				<p ng-show="trial.tumorTypes.length == 0 && true || false">No information available</p>
-				<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table the-table">
+				<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table trialTable">
 					<tr>
 						<th ng-repeat="x in tumorHeader">{{x}}</th>
 					</tr>

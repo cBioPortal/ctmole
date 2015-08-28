@@ -16,3 +16,15 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     border-radius: 5px;
     margin-top: 5px;
 }
+
+
+table.table tr:nth-child(odd)	{
+    background-color: #f1f1f1;
+}
+table.table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+.trialTable {
+    table-layout: fixed;
+    word-wrap: break-word;
+ }

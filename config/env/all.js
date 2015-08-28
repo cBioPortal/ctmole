@@ -55,6 +55,7 @@ module.exports = {
 			js: [
 				'public/lib/jquery/dist/jquery.js',
 				'public/lib/angular/angular.js',
+				'public/_lib/bootstrap/js/bootstrap.js',
 				'public/lib/angular-resource/angular-resource.js',
 				'public/lib/angular-cookies/angular-cookies.js',
 				'public/lib/angular-animate/angular-animate.js',
