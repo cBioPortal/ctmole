@@ -46,11 +46,11 @@ angular.module('genes').config(['$stateProvider',
 			templateUrl: 'modules/genes/views/create-gene.client.view.html'
 		}).
 		state('viewGene', {
-			url: '/genes/:geneId',
+			url: '/genes/:symbol',
 			templateUrl: 'modules/genes/views/view-gene.client.view.html'
 		}).
 		state('editGene', {
-			url: '/genes/:geneId/edit',
+			url: '/genes/:symbol/edit',
 			templateUrl: 'modules/genes/views/edit-gene.client.view.html'
 		});
 	}

@@ -110,7 +110,7 @@
 	<div ng-if="trialGenes.length > 0">
 					<span class="trialSpanType" ng-repeat="x in trialGenes">
 							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o "></i>
+							<i class="fa fa-trash-o " ng-click="deleteGene(x.symbol)"></i>
 					</span>
 	</div>
 	<div class="input-group trialAddType" >

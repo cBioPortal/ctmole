@@ -33,11 +33,11 @@
 'use strict';
 
 // Trials controller
-angular.module('trials').controller('TrialsController', 
+angular.module('trials').controller('TrialsController',
 	['$scope',
-	'$stateParams', 
-	'$location', 
-	'Authentication', 
+	'$stateParams',
+	'$location',
+	'Authentication',
 	'Trials',
 	'Genes',
 	'Alterations',
@@ -125,7 +125,7 @@ angular.module('trials').controller('TrialsController',
 
 		// Find existing Trial
 		$scope.findOne = function() {
-			$scope.trial = Trials.nctId.get({ 
+			$scope.trial = Trials.nctId.get({
 				nctId: $stateParams.nctId
 			});
             $scope.trialGenes = Genes.nctIds.get({
@@ -152,10 +152,10 @@ angular.module('trials').controller('TrialsController',
 		};
 
 		$scope.assignTrailBynctId = function() {
-			$scope.trial = Trials.nctId.get({ 
+			$scope.trial = Trials.nctId.get({
 				nctId: $scope.nctId
 			});
-			$scope.trialGenes = Genes.nctIds.get({ 
+			$scope.trialGenes = Genes.nctIds.get({
 				nctIds: [$scope.nctId]
 			});
 			console.log($scope.trialGenes);
@@ -219,20 +219,47 @@ angular.module('trials').controller('TrialsController',
 		};
 
 
-        // Create new Gene
+        //Add new connection between gene and current trial
         $scope.addGeneBynctId = function() {
-
-            var gene = new Genes ({
-                symbol: $scope.newGene,
-                nctIds: $scope.nctId
-            });
-
-            gene.$update(function() {
-                $location.path('genes/trials/' + $scope.nctId);
-            }, function(errorResponse) {
-                $scope.error = errorResponse.data.message;
-            });
+			Genes.gene.get({symbol: $scope.newGene}, function (u, getResponseHeaders) {
+                if(u.nctIds.indexOf($stateParams.nctid) === -1) {
+                    u.nctIds.push($stateParams.nctId);
+                }
+				u.$update(function(response) {
+					console.log('success updated');
+                    $scope.trialGenes = Genes.nctIds.get({
+                        nctIds: $stateParams.nctId
+                    });
+				}, function(response) {
+					console.log('failed');
+				});
+			}, function (error) {
+				//Indicates there is not gene exists, need to create a new one
+				console.log('error: ', error);
+			}, function (test) {
+				console.log('test-', test);
+			});
          };
-
+		$scope.deleteGene = function(gene) {
+            Genes.gene.get({symbol: gene}, function (u, getResponseHeaders) {
+                var index = u.nctIds.indexOf($stateParams.nctId);
+                if(index !== -1) {
+                    u.nctIds.splice(index, 1);
+                }
+                u.$update(function(response) {
+                    $scope.trialGenes = Genes.nctIds.get({
+                        nctIds: $stateParams.nctId
+                    });
+                    console.log('success updated');
+                }, function(response) {
+                    console.log('failed');
+                });
+            }, function (error) {
+                //Indicates there is not gene exists, need to create a new one
+                console.log('error: ', error);
+            }, function (test) {
+                console.log('test-', test);
+            });
+        }
 	}
 ]);
