@@ -65,6 +65,11 @@ exports.read = function(req, res) {
 	res.jsonp(req.alteration);
 };
 
+
+exports.readAlterations = function(req, res) {
+	res.jsonp(req.alterations);
+};
+
 /**
  * Update a Alteration
  */
@@ -125,6 +130,24 @@ exports.alterationByID = function(req, res, next, id) { Alteration.findOne({'sym
 		next();
 	});
 };
+
+/**
+ * Alteration middleware
+ */
+exports.alterationByNctIds = function(req, res, next, ids) {
+
+	console.log(ids);
+	if(!(ids instanceof Array)) {
+		ids = [ids];
+	}
+	Alteration.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, alterations) {
+		if (err) return next(err);
+		if (! alterations) return next(new Error('Failed to load Alteration ' + ids));
+		req.alterations = alterations ;
+		next();
+	});
+};
+
 
 /**
  * Alteration authorization middleware

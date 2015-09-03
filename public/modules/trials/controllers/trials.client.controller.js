@@ -34,7 +34,7 @@
 
 // Trials controller
 angular.module('trials').controller('TrialsController', 
-	['$scope', 
+	['$scope',
 	'$stateParams', 
 	'$location', 
 	'Authentication', 
@@ -128,7 +128,15 @@ angular.module('trials').controller('TrialsController',
 			$scope.trial = Trials.nctId.get({ 
 				nctId: $stateParams.nctId
 			});
-
+            $scope.trialGenes = Genes.nctIds.get({
+                nctIds: $stateParams.nctId
+            });
+            $scope.trialAlterations = Alterations.nctIds.get({
+                nctIds: $stateParams.nctId
+            });
+            $scope.trialCancertypes = Cancertypes.nctIds.get({
+                nctIds: $stateParams.nctId
+            });
 			//Analysis trial
 		};
 
@@ -157,16 +165,74 @@ angular.module('trials').controller('TrialsController',
 			return drugs.map(function(e){return e.drugName;}).join(', ');
 		};
 
+       var getLists = function(str)
+        {
+            var slicedResult = [];
+
+            if((str.indexOf("1. ") != -1 && (str.indexOf("1. ") < str.indexOf(" - ") ||  str.indexOf(" - ") == -1)))
+            {
+                slicedResult = str.replace(/(\d)[.]\s/g, '\u000B').split('\u000B');
+                slicedResult = _.map(slicedResult, function(value){
+                    return value.slice(0,-1).trim();});
+                slicedResult =  _.compact(slicedResult);
+
+            }
+            else
+            {
+                slicedResult = str.split(" - ");
+                slicedResult = _.map(slicedResult, function(value){return value.trim();});
+                slicedResult =  _.compact(slicedResult);
+                //slicedResult = ["pear","watermelon","orange"];
+            }
+
+
+            return slicedResult;
+        }
+
 		$scope.getEligibility = function(eligibility, elgType){
+            if(_.isUndefined(eligibility))
+            {
+                eligibility = '';
+            }
 			var m = eligibility.indexOf("Inclusion Criteria") + 30;
 			var n = eligibility.indexOf("Exclusion Criteria") + 30;
-			var inEligi = eligibility.substr(m,n-m);
+			var inEligi = eligibility.substr(m,n-m-30);
 			var exEligi = eligibility.substr(n);
-			if(elgType == "exclusion")
-				return exEligi;
-			else if(elgType == "inclusion")
-				return inEligi;
 
+            inEligi = getLists(inEligi);
+            exEligi = getLists(exEligi);
+
+            var output = "<ul>";
+
+
+            if(elgType == "inclusion")
+            {
+                _.each(inEligi,function(element){output = output + "<li>" + element + "</li>";});
+            }
+			else if(elgType == "exclusion")
+            {
+                _.each(exEligi,function(element){output = output + "<li>" + element + "</li>";});
+            }
+
+            output += "</ul>";
+            return output;
 		};
+
+
+        // Create new Gene
+        $scope.addGeneBynctId = function() {
+
+            var gene = new Genes ({
+                symbol: $scope.newGene,
+                nctIds: $scope.nctId
+            });
+
+            gene.$update(function() {
+                $location.path('genes/trials/' + $scope.nctId);
+            }, function(errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+         };
+
 	}
 ]);

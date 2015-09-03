@@ -31,7 +31,7 @@
 */
 
 'use strict';
-
+/*
 //Cancertypes service used to communicate Cancertypes REST endpoints
 angular.module('cancertypes').factory('Cancertypes', ['$resource',
 	function($resource) {
@@ -43,3 +43,27 @@ angular.module('cancertypes').factory('Cancertypes', ['$resource',
 		});
 	}
 ]);
+
+*/
+
+
+angular.module('cancertypes').factory('Cancertypes', ['$resource',
+	function($resource) {
+		return {
+			alteration: $resource('cancertypes/:cancertypeId', { cancertypeId: '@_id'
+			}, {
+				update: {
+					method: 'PUT'
+				},
+				query: {isArray: true}
+			}),
+			nctIds: $resource('cancertypes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+		};
+	}
+]);
+
+
+
+
+
+

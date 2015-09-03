@@ -46,6 +46,10 @@ module.exports = function(app) {
 		.put(users.requiresLogin, alterations.hasAuthorization, alterations.update)
 		.delete(users.requiresLogin, alterations.hasAuthorization, alterations.delete);
 
+	app.route('/alterations/trials/:nctIds')
+		.get(alterations.readAlterations);
+
 	// Finish by binding the Alteration middleware
 	app.param('alterationId', alterations.alterationByID);
+	app.param('nctIds', alterations.alterationByNctIds);
 };

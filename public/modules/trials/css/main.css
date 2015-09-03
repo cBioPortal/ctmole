@@ -28,3 +28,20 @@ table.table.trialTableStyle tr:nth-child(even) {
     table-layout: fixed;
     word-wrap: break-word;
  }
+
+.trialTabTopMargin{
+    margin-top: 20px;
+}
+
+.trialSpanType{
+    margin-left:10px;
+    margin-right:10px;
+    margin-top:10px;
+    margin-bottom:10px;
+    height:50px;
+    float:left;
+}
+
+.trialAddType{
+    width:170px;
+}

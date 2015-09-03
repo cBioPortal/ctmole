@@ -89,7 +89,7 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 
 		// Find existing Cancertype
 		$scope.findOne = function() {
-			$scope.cancertype = Cancertypes.get({ 
+			$scope.cancertype = Cancertypes.cancertype.get({
 				cancertypeId: $stateParams.cancertypeId
 			});
 		};
@@ -99,3 +99,4 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 		};
 	}
 ]);
+

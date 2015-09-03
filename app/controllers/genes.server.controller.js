@@ -149,6 +149,22 @@ exports.geneByNctIds = function(req, res, next, ids) {
 	});
 };
 
+
+/**
+ * Gene middleware
+ */
+exports.geneByNctId = function(req, res, next, ids) {
+
+	if(!(ids instanceof Array)) {
+		ids = [ids];
+	}
+	Gene.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, genes) {
+		if (err) return next(err);
+		if (! genes) return next(new Error('Failed to load Gene ' + ids));
+		req.genes = genes ;
+		next();
+	});
+};
 /**
  * Gene authorization middleware
  */

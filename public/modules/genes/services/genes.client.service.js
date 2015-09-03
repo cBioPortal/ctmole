@@ -43,7 +43,7 @@ angular.module('genes').factory('Genes', ['$resource',
     			},
                 query: {isArray: true}
     		}),
-            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}, put: {}})
         };
 	}
 ]);

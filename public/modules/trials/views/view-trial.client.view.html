@@ -1,81 +1,158 @@
 
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
 	<div class="page-header">
-		<h1 data-ng-bind="trial.nctId"></h1>
+		<h3 data-ng-bind="trial.title"></h3>
 	</div>
 
-		<ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#home">INTRODUCTION</a></li>
-			<li><a data-toggle="tab" href="#menu1">ELIGIBILITY</a></li>
-			<li><a data-toggle="tab" href="#menu2">OTHERS</a></li>
-		</ul>
+	<div class="row">
+		<div class="col-sm-4 panel panel-default">
+			<div class="panel-body">
+				<h1>Overview</h1>
+				<hr>
 
-		<div class="tab-content">
-			<div id="home" class="tab-pane fade in active">
-				<div class="row">
-					<div class="col-sm-4 panel panel-default">
-						<div class="panel-body">
-							<h1>Overview</h1>
-							<hr>
-
-							<h4 ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></h4>
-							<h2><small>
-								<ul>
-									<li ng-repeat="x in trial.countries">
-										{{ x }}
-									</li>
-								</ul>
-							</small></h2>
-							<div  ng-repeat="x in overviewItems">
-								<h4>{{overviewHeader[$index] | uppercase}}</h4>
-								<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-8">
-						<h4>TITLE</h4>
-						<blockquote><p data-ng-bind="trial.title"></p></blockquote>
-						<h4>PURPOSE</h4>
-						<blockquote><p data-ng-bind="trial.purpose"></p></blockquote>
-
-					</div>
+				<h4 ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></h4>
+				<h2><small>
+					<ul>
+						<li ng-repeat="x in trial.countries">
+							{{ x }}
+						</li>
+					</ul>
+				</small></h2>
+				<div  ng-repeat="x in overviewItems">
+					<h4>{{overviewHeader[$index] | uppercase}}</h4>
+					<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
 				</div>
 			</div>
-			<div id="menu1" class="tab-pane fade">
-
-				<h3>Inclusion Criteria</h3>
-				<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"inclusion")}}</p></blockquote>
-				<h3>Exclusion Criteria</h3>
-				<blockquote><p>{{getEligibility(trial.eligibilityCriteria,"exclusion")}}</p></blockquote>
-			</div>
-			<div id="menu2" class="tab-pane fade">
-
-				<h3>DRUGS </h3>
-				<p ng-show="trial.drugs.length == 0 && true || false">No information available</p>
-				<table ng-show="trial.drugs.length > 0 && true || false" class="table trialTableStyle trialTable">
-					<tr>
-						<th ng-repeat="x in drugHeader">{{x}}</th>
-					</tr>
-					<tr ng-repeat="x in trial.drugs">
-						<td ng-repeat="y in drugItems" data-ng-bind="x[y]"></td>
-					</tr>
-				</table>
-				<br/>
-				<h3>TUMORTYPES</h3>
-				<p ng-show="trial.tumorTypes.length == 0 && true || false">No information available</p>
-				<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table trialTableStyle trialTable">
-					<tr>
-						<th ng-repeat="x in tumorHeader">{{x}}</th>
-					</tr>
-					<tr ng-repeat="x in trial.tumorTypes">
-						<td ng-repeat="y in tumorItems" data-ng-bind="x[y]"></td>
-					</tr>
-				</table>
-			</div>
-
 		</div>
+		<div class="col-sm-8">
+
+			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="heading">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								Purpose
+							</a>
+						</h4>
+					</div>
+					<div id="collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading">
+						<div class="panel-body">
+							<p data-ng-bind="trial.purpose"></p>
+
+						</div>
+					</div>
+				</div>
 
 
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="headingOne">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								Inclusion Criteria
+							</a>
+						</h4>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+						<div class="panel-body">
+							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"inclusion")'></p>
+
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="headingTwo">
+						<h4 class="panel-title">
+							<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								Exclusion Criteria
+							</a>
+						</h4>
+					</div>
+					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+						<div class="panel-body">
+							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"exclusion")'></p>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+	<h3>DRUGS </h3>
+	<p ng-show="trial.drugs.length == 0 && true || false">No information available</p>
+	<table ng-show="trial.drugs.length > 0 && true || false" class="table trialTableStyle trialTable">
+		<tr>
+			<th ng-repeat="x in drugHeader">{{x}}</th>
+		</tr>
+		<tr ng-repeat="x in trial.drugs">
+			<td ng-repeat="y in drugItems" data-ng-bind="x[y]"></td>
+		</tr>
+	</table>
+	<br/>
+	<h3>TUMORTYPES</h3>
+	<p ng-show="trial.tumorTypes.length == 0 && true || false">No information available</p>
+	<table ng-show="trial.tumorTypes.length > 0 && true || false" class="table trialTableStyle trialTable">
+		<tr>
+			<th ng-repeat="x in tumorHeader">{{x}}</th>
+		</tr>
+		<tr ng-repeat="x in trial.tumorTypes">
+			<td ng-repeat="y in tumorItems" data-ng-bind="x[y]"></td>
+		</tr>
+	</table>
+
+
+	<h3>GENES</h3>
+	<hr>
+	<p ng-show="trialGenes.length == 0 && true || false">No information available</p>
+	<div ng-if="trialGenes.length > 0">
+					<span class="trialSpanType" ng-repeat="x in trialGenes">
+							<label>{{x.symbol}}</label>
+							<i class="fa fa-trash-o "></i>
+					</span>
+	</div>
+	<div class="input-group trialAddType" >
+		<input type="text" ng-model="newGene" class="form-control" placeholder='Add gene'>
+		<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+	</div>
+
+
+	<br/><br/>
+	<h3>ALTERATIONS</h3>
+	<hr>
+	<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
+
+	<div ng-if="trialAlterations.length > 0">
+					<span class="trialSpanType" ng-repeat="x in trialAlterations">
+							<label>{{x.symbol}}</label>
+							<i class="fa fa-trash-o "></i>
+					</span>
+	</div>
+	<div class="input-group trialAddType" >
+		<input type="text" class="form-control" ng-model='newAlteration' placeholder='Add alteration'>
+		<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+	</div>
+	<br/><br/>
+
+	<h3>CANCER TYPES</h3>
+	<hr>
+
+	<p ng-show="trialCancertypes.length == 0 && true || false">No information available</p>
+	<div ng-if="trialCancertypes.length > 0">
+					<span class="trialSpanType" ng-repeat="x in trialCancertypes">
+							<label>{{x.symbol}}</label>
+							<i class="fa fa-trash-o "></i>
+					</span>
+	</div>
+	<div class="input-group trialAddType" >
+		<input type="text" class="form-control" ng-model='newCancertype' placeholder='Add cancer type'>
+		<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+	</div>
+
+
+	<br/><br/>
 	<small>
 		<em class="text-muted">
 			Powered by OncoKB

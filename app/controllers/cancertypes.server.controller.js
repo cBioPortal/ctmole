@@ -64,6 +64,9 @@ exports.create = function(req, res) {
 exports.read = function(req, res) {
 	res.jsonp(req.cancertype);
 };
+exports.readCancertypes = function(req, res) {
+	res.jsonp(req.cancertypes);
+};
 
 /**
  * Update a Cancertype
@@ -125,6 +128,22 @@ exports.cancertypeByID = function(req, res, next, id) { Cancertype.findOne({'sym
 		next();
 	});
 };
+
+exports.cancertypeByNctIds = function(req, res, next, ids) {
+
+	console.log(ids);
+	if(!(ids instanceof Array)) {
+		ids = [ids];
+	}
+	Cancertype.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, cancertypes) {
+		if (err) return next(err);
+		if (! cancertypes) return next(new Error('Failed to load Cancertype ' + ids));
+		req.cancertypes = cancertypes ;
+		next();
+	});
+};
+
+
 
 /**
  * Cancertype authorization middleware

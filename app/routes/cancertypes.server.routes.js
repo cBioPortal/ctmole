@@ -46,6 +46,10 @@ module.exports = function(app) {
 		.put(users.requiresLogin, cancertypes.hasAuthorization, cancertypes.update)
 		.delete(users.requiresLogin, cancertypes.hasAuthorization, cancertypes.delete);
 
+	app.route('/cancertypes/trials/:nctIds')
+		.get(cancertypes.readCancertypes);
+
 	// Finish by binding the Cancertype middleware
 	app.param('cancertypeId', cancertypes.cancertypeByID);
+	app.param('nctIds', cancertypes.cancertypeByNctIds);
 };

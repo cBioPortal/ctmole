@@ -47,9 +47,11 @@ module.exports = function(app) {
 		.delete(users.requiresLogin, genes.hasAuthorization, genes.delete);
 
 	app.route('/genes/trials/:nctIds')
-		.get(genes.readGenes);
+		.get(genes.readGenes)
+		.put(genes.create);
 
 	// Finish by binding the Gene middleware
 	app.param('geneId', genes.geneByID);
 	app.param('nctIds', genes.geneByNctIds);
+	//app.param('nctId', genes.geneByNctId);
 };
