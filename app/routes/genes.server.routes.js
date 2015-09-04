@@ -41,17 +41,22 @@ module.exports = function(app) {
 		.get(genes.list)
 		.post(users.requiresLogin, genes.create);
 
-	app.route('/genes/:geneId')
+	app.route('/genes/:symbol')
 		.get(genes.read)
-		.put(users.requiresLogin, genes.hasAuthorization, genes.update)
-		.delete(users.requiresLogin, genes.hasAuthorization, genes.delete);
+<<<<<<< HEAD
+		//.put(users.requiresLogin, genes.update)
+		.post(users.requiresLogin, genes.update)
+=======
+		.put(users.requiresLogin, genes.update)
+>>>>>>> origin/ctmoleBranch
+		.delete(users.requiresLogin, genes.delete);
 
 	app.route('/genes/trials/:nctIds')
 		.get(genes.readGenes)
 		.put(genes.create);
 
 	// Finish by binding the Gene middleware
-	app.param('geneId', genes.geneByID);
+	app.param('symbol', genes.geneByID);
 	app.param('nctIds', genes.geneByNctIds);
 	//app.param('nctId', genes.geneByNctId);
 };

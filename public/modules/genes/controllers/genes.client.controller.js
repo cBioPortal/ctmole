@@ -89,8 +89,12 @@ angular.module('genes').controller('GenesController', ['$scope', '$stateParams',
 
 		// Find existing Gene
 		$scope.findOne = function() {
+<<<<<<< HEAD
 			$scope.gene = Genes.gene.get({ 
-				geneId: $stateParams.geneId
+=======
+			$scope.gene = Genes.gene.get({
+>>>>>>> origin/ctmoleBranch
+				symbol: $stateParams.symbol
 			});
 		};
 	}

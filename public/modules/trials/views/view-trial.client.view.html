@@ -22,6 +22,58 @@
 					<h4>{{overviewHeader[$index] | uppercase}}</h4>
 					<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
 				</div>
+
+				<h4>DRUGS</h4>
+				<h2><small><p ng-repeat="x in trial.drugs">{{x.drugName}}</p></small></h2>
+
+				<h4>TUMOR TYPES</h4>
+				<h2><small><p ng-repeat="x in trial.tumorTypes">{{x.name}}</p></small></h2>
+
+				<h4>GENES</h4>
+				<p ng-show="trialGenes.length == 0 && true || false">No information available</p>
+				<div ng-if="trialGenes.length > 0">
+				<span class="trialSpanType" ng-repeat="x in trialGenes">
+					<p>{{x.symbol}}<i class="fa fa-trash-o " ng-click="deleteGene(x.symbol)"></i></p>
+
+				</span>
+				</div>
+				<br/>
+				<div class="input-group trialAddType" >
+					<input type="text" ng-model="newGene" class="form-control" placeholder='Add gene'>
+					<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+				</div>
+
+				<h4>ALTERATIONS</h4>
+
+				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
+
+				<div ng-if="trialAlterations.length > 0">
+					<span class="trialSpanType" ng-repeat="x in trialAlterations">
+							<p>{{x.symbol}}
+							<i class="fa fa-trash-o "></i></p>
+					</span>
+				</div>
+				<br/>
+				<div class="input-group trialAddType" >
+					<input type="text" class="form-control" ng-model='newAlteration' placeholder='Add alteration'>
+					<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+				</div>
+
+				<h4>CANCER TYPES</h4>
+
+				<p ng-show="trialCancertypes.length == 0 && true || false">No information available</p>
+				<div ng-if="trialCancertypes.length > 0">
+					<span class="trialSpanType" ng-repeat="x in trialCancertypes">
+							<p>{{x.symbol}}
+							<i class="fa fa-trash-o "></i></p>
+					</span>
+				</div>
+				<br/>
+				<div class="input-group trialAddType" >
+					<input type="text" class="form-control" ng-model='newCancertype' placeholder='Add cancer type'>
+					<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+				</div>
+
 			</div>
 		</div>
 		<div class="col-sm-8">
@@ -81,6 +133,8 @@
 
 
 
+<<<<<<< HEAD
+=======
 	<h3>DRUGS </h3>
 	<p ng-show="trial.drugs.length == 0 && true || false">No information available</p>
 	<table ng-show="trial.drugs.length > 0 && true || false" class="table trialTableStyle trialTable">
@@ -110,7 +164,7 @@
 	<div ng-if="trialGenes.length > 0">
 					<span class="trialSpanType" ng-repeat="x in trialGenes">
 							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o "></i>
+							<i class="fa fa-trash-o " ng-click="deleteGene(x.symbol)"></i>
 					</span>
 	</div>
 	<div class="input-group trialAddType" >
@@ -151,6 +205,7 @@
 		<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
 	</div>
 
+>>>>>>> origin/ctmoleBranch
 
 	<br/><br/>
 	<small>
