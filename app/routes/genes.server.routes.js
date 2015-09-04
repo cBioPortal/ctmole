@@ -43,12 +43,7 @@ module.exports = function(app) {
 
 	app.route('/genes/:symbol')
 		.get(genes.read)
-<<<<<<< HEAD
-		//.put(users.requiresLogin, genes.update)
-		.post(users.requiresLogin, genes.update)
-=======
 		.put(users.requiresLogin, genes.update)
->>>>>>> origin/ctmoleBranch
 		.delete(users.requiresLogin, genes.delete);
 
 	app.route('/genes/trials/:nctIds')
