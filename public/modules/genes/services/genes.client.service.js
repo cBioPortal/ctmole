@@ -39,7 +39,7 @@ angular.module('genes').factory('Genes', ['$resource',
             gene: $resource('genes/:symbol', { symbol: '@symbol'
     		}, {
     			update: {
-    				method: 'POST'
+    				method: 'PUT'
     			},
                 query: {isArray: true}
     		}),
