@@ -46,3 +46,22 @@ table.table.trialTableStyle tr:nth-child(even) {
     width:170px;
     clear:both;
 }
+.content_right_head {
+    display:inline-block;
+    margin-top:20px;
+    width:100%;
+    font-size:25px;
+    font-weight:500;
+    white-space: nowrap;
+    overflow:hidden !important;
+    text-overflow: ellipsis;
+}
+
+.content_all {
+    display:inline-block;
+    margin-top:20px;
+    width:100%;
+    font-size:25px;
+    font-weight:500;
+
+}

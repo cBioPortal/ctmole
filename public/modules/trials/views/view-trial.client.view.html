@@ -1,8 +1,7 @@
 
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
-	<div class="page-header">
-		<h3 data-ng-bind="trial.title"></h3>
-	</div>
+	<span class="content_right_head" ng-click="showAllTitle()" ng-show="!showVar">{{trial.title}}</span>
+	<span class="content_all" ng-show="showVar">{{trial.title}}</span>
 
 	<div class="row">
 		<div class="col-sm-4 panel panel-default">
@@ -10,6 +9,11 @@
 				<h1>Overview</h1>
 				<hr>
 
+
+				<div  ng-repeat="x in overviewItems">
+					<h4>{{overviewHeader[$index] | uppercase}}</h4>
+					<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
+				</div>
 				<h4 ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></h4>
 				<h2><small>
 					<ul>
@@ -18,11 +22,6 @@
 						</li>
 					</ul>
 				</small></h2>
-				<div  ng-repeat="x in overviewItems">
-					<h4>{{overviewHeader[$index] | uppercase}}</h4>
-					<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
-				</div>
-
 				<h4>DRUGS</h4>
 				<h2><small><p ng-if="trial.drugs.length>0" ng-repeat="x in trial.drugs">{{x.drugName}}</p></small></h2>
 				<h2><small><p ng-if="trial.drugs.length<1" >No information available</p></small></h2>
@@ -82,7 +81,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="heading">
 						<h4 class="panel-title">
-							<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							<a role="button" data-toggle="collapse" href="#collapse" aria-expanded="true" aria-controls="collapseOne">
 								Purpose
 							</a>
 						</h4>
@@ -99,7 +98,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
-							<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 								Inclusion Criteria
 							</a>
 						</h4>
@@ -114,7 +113,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="headingTwo">
 						<h4 class="panel-title">
-							<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							<a class="collapsed" role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
 								Exclusion Criteria
 							</a>
 						</h4>

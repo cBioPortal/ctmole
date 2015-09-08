@@ -52,6 +52,12 @@ angular.module('trials').controller('TrialsController',
         $scope.tumorItems = ["name","tissue","clinicalTrialKeywords"];
         $scope.overviewHeader = ["alterations","disease Condition","last Changed Date","nct Id","phase","recruiting Status"];
         $scope.overviewItems = ["alterations","diseaseCondition","lastChangedDate","nctId","phase","recruitingStatus"];
+		$scope.showVar = false;
+
+		$scope.showAllTitle = function()
+		{
+			$scope.showVar = true;
+		}
 
 		function syntaxHighlight(json) {
 			json = JSON.stringify(json, undefined, 4);
