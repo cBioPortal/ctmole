@@ -200,28 +200,38 @@ angular.module('trials').controller('TrialsController',
             {
                 eligibility = '';
             }
-			var m = eligibility.indexOf("Inclusion Criteria") + 30;
-			var n = eligibility.indexOf("Exclusion Criteria") + 30;
-			var inEligi = eligibility.substr(m,n-m-30);
-			var exEligi = eligibility.substr(n);
+			var m = eligibility.indexOf("Inclusion Criteria");
+			var n = eligibility.indexOf("Exclusion Criteria");
+			if((m== -1 && elgType == "inclusion") || (n == -1 && elgType == "exclusion"))
+			{
+				return "";
+			}
+			else
+			{
+				m += 30;
+				n += 30;
+				var inEligi = eligibility.substr(m,n-m-30);
+				var exEligi = eligibility.substr(n);
 
-            inEligi = getLists(inEligi);
-            exEligi = getLists(exEligi);
+				inEligi = getLists(inEligi);
+				exEligi = getLists(exEligi);
 
-            var output = "<ul>";
+				var output = "<ul>";
 
 
-            if(elgType == "inclusion")
-            {
-                _.each(inEligi,function(element){output = output + "<li>" + element + "</li>";});
-            }
-			else if(elgType == "exclusion")
-            {
-                _.each(exEligi,function(element){output = output + "<li>" + element + "</li>";});
-            }
+				if(elgType == "inclusion")
+				{
+					_.each(inEligi,function(element){output = output + "<li>" + element + "</li>";});
+				}
+				else if(elgType == "exclusion")
+				{
+					_.each(exEligi,function(element){output = output + "<li>" + element + "</li>";});
+				}
 
-            output += "</ul>";
-            return output;
+				output += "</ul>";
+				return output;
+			}
+
 		};
 
 
