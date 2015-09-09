@@ -210,22 +210,20 @@ angular.module('trials').controller('TrialsController',
 			{
 				m += 30;
 				n += 30;
-				var inEligi = eligibility.substr(m,n-m-30);
-				var exEligi = eligibility.substr(n);
-
-				inEligi = getLists(inEligi);
-				exEligi = getLists(exEligi);
 
 				var output = "<ul>";
 
-
 				if(elgType == "inclusion")
 				{
-					_.each(inEligi,function(element){output = output + "<li>" + element + "</li>";});
+					var inEligi = eligibility.substr(m,n-m-30);
+					var inEligiArray = getLists(inEligi);
+					_.each(inEligiArray,function(element){output = output + "<li>" + element + "</li>";});
 				}
 				else if(elgType == "exclusion")
 				{
-					_.each(exEligi,function(element){output = output + "<li>" + element + "</li>";});
+					var exEligi = eligibility.substr(n);
+					var exEligiArray = getLists(exEligi);
+					_.each(exEligiArray,function(element){output = output + "<li>" + element + "</li>";});
 				}
 
 				output += "</ul>";
@@ -277,5 +275,50 @@ angular.module('trials').controller('TrialsController',
                 console.log('test-', test);
             });
         }
+
+		//Add new connection between cancertype and current trial
+		$scope.addCancertypeBynctId = function() {
+			Cancertypes.cancertype.get({cancertypeSymbol: $scope.newCancertype}, function (u, getResponseHeaders) {
+				if(u.nctIds.indexOf($stateParams.nctid) === -1) {
+					u.nctIds.push($stateParams.nctId);
+				}
+				u.$update(function(response) {
+					console.log('success updated');
+					$scope.trialCancertypes = Cancertypes.nctIds.get({
+						nctIds: $stateParams.nctId
+					});
+				}, function(response) {
+					console.log('failed');
+				});
+			}, function (error) {
+				//Indicates there is not gene exists, need to create a new one
+				console.log('error: ', error);
+			}, function (test) {
+				console.log('test-', test);
+			});
+		};
+		$scope.deleteCancertype = function(cancertype) {
+			Cancertypes.cancertype.get({cancertypeSymbol: cancertype}, function (u, getResponseHeaders) {
+				var index = u.nctIds.indexOf($stateParams.nctId);
+				if(index !== -1) {
+					u.nctIds.splice(index, 1);
+				}
+				u.$update(function(response) {
+					$scope.trialCancertypes = Cancertypes.nctIds.get({
+						nctIds: $stateParams.nctId
+					});
+					console.log('success updated');
+				}, function(response) {
+					console.log('failed');
+				});
+			}, function (error) {
+				//Indicates there is not gene exists, need to create a new one
+				console.log('error: ', error);
+			}, function (test) {
+				console.log('test-', test);
+			});
+		}
+
+
 	}
 ]);
