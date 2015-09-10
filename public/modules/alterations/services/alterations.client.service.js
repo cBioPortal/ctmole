@@ -50,7 +50,7 @@ angular.module('alterations').factory('Alterations', ['$resource',
 angular.module('alterations').factory('Alterations', ['$resource',
 	function($resource) {
 		return {
-			alteration: $resource('alterations/:alterationId', { alterationId: '@_id'
+			alteration: $resource('alterations/:alterationSymbol', { alterationSymbol: '@symbol'
 			}, {
 				update: {
 					method: 'PUT'

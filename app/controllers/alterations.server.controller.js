@@ -123,7 +123,7 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 /**
  * Alteration middleware
  */
-exports.alterationByID = function(req, res, next, id) { Alteration.findOne({'symbol': id}).populate('user', 'displayName').exec(function(err, alteration) {
+exports.alterationByID = function(req, res, next, alterationSymbol) { Alteration.findOne({'symbol': alterationSymbol}).populate('user', 'displayName').exec(function(err, alteration) {
 		if (err) return next(err);
 		if (! alteration) return next(new Error('Failed to load Alteration ' + id));
 		req.alteration = alteration ;

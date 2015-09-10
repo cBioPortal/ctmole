@@ -41,15 +41,17 @@ module.exports = function(app) {
 		.get(alterations.list)
 		.post(users.requiresLogin, alterations.create);
 
-	app.route('/alterations/:alterationId')
+	app.route('/alterations/:alterationSymbol')
 		.get(alterations.read)
-		.put(users.requiresLogin, alterations.hasAuthorization, alterations.update)
-		.delete(users.requiresLogin, alterations.hasAuthorization, alterations.delete);
+		//.put(users.requiresLogin, alterations.hasAuthorization, alterations.update)
+		//.delete(users.requiresLogin, alterations.hasAuthorization, alterations.delete);
+		.put(users.requiresLogin, alterations.update)
+		.delete(users.requiresLogin, alterations.delete);
 
 	app.route('/alterations/trials/:nctIds')
 		.get(alterations.readAlterations);
 
 	// Finish by binding the Alteration middleware
-	app.param('alterationId', alterations.alterationByID);
+	app.param('alterationSymbol', alterations.alterationByID);
 	app.param('nctIds', alterations.alterationByNctIds);
 };

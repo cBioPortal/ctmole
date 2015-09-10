@@ -317,8 +317,49 @@ angular.module('trials').controller('TrialsController',
 			}, function (test) {
 				console.log('test-', test);
 			});
-		}
-
+		};
+		//Add new connection between alterations and current trial
+		$scope.addAlterationBynctId = function() {
+			Alterations.alteration.get({alterationSymbol: $scope.newAlteration}, function (u, getResponseHeaders) {
+				if(u.nctIds.indexOf($stateParams.nctid) === -1) {
+					u.nctIds.push($stateParams.nctId);
+				}
+				u.$update(function(response) {
+					console.log('success updated');
+					$scope.trialAlterations = Alterations.nctIds.get({
+						nctIds: $stateParams.nctId
+					});
+				}, function(response) {
+					console.log('failed');
+				});
+			}, function (error) {
+				//Indicates there is not gene exists, need to create a new one
+				console.log('error: ', error);
+			}, function (test) {
+				console.log('test-', test);
+			});
+		};
+		$scope.deleteAlteration = function(alteration) {
+			Alterations.alteration.get({alterationSymbol: alteration}, function (u, getResponseHeaders) {
+				var index = u.nctIds.indexOf($stateParams.nctId);
+				if(index !== -1) {
+					u.nctIds.splice(index, 1);
+				}
+				u.$update(function(response) {
+					$scope.trialAlterations = Alterations.nctIds.get({
+						nctIds: $stateParams.nctId
+					});
+					console.log('success updated');
+				}, function(response) {
+					console.log("failed");
+				});
+			}, function (error) {
+				//Indicates there is not gene exists, need to create a new one
+				console.log('error: ', error);
+			}, function (test) {
+				console.log('test-', test);
+			});
+		};
 
 	}
 ]);

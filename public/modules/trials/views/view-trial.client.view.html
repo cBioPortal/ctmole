@@ -51,12 +51,12 @@
 				<div ng-if="trialAlterations.length > 0">
 					<span class="trialSpanType" ng-repeat="x in trialAlterations">
 							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o "></i>
+							<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol)"></i>
 					</span>
 				</div>
 				<div class="input-group trialAddType" >
 					<input type="text" class="form-control" ng-model='newAlteration' placeholder='Add alteration'>
-					<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+					<span class="input-group-addon" ng-click='addAlterationBynctId()'><i class="fa fa-plus-circle"></i></span>
 				</div>
 
 				<h4>CANCER TYPES</h4>

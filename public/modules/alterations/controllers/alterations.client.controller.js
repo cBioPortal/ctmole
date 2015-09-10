@@ -90,7 +90,7 @@ angular.module('alterations').controller('AlterationsController', ['$scope', '$s
 		// Find existing Alteration
 		$scope.findOne = function() {
 			$scope.alteration = Alterations.alteration.get({
-				alterationId: $stateParams.alterationId
+				alterationSymbol: $stateParams.alterationSymbol
 			});
 		};
 	}
