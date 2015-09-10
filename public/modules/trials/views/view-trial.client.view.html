@@ -65,12 +65,12 @@
 				<div ng-if="trialCancertypes.length > 0">
 					<span class="trialSpanType" ng-repeat="x in trialCancertypes">
 							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o "></i>
+							<i class="fa fa-trash-o " ng-click="deleteCancertype(x.symbol)"></i>
 					</span>
 				</div>
 				<div class="input-group trialAddType" >
 					<input type="text" class="form-control" ng-model='newCancertype' placeholder='Add cancer type'>
-					<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
+					<span class="input-group-addon" ng-click='addCancertypeBynctId()'><i class="fa fa-plus-circle"></i></span>
 				</div>
 
 			</div>

@@ -309,7 +309,7 @@ angular.module('trials').controller('TrialsController',
 					});
 					console.log('success updated');
 				}, function(response) {
-					console.log('failed');
+					console.log("failed");
 				});
 			}, function (error) {
 				//Indicates there is not gene exists, need to create a new one

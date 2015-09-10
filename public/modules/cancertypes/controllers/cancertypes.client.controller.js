@@ -76,7 +76,7 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 			var cancertype = $scope.cancertype ;
 
 			cancertype.$update(function() {
-				$location.path('cancertypes/' + cancertype._id);
+				$location.path('cancertypes/' + cancertype.symbol);
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -90,7 +90,7 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 		// Find existing Cancertype
 		$scope.findOne = function() {
 			$scope.cancertype = Cancertypes.cancertype.get({
-				cancertypeId: $stateParams.cancertypeId
+				cancertypeSymbol: $stateParams.cancertypeSymbol
 			});
 		};
 

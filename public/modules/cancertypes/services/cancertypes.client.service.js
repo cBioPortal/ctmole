@@ -50,7 +50,7 @@ angular.module('cancertypes').factory('Cancertypes', ['$resource',
 angular.module('cancertypes').factory('Cancertypes', ['$resource',
 	function($resource) {
 		return {
-			alteration: $resource('cancertypes/:cancertypeId', { cancertypeId: '@_id'
+			cancertype: $resource('cancertypes/:cancertypeSymbol', { cancertypeSymbol: '@symbol'
 			}, {
 				update: {
 					method: 'PUT'

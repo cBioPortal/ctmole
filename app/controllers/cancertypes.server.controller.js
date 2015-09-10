@@ -121,7 +121,7 @@ exports.list = function(req, res) { Cancertype.find().sort('-created').populate(
 /**
  * Cancertype middleware
  */
-exports.cancertypeByID = function(req, res, next, id) { Cancertype.findOne({'symbol': id}).populate('user', 'displayName').exec(function(err, cancertype) {
+exports.cancertypeByID = function(req, res, next, cancertypeSymbol) { Cancertype.findOne({'symbol': cancertypeSymbol}).populate('user', 'displayName').exec(function(err, cancertype) {
 		if (err) return next(err);
 		if (! cancertype) return next(new Error('Failed to load Cancertype ' + id));
 		req.cancertype = cancertype ;
