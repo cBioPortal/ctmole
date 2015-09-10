@@ -140,7 +140,7 @@ exports.alterationByNctIds = function(req, res, next, ids) {
 	if(!(ids instanceof Array)) {
 		ids = [ids];
 	}
-	Alteration.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, alterations) {
+	Alteration.find({nctIds: {$in: ids}},{'_id':0,'symbol':1,'name':1}).populate('user', 'displayName').exec(function(err, alterations) {
 		if (err) return next(err);
 		if (! alterations) return next(new Error('Failed to load Alteration ' + ids));
 		req.alterations = alterations ;

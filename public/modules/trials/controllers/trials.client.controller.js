@@ -50,8 +50,8 @@ angular.module('trials').controller('TrialsController',
         $scope.drugItems = ["drugName","synonyms","fdaApproved","atcCodes","description"];
         $scope.tumorHeader = ["Name","Tissue","Clinical TrialKeywords"];
         $scope.tumorItems = ["name","tissue","clinicalTrialKeywords"];
-        $scope.overviewHeader = ["alterations","disease Condition","last Changed Date","nct Id","phase","recruiting Status"];
-        $scope.overviewItems = ["alterations","diseaseCondition","lastChangedDate","nctId","phase","recruitingStatus"];
+        $scope.overviewHeader = ["disease Condition","phase","recruiting Status","nct Id","last Changed Date"];
+        $scope.overviewItems = ["diseaseCondition","phase","recruitingStatus","nctId","lastChangedDate"];
 		$scope.showVar = false;
 
 		$scope.showAllTitle = function()
@@ -232,7 +232,7 @@ angular.module('trials').controller('TrialsController',
 
 		};
 
-
+/*
         //Add new connection between gene and current trial
         $scope.addGeneBynctId = function() {
 			Genes.gene.get({symbol: $scope.newGene}, function (u, getResponseHeaders) {
@@ -275,7 +275,7 @@ angular.module('trials').controller('TrialsController',
                 console.log('test-', test);
             });
         }
-
+*/
 		//Add new connection between cancertype and current trial
 		$scope.addCancertypeBynctId = function() {
 			Cancertypes.cancertype.get({cancertypeSymbol: $scope.newCancertype}, function (u, getResponseHeaders) {
