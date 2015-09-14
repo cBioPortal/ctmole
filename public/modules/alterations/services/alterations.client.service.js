@@ -57,6 +57,14 @@ angular.module('alterations').factory('Alterations', ['$resource',
 				},
 				query: {isArray: true}
 			}),
+			newAlterationRecord: $resource('alterations/:newAlterationSymbol/:geneName/:nctId',
+				{ newAlterationSymbol: '@symbol', geneName: '@name'},
+				{
+					update: {
+						method: 'PUT'
+					},
+					query: {isArray: true}
+				}),
 			nctIds: $resource('alterations/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
 		};
 	}

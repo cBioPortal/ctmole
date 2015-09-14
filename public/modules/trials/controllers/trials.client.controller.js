@@ -53,6 +53,7 @@ angular.module('trials').controller('TrialsController',
         $scope.overviewHeader = ["disease Condition","phase","recruiting Status","nct Id","last Changed Date"];
         $scope.overviewItems = ["diseaseCondition","phase","recruitingStatus","nctId","lastChangedDate"];
 		$scope.showVar = false;
+		$scope.alertShow = false;
 
 		$scope.showAllTitle = function()
 		{
@@ -232,50 +233,6 @@ angular.module('trials').controller('TrialsController',
 
 		};
 
-/*
-        //Add new connection between gene and current trial
-        $scope.addGeneBynctId = function() {
-			Genes.gene.get({symbol: $scope.newGene}, function (u, getResponseHeaders) {
-                if(u.nctIds.indexOf($stateParams.nctid) === -1) {
-                    u.nctIds.push($stateParams.nctId);
-                }
-				u.$update(function(response) {
-					console.log('success updated');
-                    $scope.trialGenes = Genes.nctIds.get({
-                        nctIds: $stateParams.nctId
-                    });
-				}, function(response) {
-					console.log('failed');
-				});
-			}, function (error) {
-				//Indicates there is not gene exists, need to create a new one
-				console.log('error: ', error);
-			}, function (test) {
-				console.log('test-', test);
-			});
-         };
-		$scope.deleteGene = function(gene) {
-            Genes.gene.get({symbol: gene}, function (u, getResponseHeaders) {
-                var index = u.nctIds.indexOf($stateParams.nctId);
-                if(index !== -1) {
-                    u.nctIds.splice(index, 1);
-                }
-                u.$update(function(response) {
-                    $scope.trialGenes = Genes.nctIds.get({
-                        nctIds: $stateParams.nctId
-                    });
-                    console.log('success updated');
-                }, function(response) {
-                    console.log('failed');
-                });
-            }, function (error) {
-                //Indicates there is not gene exists, need to create a new one
-                console.log('error: ', error);
-            }, function (test) {
-                console.log('test-', test);
-            });
-        }
-*/
 		//Add new connection between cancertype and current trial
 		$scope.addCancertypeBynctId = function() {
 			Cancertypes.cancertype.get({cancertypeSymbol: $scope.newCancertype}, function (u, getResponseHeaders) {
@@ -291,8 +248,20 @@ angular.module('trials').controller('TrialsController',
 					console.log('failed');
 				});
 			}, function (error) {
-				//Indicates there is not gene exists, need to create a new one
-				console.log('error: ', error);
+
+				//insert new object
+				Cancertypes.newCancertype.save({newCancertypeSymbol: $scope.newCancertype,nctId: $scope.trial.nctId}, function(u, getResponseHeaders){
+						console.log('success inserting new record');
+						$scope.trialCancertypes = Cancertypes.nctIds.get({
+							nctIds: $stateParams.nctId
+						});
+					}, function(errorInsert){
+						console.log('failed to insert new record');
+					}
+
+				);
+
+
 			}, function (test) {
 				console.log('test-', test);
 			});
@@ -321,9 +290,11 @@ angular.module('trials').controller('TrialsController',
 		//Add new connection between alterations and current trial
 		$scope.addAlterationBynctId = function() {
 			Alterations.alteration.get({alterationSymbol: $scope.newAlteration}, function (u, getResponseHeaders) {
-				if(u.nctIds.indexOf($stateParams.nctid) === -1) {
-					u.nctIds.push($stateParams.nctId);
-				}
+
+
+				if(u.nctIds.indexOf($scope.trial.nctId) === -1) {
+					u.nctIds.push($scope.trial.nctId);
+
 				u.$update(function(response) {
 					console.log('success updated');
 					$scope.trialAlterations = Alterations.nctIds.get({
@@ -331,20 +302,33 @@ angular.module('trials').controller('TrialsController',
 					});
 				}, function(response) {
 					console.log('failed');
-				});
-			}, function (error) {
-				//Indicates there is not gene exists, need to create a new one
-				console.log('error: ', error);
+				});}
+				else
+				{
+					alert("Enterned alteration already exist. Please check your input");
+				}
+			}, function (getError) {
+				//create new alteration
+				//console.log($scope.newAlteration,$scope.newGene,$scope.trial.nctId);
+				Alterations.newAlterationRecord.save({newAlterationSymbol: $scope.newAlteration ,geneName: $scope.newGene, nctId: $scope.trial.nctId },
+				function(){
+					console.log('success inserting new record');
+					$scope.trialAlterations = Alterations.nctIds.get({
+						nctIds: $stateParams.nctId
+					});
+				}
+				);
+				console.log('error: ', getError);
 			}, function (test) {
 				console.log('test-', test);
 			});
 		};
 		$scope.deleteAlteration = function(alteration) {
 			Alterations.alteration.get({alterationSymbol: alteration}, function (u, getResponseHeaders) {
-				var index = u.nctIds.indexOf($stateParams.nctId);
+				var index = u.nctIds.indexOf($stateParams.nctId); console.log(u.nctIds);
 				if(index !== -1) {
 					u.nctIds.splice(index, 1);
-				}
+				}console.log(u.nctIds);
 				u.$update(function(response) {
 					$scope.trialAlterations = Alterations.nctIds.get({
 						nctIds: $stateParams.nctId

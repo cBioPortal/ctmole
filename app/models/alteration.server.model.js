@@ -43,6 +43,7 @@ var mongoose = require('mongoose'),
  */
 var AlterationSchema = new Schema({
 	symbol: String,
+	name: String,
 	nctIds: Array
 });
 

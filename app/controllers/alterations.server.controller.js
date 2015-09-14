@@ -44,7 +44,8 @@ var mongoose = require('mongoose'),
  * Create a Alteration
  */
 exports.create = function(req, res) {
-	var alteration = new Alteration(req.body);
+	var alteration = new Alteration({'symbol': req.body.newAlterationSymbol, 'name': req.body.geneName, 'nctIds': [req.body.nctId]});
+	//var alteration = new Alteration(req.body);
 	alteration.user = req.user;
 
 	alteration.save(function(err) {
@@ -123,9 +124,9 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 /**
  * Alteration middleware
  */
-exports.alterationByID = function(req, res, next, alterationSymbol) { Alteration.findOne({'symbol': alterationSymbol}).populate('user', 'displayName').exec(function(err, alteration) {
+exports.alterationByID = function(req, res, next, newAlterationSymbol) { Alteration.findOne({'symbol': newAlterationSymbol}).populate('user', 'displayName').exec(function(err, alteration) {
 		if (err) return next(err);
-		if (! alteration) return next(new Error('Failed to load Alteration ' + id));
+		if (! alteration) return next(new Error('Failed to load Alteration '));
 		req.alteration = alteration ;
 		next();
 	});

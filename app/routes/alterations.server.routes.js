@@ -43,9 +43,13 @@ module.exports = function(app) {
 
 	app.route('/alterations/:alterationSymbol')
 		.get(alterations.read)
-		//.put(users.requiresLogin, alterations.hasAuthorization, alterations.update)
-		//.delete(users.requiresLogin, alterations.hasAuthorization, alterations.delete);
 		.put(users.requiresLogin, alterations.update)
+		.delete(users.requiresLogin, alterations.delete);
+
+	app.route('alterations/:newAlterationSymbol/:geneName/:nctId')
+		.get(alterations.read)
+		.put(users.requiresLogin, alterations.update)
+		.post(users.requiresLogin, alterations.create)
 		.delete(users.requiresLogin, alterations.delete);
 
 	app.route('/alterations/trials/:nctIds')
@@ -53,5 +57,6 @@ module.exports = function(app) {
 
 	// Finish by binding the Alteration middleware
 	app.param('alterationSymbol', alterations.alterationByID);
+	app.param('newAlterationSymbol', alterations.alterationByID);
 	app.param('nctIds', alterations.alterationByNctIds);
 };

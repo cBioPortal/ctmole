@@ -10,10 +10,12 @@
 				<hr>
 
 				<div class="input-group">
-						<label><h4>ALTERATIONS</h4></label>
+						<label class="headerStyle">ALTERATIONS</label>
+					<!--
 					  <span class="input-group-btn trialSpanType">
 						<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus-circle"></i></button>
 					  </span>
+					  -->
 				</div>
 
 
@@ -40,30 +42,28 @@
 				</div>
 
 
-
-
-
 			<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
 
 				<div ng-if="trialAlterations.length > 0">
 					<span class="trialAddType" ng-repeat="x in trialAlterations">
-							<label>{{x.name}}</label>
-							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol)"></i>
+							<h2><small>{{x.name + "     " + x.symbol}}
+							<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol)"></i></small></h2>
 					</span>
 				</div>
+				<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
+				<br/><br/>
+				<!--
+                                <div class="input-group">
+                                    <label><h4>CANCER TYPES</h4></label>
+                                      <span class="input-group-btn trialSpanType">
+                                        <button class="btn btn-default" data-toggle="modal" data-target="#myModal1" type="button"><i class="fa fa-plus-circle"></i></button>
+                                      </span>
+                                </div>
 
-				<div class="input-group">
-					<label><h4>CANCER TYPES</h4></label>
-					  <span class="input-group-btn trialSpanType">
-						<button class="btn btn-default" data-toggle="modal" data-target="#myModal1" type="button"><i class="fa fa-plus-circle"></i></button>
-					  </span>
-				</div>
+                                <div class="modal fade" id="myModal1" role="dialog">
+                                    <div class="modal-dialog">
 
-				<div class="modal fade" id="myModal1" role="dialog">
-					<div class="modal-dialog">
 
-						<!-- Modal content-->
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -88,26 +88,26 @@
 							<i class="fa fa-trash-o " ng-click="deleteCancertype(x.symbol)"></i>
 					</span>
 				</div>
-				<!--
+
 				<div class="input-group trialAddType" >
 					<input type="text" class="form-control" ng-model='newCancertype' placeholder='Add cancer type'>
 					<span class="input-group-addon" ng-click='addCancertypeBynctId()'><i class="fa fa-plus-circle"></i></span>
 				</div>
 -->
-				<h4>DRUGS</h4>
+				<label class="headerStyle">DRUGS</label>
 				<h2><small><p ng-if="trial.drugs.length>0" ng-repeat="x in trial.drugs">{{x.drugName}}</p></small></h2>
 				<h2><small><p ng-if="trial.drugs.length<1" >No information available</p></small></h2>
-
+<!--
 				<h4>TUMORTYPES</h4>
 				<h2><small><p ng-if="trial.tumorTypes.length>0" ng-repeat="x in trial.tumorTypes">{{x.name}}</p></small></h2>
 				<h2><small><p ng-if="trial.tumorTypes.length<1" >No information available</p></small></h2>
-
+-->
 
 				<div  ng-repeat="x in overviewItems">
-					<h4>{{overviewHeader[$index] | uppercase}}</h4>
+					<label class="headerStyle">{{overviewHeader[$index] | uppercase}}</label>
 					<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
 				</div>
-				<h4 ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></h4>
+				<label class="headerStyle"  ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></label>
 				<h2><small>
 					<ul>
 						<li ng-repeat="x in trial.countries">

@@ -48,6 +48,8 @@ module.exports = function(app) {
 		.put(users.requiresLogin, cancertypes.update)
 		.delete(users.requiresLogin, cancertypes.delete);
 
+	app.route('/cancertypes/:newCancertypeSymbol/:nctId')
+		.post(users.requiresLogin, cancertypes.create);
 
 	app.route('/cancertypes/trials/:nctIds')
 		.get(cancertypes.readCancertypes);
@@ -55,4 +57,6 @@ module.exports = function(app) {
 	// Finish by binding the Cancertype middleware
 	app.param('cancertypeSymbol', cancertypes.cancertypeByID);
 	app.param('nctIds', cancertypes.cancertypeByNctIds);
+
+
 };

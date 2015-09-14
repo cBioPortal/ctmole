@@ -44,7 +44,9 @@ var mongoose = require('mongoose'),
  * Create a Cancertype
  */
 exports.create = function(req, res) {
-	var cancertype = new Cancertype(req.body);
+	//var cancertype = new Cancertype(req.body);
+	var cancertype = new Cancertype({'symbol': req.body.newCancertypeSymbol,'nctIds': [req.body.nctId]});
+	//var cancertype = req.cancertype ;
 	cancertype.user = req.user;
 
 	cancertype.save(function(err) {
@@ -123,7 +125,7 @@ exports.list = function(req, res) { Cancertype.find().sort('-created').populate(
  */
 exports.cancertypeByID = function(req, res, next, cancertypeSymbol) { Cancertype.findOne({'symbol': cancertypeSymbol}).populate('user', 'displayName').exec(function(err, cancertype) {
 		if (err) return next(err);
-		if (! cancertype) return next(new Error('Failed to load Cancertype ' + id));
+		if (! cancertype) return next(new Error('Failed to load Cancertype ' + cancertypeSymbol));
 		req.cancertype = cancertype ;
 		next();
 	});
