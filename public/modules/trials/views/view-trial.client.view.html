@@ -47,7 +47,7 @@
 				<div ng-if="trialAlterations.length > 0">
 					<span class="trialAddType" ng-repeat="x in trialAlterations">
 							<h2><small>{{x.name + "     " + x.symbol}}
-							<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol)"></i></small></h2>
+							<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol, x.name)"></i></small></h2>
 					</span>
 				</div>
 				<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>

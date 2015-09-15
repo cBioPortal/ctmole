@@ -90,7 +90,8 @@ angular.module('alterations').controller('AlterationsController', ['$scope', '$s
 		// Find existing Alteration
 		$scope.findOne = function() {
 			$scope.alteration = Alterations.alteration.get({
-				alterationSymbol: $stateParams.alterationSymbol
+				alterationSymbol: $stateParams.alterationSymbol,
+				geneRecordName: $stateParams.geneRecordName
 			});
 		};
 	}

@@ -289,7 +289,7 @@ angular.module('trials').controller('TrialsController',
 		};
 		//Add new connection between alterations and current trial
 		$scope.addAlterationBynctId = function() {
-			Alterations.alteration.get({alterationSymbol: $scope.newAlteration}, function (u, getResponseHeaders) {
+			Alterations.alteration.get({alterationSymbol: $scope.newAlteration, geneRecordName: $scope.newGene}, function (u, getResponseHeaders) {
 
 
 				if(u.nctIds.indexOf($scope.trial.nctId) === -1) {
@@ -323,12 +323,14 @@ angular.module('trials').controller('TrialsController',
 				console.log('test-', test);
 			});
 		};
-		$scope.deleteAlteration = function(alteration) {
-			Alterations.alteration.get({alterationSymbol: alteration}, function (u, getResponseHeaders) {
-				var index = u.nctIds.indexOf($stateParams.nctId); console.log(u.nctIds);
+		$scope.deleteAlteration = function(alteration,geneName) {
+			console.log('alterationRecord:', alteration,'geneRecord:', geneName);
+			Alterations.alteration.get({alterationSymbol: alteration, geneRecordName: geneName}, function (u, getResponseHeaders) {
+				console.log("here");console.log(u.nctIds);
+				var index = u.nctIds.indexOf($stateParams.nctId);
 				if(index !== -1) {
 					u.nctIds.splice(index, 1);
-				}console.log(u.nctIds);
+				}
 				u.$update(function(response) {
 					$scope.trialAlterations = Alterations.nctIds.get({
 						nctIds: $stateParams.nctId

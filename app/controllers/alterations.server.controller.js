@@ -124,13 +124,22 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 /**
  * Alteration middleware
  */
-exports.alterationByID = function(req, res, next, newAlterationSymbol) { Alteration.findOne({'symbol': newAlterationSymbol}).populate('user', 'displayName').exec(function(err, alteration) {
+exports.alterationByID = function(req, res, next, alterationSymbol) { Alteration.findOne({'symbol': alterationSymbol}).populate('user', 'displayName').exec(function(err, alteration) {
 		if (err) return next(err);
 		if (! alteration) return next(new Error('Failed to load Alteration '));
 		req.alteration = alteration ;
 		next();
 	});
 };
+
+exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'symbol': req.params.alterationSymbol, 'name': req.params.geneRecordName}).populate('user', 'displayName').exec(function(err, alteration) {
+	if (err) return next(err);
+	if (! alteration) return next(new Error('Failed to load Alteration '));
+	req.alteration = alteration ;
+	next();
+});
+};
+
 
 /**
  * Alteration middleware

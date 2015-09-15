@@ -41,10 +41,17 @@ module.exports = function(app) {
 		.get(alterations.list)
 		.post(users.requiresLogin, alterations.create);
 
-	app.route('/alterations/:alterationSymbol')
+	app.route('/alterations/trials/:nctIds')
+		.get(alterations.readAlterations);
+
+	app.route('/alterations/:alterationSymbol/:geneRecordName')
 		.get(alterations.read)
 		.put(users.requiresLogin, alterations.update)
 		.delete(users.requiresLogin, alterations.delete);
+
+	//app.route('alterations/:alterationRecord/:geneRecord')
+	//	.get(alterations.read);
+
 
 	app.route('alterations/:newAlterationSymbol/:geneName/:nctId')
 		.get(alterations.read)
@@ -52,11 +59,10 @@ module.exports = function(app) {
 		.post(users.requiresLogin, alterations.create)
 		.delete(users.requiresLogin, alterations.delete);
 
-	app.route('/alterations/trials/:nctIds')
-		.get(alterations.readAlterations);
+
 
 	// Finish by binding the Alteration middleware
-	app.param('alterationSymbol', alterations.alterationByID);
-	app.param('newAlterationSymbol', alterations.alterationByID);
+	app.param('alterationSymbol', alterations.alterationByTwoIDs);
+	//app.param('alterationRecord', alterations.alterationByID);
 	app.param('nctIds', alterations.alterationByNctIds);
 };
