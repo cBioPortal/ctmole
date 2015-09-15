@@ -9,49 +9,7 @@
 				<h1>Overview</h1>
 				<hr>
 
-				<div class="input-group">
-						<label class="headerStyle">ALTERATIONS</label>
-					<!--
-					  <span class="input-group-btn trialSpanType">
-						<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus-circle"></i></button>
-					  </span>
-					  -->
-				</div>
 
-
-				<div class="modal fade" id="myModal" role="dialog">
-					<div class="modal-dialog">
-
-						<!-- Modal content-->
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Add a new alteration</h4>
-							</div>
-							<div class="modal-body">
-								Gene: <input ng-model="newGene">
-								Alteration: <input ng-model="newAlteration">
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId()">Submit</button>
-								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-
-			<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
-
-				<div ng-if="trialAlterations.length > 0">
-					<span class="trialAddType" ng-repeat="x in trialAlterations">
-							<h2><small>{{x.name + "     " + x.symbol}}
-							<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol, x.name)"></i></small></h2>
-					</span>
-				</div>
-				<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
-				<br/><br/>
 				<!--
                                 <div class="input-group">
                                     <label><h4>CANCER TYPES</h4></label>
@@ -115,6 +73,51 @@
 						</li>
 					</ul>
 				</small></h2>
+
+
+				<div class="input-group">
+					<label class="headerStyle">ALTERATIONS</label>
+					<!--
+					  <span class="input-group-btn trialSpanType">
+						<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus-circle"></i></button>
+					  </span>
+					  -->
+				</div>
+
+
+				<div class="modal fade" id="myModal" role="dialog">
+					<div class="modal-dialog">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Add a new alteration</h4>
+							</div>
+							<div class="modal-body">
+								Gene: <input ng-model="newGene">
+								Alteration: <input ng-model="newAlteration">
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId()">Submit</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+
+				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
+
+				<div ng-if="trialAlterations.length > 0">
+					<span class="trialAddType" ng-repeat="x in trialAlterations">
+							<h2><small>{{x.name + "     " + x.symbol}}
+								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol, x.name)"></i></small></h2>
+					</span>
+				</div>
+				<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
+				<br/><br/>
 
 <!--
 

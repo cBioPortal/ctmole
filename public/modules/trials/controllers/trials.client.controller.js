@@ -192,7 +192,8 @@ angular.module('trials').controller('TrialsController',
                 //slicedResult = ["pear","watermelon","orange"];
             }
 
-
+			slicedResult = _.map(slicedResult, function(element){return element.split(". ");});
+			slicedResult = _.flatten(slicedResult);
             return slicedResult;
         }
 
@@ -209,14 +210,14 @@ angular.module('trials').controller('TrialsController',
 			}
 			else
 			{
-				m += 30;
-				n += 30;
+				m += 20;
+				n += 20;
 
-				var output = "<ul>";
+				var output = "<ol>";
 
 				if(elgType == "inclusion")
 				{
-					var inEligi = eligibility.substr(m,n-m-30);
+					var inEligi = eligibility.substr(m,n-m-20);
 					var inEligiArray = getLists(inEligi);
 					_.each(inEligiArray,function(element){output = output + "<li>" + element + "</li>";});
 				}
@@ -227,7 +228,7 @@ angular.module('trials').controller('TrialsController',
 					_.each(exEligiArray,function(element){output = output + "<li>" + element + "</li>";});
 				}
 
-				output += "</ul>";
+				output += "</ol>";
 				return output;
 			}
 
@@ -305,7 +306,7 @@ angular.module('trials').controller('TrialsController',
 				});}
 				else
 				{
-					alert("Enterned alteration already exist. Please check your input");
+					bootbox.alert({ message: "Enterned alteration already exist. Please check your input!"});
 				}
 			}, function (getError) {
 				//create new alteration
