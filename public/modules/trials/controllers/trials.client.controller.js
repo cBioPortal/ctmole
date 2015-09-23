@@ -46,19 +46,31 @@ angular.module('trials').controller('TrialsController',
 	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
 		$scope.authentication = Authentication;
 		$scope.nctId = '';
-        $scope.drugHeader = ["Drug Name","Synonyms","FDA Approved","ATC Codes","Description"];
-        $scope.drugItems = ["drugName","synonyms","fdaApproved","atcCodes","description"];
-        $scope.tumorHeader = ["Name","Tissue","Clinical TrialKeywords"];
-        $scope.tumorItems = ["name","tissue","clinicalTrialKeywords"];
-        $scope.overviewHeader = ["disease Condition","phase","recruiting Status","nct Id","last Changed Date"];
-        $scope.overviewItems = ["diseaseCondition","phase","recruitingStatus","nctId","lastChangedDate"];
+        $scope.drugHeader = ['Drug Name','Synonyms','FDA Approved','ATC Codes','Description'];
+        $scope.drugItems = ['drugName','synonyms','fdaApproved','atcCodes','description'];
+        $scope.tumorHeader = ['Name','Tissue','Clinical TrialKeywords'];
+        $scope.tumorItems = ['name','tissue','clinicalTrialKeywords'];
+
+
 		$scope.showVar = false;
 		$scope.alertShow = false;
+		$scope.showAll = false;
+		$scope.showAllDrugs = false;
 
 		$scope.showAllTitle = function()
 		{
 			$scope.showVar = true;
-		}
+		};
+
+		$scope.showDrugs = function()
+		{
+			$scope.showAllDrugs = !$scope.showAllDrugs;
+		};
+
+		$scope.displayStyle = function()
+		{
+			$scope.showAll = !$scope.showAll;
+		};
 
 		function syntaxHighlight(json) {
 			json = JSON.stringify(json, undefined, 4);
@@ -176,7 +188,7 @@ angular.module('trials').controller('TrialsController',
         {
             var slicedResult = [];
 
-            if((str.indexOf("1. ") != -1 && (str.indexOf("1. ") < str.indexOf(" - ") ||  str.indexOf(" - ") == -1)))
+            if((str.indexOf('1. ') !== -1 && (str.indexOf('1. ') < str.indexOf(' - ') ||  str.indexOf(' - ') === -1)))
             {
                 slicedResult = str.replace(/(\d)[.]\s/g, '\u000B').split('\u000B');
                 slicedResult = _.map(slicedResult, function(value){
@@ -186,108 +198,55 @@ angular.module('trials').controller('TrialsController',
             }
             else
             {
-                slicedResult = str.split(" - ");
+                slicedResult = str.split(' - ');
                 slicedResult = _.map(slicedResult, function(value){return value.trim();});
                 slicedResult =  _.compact(slicedResult);
                 //slicedResult = ["pear","watermelon","orange"];
             }
 
-			slicedResult = _.map(slicedResult, function(element){return element.split(". ");});
+			slicedResult = _.map(slicedResult, function(element){return element.split('. ');});
 			slicedResult = _.flatten(slicedResult);
             return slicedResult;
-        }
+        };
 
 		$scope.getEligibility = function(eligibility, elgType){
             if(_.isUndefined(eligibility))
             {
                 eligibility = '';
             }
-			var m = eligibility.indexOf("Inclusion Criteria");
-			var n = eligibility.indexOf("Exclusion Criteria");
-			if((m== -1 && elgType == "inclusion") || (n == -1 && elgType == "exclusion"))
+			var m = eligibility.indexOf('Inclusion Criteria');
+			var n = eligibility.indexOf('Exclusion Criteria');
+			if((m === -1 && elgType === 'inclusion') || (n === -1 && elgType === 'exclusion'))
 			{
-				return "";
+				return '';
 			}
 			else
 			{
 				m += 20;
 				n += 20;
 
-				var output = "<ol>";
+				var output = '<ol>';
 
-				if(elgType == "inclusion")
+				if(elgType === 'inclusion')
 				{
 					var inEligi = eligibility.substr(m,n-m-20);
 					var inEligiArray = getLists(inEligi);
-					_.each(inEligiArray,function(element){output = output + "<li>" + element + "</li>";});
+					_.each(inEligiArray,function(element){output = output + '<li>' + element + '</li>';});
 				}
-				else if(elgType == "exclusion")
+				else if(elgType === 'exclusion')
 				{
 					var exEligi = eligibility.substr(n);
 					var exEligiArray = getLists(exEligi);
-					_.each(exEligiArray,function(element){output = output + "<li>" + element + "</li>";});
+					_.each(exEligiArray,function(element){output = output + '<li>' + element + '</li>';});
 				}
 
-				output += "</ol>";
+				output += '</ol>';
 				return output;
 			}
 
 		};
 
-		//Add new connection between cancertype and current trial
-		$scope.addCancertypeBynctId = function() {
-			Cancertypes.cancertype.get({cancertypeSymbol: $scope.newCancertype}, function (u, getResponseHeaders) {
-				if(u.nctIds.indexOf($stateParams.nctid) === -1) {
-					u.nctIds.push($stateParams.nctId);
-				}
-				u.$update(function(response) {
-					console.log('success updated');
-					$scope.trialCancertypes = Cancertypes.nctIds.get({
-						nctIds: $stateParams.nctId
-					});
-				}, function(response) {
-					console.log('failed');
-				});
-			}, function (error) {
 
-				//insert new object
-				Cancertypes.newCancertype.save({newCancertypeSymbol: $scope.newCancertype,nctId: $scope.trial.nctId}, function(u, getResponseHeaders){
-						console.log('success inserting new record');
-						$scope.trialCancertypes = Cancertypes.nctIds.get({
-							nctIds: $stateParams.nctId
-						});
-					}, function(errorInsert){
-						console.log('failed to insert new record');
-					}
-
-				);
-
-
-			}, function (test) {
-				console.log('test-', test);
-			});
-		};
-		$scope.deleteCancertype = function(cancertype) {
-			Cancertypes.cancertype.get({cancertypeSymbol: cancertype}, function (u, getResponseHeaders) {
-				var index = u.nctIds.indexOf($stateParams.nctId);
-				if(index !== -1) {
-					u.nctIds.splice(index, 1);
-				}
-				u.$update(function(response) {
-					$scope.trialCancertypes = Cancertypes.nctIds.get({
-						nctIds: $stateParams.nctId
-					});
-					console.log('success updated');
-				}, function(response) {
-					console.log("failed");
-				});
-			}, function (error) {
-				//Indicates there is not gene exists, need to create a new one
-				console.log('error: ', error);
-			}, function (test) {
-				console.log('test-', test);
-			});
-		};
 		//Add new connection between alterations and current trial
 		$scope.addAlterationBynctId = function() {
 			Alterations.alteration.get({alterationSymbol: $scope.newAlteration, geneRecordName: $scope.newGene}, function (u, getResponseHeaders) {
@@ -306,7 +265,7 @@ angular.module('trials').controller('TrialsController',
 				});}
 				else
 				{
-					bootbox.alert({ message: "Enterned alteration already exist. Please check your input!"});
+					bootbox.alert({ message: 'Enterned alteration already exist. Please check your input!'});
 				}
 			}, function (getError) {
 				//create new alteration
@@ -327,7 +286,7 @@ angular.module('trials').controller('TrialsController',
 		$scope.deleteAlteration = function(alteration,geneName) {
 			console.log('alterationRecord:', alteration,'geneRecord:', geneName);
 			Alterations.alteration.get({alterationSymbol: alteration, geneRecordName: geneName}, function (u, getResponseHeaders) {
-				console.log("here");console.log(u.nctIds);
+
 				var index = u.nctIds.indexOf($stateParams.nctId);
 				if(index !== -1) {
 					u.nctIds.splice(index, 1);
@@ -338,7 +297,7 @@ angular.module('trials').controller('TrialsController',
 					});
 					console.log('success updated');
 				}, function(response) {
-					console.log("failed");
+					console.log('failed');
 				});
 			}, function (error) {
 				//Indicates there is not gene exists, need to create a new one
@@ -347,6 +306,29 @@ angular.module('trials').controller('TrialsController',
 				console.log('test-', test);
 			});
 		};
+
+		$scope.updateTrial = function()
+		{
+
+			Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function(u, getResponseHeaders){
+
+				u.$update(function(response) {
+					$scope.trial = Trials.nctId.get({
+						nctId: $stateParams.nctId
+					});
+					console.log('success updated');
+				}, function(response)  {
+					console.log('failed');
+				});
+			}, function(error){
+					console.log('error: ', error);
+				}
+			);
+
+
+		};
+
+
 
 	}
 ]);

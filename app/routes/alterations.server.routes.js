@@ -49,10 +49,6 @@ module.exports = function(app) {
 		.put(users.requiresLogin, alterations.update)
 		.delete(users.requiresLogin, alterations.delete);
 
-	//app.route('alterations/:alterationRecord/:geneRecord')
-	//	.get(alterations.read);
-
-
 	app.route('alterations/:newAlterationSymbol/:geneName/:nctId')
 		.get(alterations.read)
 		.put(users.requiresLogin, alterations.update)
@@ -63,6 +59,5 @@ module.exports = function(app) {
 
 	// Finish by binding the Alteration middleware
 	app.param('alterationSymbol', alterations.alterationByTwoIDs);
-	//app.param('alterationRecord', alterations.alterationByID);
 	app.param('nctIds', alterations.alterationByNctIds);
 };

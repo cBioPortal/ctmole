@@ -70,8 +70,9 @@ module.exports = function(app) {
 	// Setting the google oauth routes
 	app.route('/auth/google').get(passport.authenticate('google', {
 		scope: [
-			'https://www.googleapis.com/auth/userinfo.profile',
-			'https://www.googleapis.com/auth/userinfo.email'
+			//'https://www.googleapis.com/auth/userinfo.profile',
+			//'https://www.googleapis.com/auth/userinfo.email',
+			'https://www.googleapis.com/auth/plus.login'
 		]
 	}));
 	app.route('/auth/google/callback').get(users.oauthCallback('google'));

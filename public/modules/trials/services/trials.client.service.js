@@ -36,7 +36,7 @@
 angular.module('trials').factory('Trials', ['$resource',
 	function($resource) {
 		return  {
-			nctId: $resource('trials/:nctId', { nctId: '@_id'
+			nctId: $resource('trials/:nctId', { nctId: '@nctId'
 				}, {
 					update: {
 						method: 'PUT'
@@ -45,6 +45,12 @@ angular.module('trials').factory('Trials', ['$resource',
 			keyword: $resource('trials/search/:keyword', { keyword: '@_id'}),
 			listWithnctIds: $resource('trials/list', {nctIds: []}, {
 				search: {method: 'POST', isArray: true}
+			}),
+			updateRequestedTrial: $resource('trials/:requestednctId', { requestednctId: '@nctId'
+			}, {
+				update: {
+					method: 'PUT'
+				}
 			})
 		};
 	}

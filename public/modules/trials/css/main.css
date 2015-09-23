@@ -64,3 +64,28 @@ table.table.trialTableStyle tr:nth-child(even) {
     font-size:20px;
     font-weight:1000;
 }
+
+.expandStyle
+{
+    float:right;
+    font-size:20px
+}
+
+.addBGColor
+{
+    background-color:#F9F9F9
+}
+
+.test + .tooltip > .tooltip-inner {
+    background-color: #F9F9F9;
+   // border: 1px solid green;
+    padding: 2px;
+    font-size: 15px;
+    color:#101010;
+    white-space: pre-line;
+}
+
+/* Tooltip on top */
+.test + .tooltip.top > .tooltip-arrow {
+   // border-top: 5px solid green;
+}

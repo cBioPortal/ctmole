@@ -6,83 +6,59 @@
 	<div class="row">
 		<div class="col-sm-4 panel panel-default">
 			<div class="panel-body">
-				<h1>Overview</h1>
+				<h1>Overview</h1><br/>
+
 				<hr>
 
+				<h2><small><p>{{trial.nctId}}</p></small></h2>
+				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
+				<h2><small><p>{{trial.phase}}</p></small></h2>
 
-				<!--
-                                <div class="input-group">
-                                    <label><h4>CANCER TYPES</h4></label>
-                                      <span class="input-group-btn trialSpanType">
-                                        <button class="btn btn-default" data-toggle="modal" data-target="#myModal1" type="button"><i class="fa fa-plus-circle"></i></button>
-                                      </span>
-                                </div>
-
-                                <div class="modal fade" id="myModal1" role="dialog">
-                                    <div class="modal-dialog">
-
-
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Add a new cancer type</h4>
-							</div>
-							<div class="modal-body">
-								Cancer Type: <input ng-model="newCancertype">
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addCancertypeBynctId()">Submit</button>
-								<button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-				<p ng-show="trialCancertypes.length == 0 && true || false">No information available</p>
-				<div ng-if="trialCancertypes.length > 0">
-					<span class="trialAddType" ng-repeat="x in trialCancertypes">
-							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o " ng-click="deleteCancertype(x.symbol)"></i>
-					</span>
-				</div>
-
-				<div class="input-group trialAddType" >
-					<input type="text" class="form-control" ng-model='newCancertype' placeholder='Add cancer type'>
-					<span class="input-group-addon" ng-click='addCancertypeBynctId()'><i class="fa fa-plus-circle"></i></span>
-				</div>
--->
-				<label class="headerStyle">DRUGS</label>
-				<h2><small><p ng-if="trial.drugs.length>0" ng-repeat="x in trial.drugs">{{x.drugName}}</p></small></h2>
-				<h2><small><p ng-if="trial.drugs.length<1" >No information available</p></small></h2>
-<!--
-				<h4>TUMORTYPES</h4>
-				<h2><small><p ng-if="trial.tumorTypes.length>0" ng-repeat="x in trial.tumorTypes">{{x.name}}</p></small></h2>
-				<h2><small><p ng-if="trial.tumorTypes.length<1" >No information available</p></small></h2>
--->
-
-				<div  ng-repeat="x in overviewItems">
-					<label class="headerStyle">{{overviewHeader[$index] | uppercase}}</label>
-					<h2><small><p data-ng-bind="trial[x].length > 0 && trial[x] || 'No information available'"></p></small></h2>
-				</div>
-				<label class="headerStyle"  ng-bind="trial.countries.length>1 && 'COUNTRIES' || 'COUNTRY' "></label>
-				<h2><small>
-					<ul>
-						<li ng-repeat="x in trial.countries">
-							{{ x }}
-						</li>
-					</ul>
+				<h2><small><p class="test" tooltip="Last Updated Time
+				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
+					<i ng-click="updateTrial()" class="fa fa-refresh"></i></p>
 				</small></h2>
 
-
-				<div class="input-group">
-					<label class="headerStyle">ALTERATIONS</label>
-					<!--
-					  <span class="input-group-btn trialSpanType">
-						<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus-circle"></i></button>
-					  </span>
-					  -->
+				<div ng-show="showAllDrugs" class="addBGColor">
+				<h2><small>
+					<p>{{trial.drugs[0].drugName}}<i ng-click="showDrugs()" class="fa fa-compress"></i></p>
+					<p ng-if="$index > 0" ng-repeat="x in trial.drugs">{{x.drugName}}</p>
+				</small>
+				</h2>
 				</div>
+
+				<div ng-show="!showAllDrugs">
+					<h2><small>
+						<p>{{trial.drugs[0].drugName}}<a ng-if="trial.drugs.length > 1" ng-click="showDrugs()">    and {{trial.drugs.length-1}} more</a></p>
+
+					</small>
+					</h2>
+				</div>
+
+
+
+				<div ng-show="showAll" class="addBGColor">
+				<h2><small>
+					<p>{{trial.countries[0]}}
+					<i ng-click="displayStyle()" class="fa fa-compress"></i>
+					</p>
+					<p ng-if="$index > 0" ng-repeat="x in trial.countries">{{x}}</p>
+				</small></h2>
+				</div>
+
+				<div ng-show="!showAll">
+					<h2><small>
+						<p>{{trial.countries[0]}}
+							<a  ng-if="trial.countries.length > 1" ng-click="displayStyle()"> and {{trial.countries.length-1}} more </a>
+						</p>
+
+					</small></h2>
+				</div>
+
+
+				<br/>
+
+				<label class="headerStyle">ALTERATIONS</label>
 
 
 				<div class="modal fade" id="myModal" role="dialog">
@@ -116,24 +92,11 @@
 								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol, x.name)"></i></small></h2>
 					</span>
 				</div>
-				<button class="btn btn-default" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
+				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
 				<br/><br/>
 
-<!--
 
-				<h4>GENES</h4>
-				<p ng-show="trialGenes.length == 0 && true || false">No information available</p>
-				<div ng-if="trialGenes.length > 0">
-					<span class="trialSpanType" ng-repeat="x in trialGenes">
-							<label>{{x.symbol}}</label>
-							<i class="fa fa-trash-o " ng-click="deleteGene(x.symbol)"></i>
-					</span>
-				</div>
-				<div class="input-group trialAddType" >
-					<input type="text" ng-model="newGene" class="form-control" placeholder='Add gene'>
-					<span class="input-group-addon" ng-click='addGeneBynctId()'><i class="fa fa-plus-circle"></i></span>
-				</div>
--->
+				<br/><br/>
 
 			</div>
 		</div>
@@ -155,6 +118,30 @@
 						</div>
 					</div>
 				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="headingNew">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" href="#collapseNew" aria-expanded="true" aria-controls="collapseOne">
+								ARM
+							</a>
+						</h4>
+					</div>
+					<div id="collapseNew" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNew">
+						<div class="panel-body">
+							<table class="table table-striped">
+
+								<tr ng-repeat="x in trial.arm_group">
+									<td>{{x.arm_group_type.toString()}}: {{x.arm_group_label.toString()}}</td>
+									<td>{{x.description.toString()}}</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+
+
 
 
 				<div class="panel panel-default">

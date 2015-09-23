@@ -151,5 +151,5 @@ function main() {
 	connectDB(update);
 }
 // var queue = ['alterations'];
-var queue = ['drugs', 'genes','alterations','cancertypes'];
+var queue = [ 'genes','alterations','cancertypes'];
 main();
