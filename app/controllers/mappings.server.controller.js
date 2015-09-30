@@ -44,7 +44,10 @@ var mongoose = require('mongoose'),
  * Create a Mapping
  */
 exports.create = function(req, res) {
-	var mapping = new Mapping(req.body);
+	//var mapping = new Mapping(req.body);
+	var mapping = new Mapping({type: 'mapping', name: 'mapping'});
+	console.log('starting here...');
+	console.log(mapping);
 	mapping.user = req.user;
 
 	mapping.save(function(err) {

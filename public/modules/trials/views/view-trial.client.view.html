@@ -95,9 +95,15 @@
 				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
 				<br/><br/>
 
+				<div ng-if="trial.completeStauts === null ? true : false">
+					<h3>Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h3>
+				</div>
 
+				<div ng-if="trial.completeStauts !== null ? true : false">
+					<h3 ng-if="!trial.completeStauts">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h3>
+					<h3 ng-if="trial.completeStauts">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h3>
+				</div>
 				<br/><br/>
-
 			</div>
 		</div>
 		<div class="col-sm-8">
@@ -178,9 +184,6 @@
 			</div>
 		</div>
 	</div>
-
-
-
 
 
 	<br/><br/>

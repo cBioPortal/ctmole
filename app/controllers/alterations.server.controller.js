@@ -47,7 +47,8 @@ exports.create = function(req, res) {
 	var alteration = new Alteration({'symbol': req.body.newAlterationSymbol, 'name': req.body.geneName, 'nctIds': [req.body.nctId]});
 	//var alteration = new Alteration(req.body);
 	alteration.user = req.user;
-
+	console.log('starting......');
+	console.log(alteration);
 	alteration.save(function(err) {
 		if (err) {
 			return res.status(400).send({
@@ -132,7 +133,8 @@ exports.alterationByID = function(req, res, next, alterationSymbol) { Alteration
 	});
 };
 
-exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'symbol': req.params.alterationSymbol, 'name': req.params.geneRecordName}).populate('user', 'displayName').exec(function(err, alteration) {
+exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'symbol': req.body.alterationRecord, 'name': req.body.geneRecord}).populate('user', 'displayName').exec(function(err, alteration) {
+	console.log('');
 	if (err) return next(err);
 	if (! alteration) return next(new Error('Failed to load Alteration '));
 	req.alteration = alteration ;

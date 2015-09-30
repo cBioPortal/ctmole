@@ -131,6 +131,29 @@ exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recr
 	});
 };
 
+exports.generalSearch = function(req, res) {
+	var keywords = req.params.searchEngineKeyword;
+	var keywordsArr = keywords.split(",");
+	var finalStr = '';
+	var tempStr = '';
+	for(var i = 0;i < keywordsArr.length;i++)
+	{
+		tempStr = '\"' + keywordsArr[i].trim() + '\"';
+		finalStr += tempStr;
+	}
+
+	Trial.find( { $text: { $search: finalStr } }).exec(function(err, trials) {
+
+	if (err) {
+		return res.status(400).send({
+			message: errorHandler.getErrorMessage(err)
+		});
+	} else {
+		res.jsonp(trials);
+	}
+});
+};
+
 exports.search = function(req, res) {
 	res.jsonp(req.trials);
 };
@@ -247,6 +270,8 @@ exports.updateTrial = function(req, res) {
 			if(result.hasOwnProperty('clinical_study'))
 			{
 				updateRequiredTrial = result.clinical_study;
+				console.log('hello...');
+				console.log(updateRequiredTrial.eligibility[0].criteria);
 				trial.recruitingStatus = updateRequiredTrial.overall_status;
 				var d = new Date();
 				trial.lastUpdatedStatusDate = d.toDateString();
@@ -271,6 +296,34 @@ exports.updateTrial = function(req, res) {
 
 
 		});
+	});
+
+};
+
+
+exports.completeTrial = function(req, res) {
+
+	var trial = req.trial;
+	console.log(trial);
+	console.log('skyview34');
+	console.log(trial.hasOwnProperty('diseaseCondition'));
+	if(trial.completeStauts !== null)
+	{
+		trial.completeStauts = !trial.completeStauts; console.log('here');
+	}
+	else
+	{
+		trial.completeStauts = true; console.log('there');
+	}
+
+	trial.save(function(err) {
+		if (err) {
+			console.log('error happened when inserting new record: ');
+			console.log(err);
+		} else {
+			console.log('success inserting new record');
+			res.jsonp(trial);
+		}
 	});
 
 };

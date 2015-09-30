@@ -42,7 +42,7 @@ var mongoose = require('mongoose'),
  * Mapping Schema
  */
 var MappingSchema = new Schema({
-	name: {
+	nctId: {
 		type: String,
 		default: '',
 		required: 'Please fill Mapping name',
@@ -55,6 +55,12 @@ var MappingSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
+	},
+	log: {
+		type: Array
+	},
+	alterations: {
+		type: Array
 	}
 });
 

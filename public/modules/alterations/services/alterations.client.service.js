@@ -61,7 +61,7 @@ angular.module('alterations').factory('Alterations', ['$resource',
 					method: 'PUT'
 				},
 				query: {isArray: true}
-			}),
+		,
 
 			newAlterationRecord: $resource('alterations/:newAlterationSymbol/:geneName/:nctId',
 				{ newAlterationSymbol: '@symbol', geneName: '@name'},
@@ -70,7 +70,7 @@ angular.module('alterations').factory('Alterations', ['$resource',
 						method: 'PUT'
 					},
 					query: {isArray: true}
-				})
+				})	})
 
 		};
 	}

@@ -33,9 +33,108 @@
 'use strict';
 
 
-angular.module('core').controller('HomeController', ['$scope', 'Authentication',
-	function($scope, Authentication) {
+angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'Trials',
+	function($scope, Authentication, Trials) {
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
+		$scope.loading = false;
+		$scope.showResult = false;
+		$scope.showRefine = false;
+
+		$scope.countries = ['China', 'United Kingdom', 'Portugal', 'Spain', 'Italy', 'Sweden'];
+		$scope.genes = ['BRAF', 'PSMB5', 'MEK1', 'KRAS', 'IL2', 'EGFR'];
+		$scope.mutations = ['BRAF V600', 'BRAF V600E', 'BRAF V600K', 'HER-2 Loss', 'HER-2 Amplification'];
+
+
+		$scope.criteria = [{type: 'country', value: 'United States'}];
+		$scope.types = ['country'];
+
+		$scope.search = function(searchKeyword) {
+			if(searchKeyword === undefined)
+			{
+				bootbox.alert('please input keyword to start search!');
+				return false;
+			}
+			$scope.loading = true;
+			$scope.showResult = false;
+			$scope.criteria = [{type: 'country', value: 'United States'}];
+			$scope.types = ['country'];
+			$scope.trials = Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
+				$scope.loading = false;
+				$scope.showResult = true;
+				$scope.showRefine = true;
+
+			});
+
+			var inputs = document.getElementsByTagName("input");
+			for(var i = 0; i < inputs.length; i++) {
+				if(inputs[i].type == "checkbox") {
+					inputs[i].checked = false;
+				}
+			}
+			document.getElementById('US').checked = true;
+			document.getElementById(searchKeyword.toUpperCase()).checked = true;
+
+
+			$scope.criteria.push({type: 'gene', value: 'BRAF'});
+			$scope.types.push('gene');
+
+
+		};
+
+		$scope.searchCriteria = function() {
+			return function(trial) {
+
+				var tempStr = JSON.stringify(trial);
+				var finalFlag = true;
+				var flags = [];
+				var index;
+				var types = _.uniq($scope.types);
+				for(var i = 0;i < types.length;i++)
+				{
+					flags.push({type: types[i], value: false});
+				}
+
+				for(var i = 0;i < $scope.criteria.length;i++)
+				{
+					var criterion = $scope.criteria[i];
+
+					if(tempStr.match(criterion.value) != undefined)
+					{
+						for(var j = 0;j < flags.length;j++)
+						{
+							if(flags[j].type == criterion.type)
+							{
+								index = j;
+								break;
+							}
+						}
+						flags[index].value = true;
+					}
+				}
+				for(var i = 0;i < flags.length;i++)
+				{
+					finalFlag = finalFlag && flags[i].value;
+				}
+				return finalFlag;
+
+			}
+		};
+
+		$scope.getCriteria = function(checked, value, type)
+		{
+			if(checked)
+			{
+				$scope.criteria.push({type: type, value: value});
+				$scope.types.push(type);
+			}
+			else
+			{
+				$scope.criteria = _.without($scope.criteria, _.where($scope.criteria, {type: type, value: value})[0] );
+				$scope.types.splice($scope.types.indexOf(type), 1);
+			}
+
+		};
+
 	}
 ]);

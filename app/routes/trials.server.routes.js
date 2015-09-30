@@ -48,8 +48,11 @@ module.exports = function(app) {
 
 	app.route('/trials/:requestednctId')
 		.get(trials.read)
-		.put(trials.updateTrial);
+		.put(trials.updateTrial)
+		.post(trials.completeTrial);
 
+	app.route('/:searchEngineKeyword')
+		.get(trials.generalSearch);
 
 	app.route('/trials/search/:keyword')
 		.get(trials.search);

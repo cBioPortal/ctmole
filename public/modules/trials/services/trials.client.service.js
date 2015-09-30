@@ -50,8 +50,13 @@ angular.module('trials').factory('Trials', ['$resource',
 			}, {
 				update: {
 					method: 'PUT'
-				}
-			})
+				},
+				updateStatus:{method: 'POST'}
+			}),
+			searchEngine: $resource('/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			}),
 		};
 	}
 ]);

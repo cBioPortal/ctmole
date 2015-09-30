@@ -57,6 +57,27 @@ angular.module('trials').controller('TrialsController',
 		$scope.showAll = false;
 		$scope.showAllDrugs = false;
 
+		$scope.switchStatus = function()
+		{
+
+			$scope.completeStatus = !$scope.completeStatus;
+
+			Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function(u, getResponseHeaders){
+
+					u.$updateStatus(function(response) {
+						$scope.trial = Trials.nctId.get({
+							nctId: $stateParams.nctId
+						});
+						console.log('success updated');
+					}, function(response)  {
+						console.log('failed');
+					});
+				}, function(error){
+					console.log('error: ', error);
+				}
+			);
+
+		};
 		$scope.showAllTitle = function()
 		{
 			$scope.showVar = true;
@@ -156,7 +177,7 @@ angular.module('trials').controller('TrialsController',
             $scope.trialCancertypes = Cancertypes.nctIds.get({
                 nctIds: $stateParams.nctId
             });
-			//Analysis trial
+
 		};
 
 		$scope.searchByKeyword = function() {

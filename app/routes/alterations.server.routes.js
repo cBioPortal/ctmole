@@ -35,6 +35,7 @@
 module.exports = function(app) {
 	var users = require('../../app/controllers/users');
 	var alterations = require('../../app/controllers/alterations');
+	var mappings = require('../../app/controllers/mappings');
 
 	// Alterations Routes
 	app.route('/alterations')
