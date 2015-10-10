@@ -40,15 +40,16 @@ var mongoose = require('mongoose'),
 	Alteration = mongoose.model('Alteration'),
 	_ = require('lodash');
 
+var ObjectId = mongoose.Types.ObjectId; ;
+
 /**
  * Create a Alteration
  */
 exports.create = function(req, res) {
-	var alteration = new Alteration({'symbol': req.body.newAlterationSymbol, 'name': req.body.geneName, 'nctIds': [req.body.nctId]});
 	//var alteration = new Alteration(req.body);
+	var alteration = new Alteration({'alteration': req.body.alteration.toUpperCase(), 'gene': req.body.gene.toUpperCase()});
 	alteration.user = req.user;
-	console.log('starting......');
-	console.log(alteration);
+
 	alteration.save(function(err) {
 		if (err) {
 			return res.status(400).send({
@@ -125,41 +126,38 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 /**
  * Alteration middleware
  */
-exports.alterationByID = function(req, res, next, alterationSymbol) { Alteration.findOne({'symbol': alterationSymbol}).populate('user', 'displayName').exec(function(err, alteration) {
-		if (err) return next(err);
-		if (! alteration) return next(new Error('Failed to load Alteration '));
-		req.alteration = alteration ;
-		next();
+
+exports.alterationByID = function(req, res) {
+	var altArr = req.params.Ids.split(",");
+	var newArr = [];
+	for(var i = 0;i < altArr.length;i++)
+	{
+		newArr.push(ObjectId(altArr[i]));
+	}
+
+
+	Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function(err, alterations) {
+
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(alterations);
+		}
 	});
+
 };
 
-exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'symbol': req.body.alterationRecord, 'name': req.body.geneRecord}).populate('user', 'displayName').exec(function(err, alteration) {
-	console.log('');
+
+exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
 	if (err) return next(err);
-	if (! alteration) return next(new Error('Failed to load Alteration '));
+	if (! alteration) return next(new Error('Failed to find Alteration '));
 	req.alteration = alteration ;
+	res.jsonp(req.alteration);
 	next();
 });
 };
-
-
-/**
- * Alteration middleware
- */
-exports.alterationByNctIds = function(req, res, next, ids) {
-
-	console.log(ids);
-	if(!(ids instanceof Array)) {
-		ids = [ids];
-	}
-	Alteration.find({nctIds: {$in: ids}},{'_id':0,'symbol':1,'name':1}).populate('user', 'displayName').exec(function(err, alterations) {
-		if (err) return next(err);
-		if (! alterations) return next(new Error('Failed to load Alteration ' + ids));
-		req.alterations = alterations ;
-		next();
-	});
-};
-
 
 /**
  * Alteration authorization middleware
@@ -169,4 +167,26 @@ exports.hasAuthorization = function(req, res, next) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();
+};
+
+exports.generalSearch = function(req, res) {
+	var keywords = req.params.searchEngineKeyword;
+	var keywordsArr = keywords.split(",");
+	var finalStr = '';
+	var tempStr = '';
+	for(var i = 0;i < keywordsArr.length;i++)
+	{
+		tempStr = '\"' + keywordsArr[i].trim() + '\"';
+		finalStr += tempStr;
+	}
+	Alteration.find( { $text: { $search: finalStr } }).exec(function(err, alterations) {
+
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(alterations);
+		}
+	});
 };

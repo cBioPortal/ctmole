@@ -53,10 +53,14 @@ angular.module('trials').factory('Trials', ['$resource',
 				},
 				updateStatus:{method: 'POST'}
 			}),
-			searchEngine: $resource('/:searchEngineKeyword', {
+			searchEngine: $resource('trials/search/:searchEngineKeyword', {
 			}, {
 				'query':  {method:'GET', isArray:true}
 			}),
+			nctIds: $resource('trialsMultiSearch/:nctIds', {nctIds: []
+			}, {
+				'query':  {method:'GET', isArray:true}
+			})
 		};
 	}
 ]);

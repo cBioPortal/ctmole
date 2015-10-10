@@ -42,9 +42,8 @@ var mongoose = require('mongoose'),
  * Alteration Schema
  */
 var AlterationSchema = new Schema({
-	symbol: String,
-	name: String,
-	nctIds: Array
+	alteration: String,
+	gene: String
 });
 
 mongoose.model('Alteration', AlterationSchema);

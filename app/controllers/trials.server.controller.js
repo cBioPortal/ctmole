@@ -132,7 +132,8 @@ exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recr
 };
 
 exports.generalSearch = function(req, res) {
-	var keywords = req.params.searchEngineKeyword;
+	var keywords = req.params.searchEngineKeyword; console.log('hereing...', keywords );
+
 	var keywordsArr = keywords.split(",");
 	var finalStr = '';
 	var tempStr = '';
@@ -141,6 +142,7 @@ exports.generalSearch = function(req, res) {
 		tempStr = '\"' + keywordsArr[i].trim() + '\"';
 		finalStr += tempStr;
 	}
+	console.log('hereing...', finalStr );
 
 	Trial.find( { $text: { $search: finalStr } }).exec(function(err, trials) {
 
@@ -270,7 +272,6 @@ exports.updateTrial = function(req, res) {
 			if(result.hasOwnProperty('clinical_study'))
 			{
 				updateRequiredTrial = result.clinical_study;
-				console.log('hello...');
 				console.log(updateRequiredTrial.eligibility[0].criteria);
 				trial.recruitingStatus = updateRequiredTrial.overall_status;
 				var d = new Date();
@@ -301,29 +302,17 @@ exports.updateTrial = function(req, res) {
 };
 
 
-exports.completeTrial = function(req, res) {
+exports.multiTrials = function(req, res) {
+	var nctIds = req.params.nctIds;
+	nctIds = nctIds.split(',');
 
-	var trial = req.trial;
-	console.log(trial);
-	console.log('skyview34');
-	console.log(trial.hasOwnProperty('diseaseCondition'));
-	if(trial.completeStauts !== null)
-	{
-		trial.completeStauts = !trial.completeStauts; console.log('here');
-	}
-	else
-	{
-		trial.completeStauts = true; console.log('there');
-	}
-
-	trial.save(function(err) {
+	Trial.find({'nctId': {$in: nctIds}}).exec(function(err, trials) {
 		if (err) {
-			console.log('error happened when inserting new record: ');
-			console.log(err);
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
 		} else {
-			console.log('success inserting new record');
-			res.jsonp(trial);
+			res.jsonp(trials);
 		}
 	});
-
 };

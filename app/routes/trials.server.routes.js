@@ -48,10 +48,9 @@ module.exports = function(app) {
 
 	app.route('/trials/:requestednctId')
 		.get(trials.read)
-		.put(trials.updateTrial)
-		.post(trials.completeTrial);
+		.put(trials.updateTrial);
 
-	app.route('/:searchEngineKeyword')
+	app.route('/trials/search/:searchEngineKeyword')
 		.get(trials.generalSearch);
 
 	app.route('/trials/search/:keyword')
@@ -59,6 +58,10 @@ module.exports = function(app) {
 
 	app.route('/trials/list')
 		.post(trials.searchList);
+
+	app.route('/trialsMultiSearch/:nctIds')
+		.get(trials.multiTrials);
+
 
 	// Finish by binding the Trial middleware
 	app.param('nctId', trials.trialByID);

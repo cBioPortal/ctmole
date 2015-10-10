@@ -3,16 +3,33 @@
 
 	<br/><br/><br/><br/>
 	<div class="col-md-2" ng-show="showRefine">
+
+		<h3>Curation Status</h3>
+
+		<div class="radio" ng-init="status=1">
+		<label><input type="radio" ng-model="status" value="1" ng-change="search()">All</label><br/>
+		<label><input type="radio" ng-model="status" value="2" ng-change="search()">Incomplete</label><br/>
+		<label><input type="radio" ng-model="status" value="3" ng-change="search()">Complete</label>
+	</div>
+
 		<h3>Location</h3>
 
-		<div class="checkbox">
-			<input id="US" type="checkbox" ng-model="US" ng-change="getCriteria(US, 'United States', 'country')" ng-checked="true"><label for="US"> United States</label>
+		<div class="radio">
+			<label><input type="radio" name="country" ng-click="hideAllCountries()" checked>United States</label>
 		</div>
-		<div class="checkbox" ng-repeat="x in countries">
-			<input id="{{x}}" ng-model="country" ng-change="getCriteria(country, x, 'country')" type="checkbox"><label for="{{x}}"> {{x}}</label>
+		<div class="radio">
+			<label><input type="radio" ng-click="showAllCountries()"  name="country">All Countries</label>
 		</div>
 
+		<div ng-show="allCountries">
+				<div class="checkbox">
+					<input id="US" type="checkbox" ng-model="US" ng-change="getCriteria(US, 'United States', 'country')" ng-checked="true"><label for="US"> United States</label>
+				</div>
+				<div class="checkbox" ng-if="countries.length>1" ng-repeat="x in countries">
+					<input id="{{x}}" name="otherCountries" ng-model="country" ng-change="getCriteria(country, x, 'country')" type="checkbox"><label for="{{x}}"> {{x}}</label>
+				</div>
 
+		</div>
 		<h3>Gene</h3>
 		<div class="checkbox" ng-repeat="y in genes">
 			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox"><label for="{{y}}"> {{y}}</label>
@@ -21,12 +38,10 @@
 
 		<h3>Mutation</h3>
 		<div class="checkbox" ng-repeat="z in mutations">
-			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox"><label for="{{z}}"> {{z}}</label>
+			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
 
-		<h3>Condition</h3>
 
-		<h3>Drugs</h3>
 		<br/><br/>
 		<small>
 			<em class="text-muted">
@@ -37,8 +52,8 @@
 	<div class="container col-md-10">
 
 		<div class="input-group input-group-lg">
-			<input type="text" ng-keypress="console.log($event.keyCode)" class="form-control" ng-model="searchKeyword" name="keywordInputBox" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
-			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search(searchKeyword)"></i></span>
+			<input type="text" class="form-control" ng-model="searchKeyword" name="keywordInputBox" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
+			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search()"></i></span>
 		</div>
 
 		<br/><br/>

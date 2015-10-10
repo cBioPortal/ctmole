@@ -50,27 +50,20 @@ angular.module('alterations').factory('Alterations', ['$resource',
 angular.module('alterations').factory('Alterations', ['$resource',
 	function($resource) {
 		return {
+			alterationByIds: $resource('alterations/:Ids', {Ids:[]}, {query: {isArray: true}}),
 
-
-
-			nctIds: $resource('alterations/trials/:nctIds', {nctIds: []}, {get: {isArray: true}}),
-
-			alteration: $resource('alterations/:alterationSymbol/:geneRecordName', { alterationSymbol: '@symbol',geneRecordName: '@name'
+			alteration: $resource('alterations/:alteration/:gene', { alteration: '@alteration',gene: '@gene'
 			}, {
 				update: {
 					method: 'PUT'
 				},
 				query: {isArray: true}
-		,
+			}),
+			searchEngine: $resource('alterationGeneral/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			})
 
-			newAlterationRecord: $resource('alterations/:newAlterationSymbol/:geneName/:nctId',
-				{ newAlterationSymbol: '@symbol', geneName: '@name'},
-				{
-					update: {
-						method: 'PUT'
-					},
-					query: {isArray: true}
-				})	})
 
 		};
 	}

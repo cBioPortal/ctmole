@@ -48,6 +48,16 @@ var MappingSchema = new Schema({
 		required: 'Please fill Mapping name',
 		trim: true
 	},
+	alteration: {
+		type: Array
+	},
+	completeStatus: {
+		type: Boolean
+	},
+	log: {
+		type: Array
+	}
+	/*
 	created: {
 		type: Date,
 		default: Date.now
@@ -56,12 +66,8 @@ var MappingSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
-	log: {
-		type: Array
-	},
-	alterations: {
-		type: Array
-	}
+	,*/
+
 });
 
 mongoose.model('Mapping', MappingSchema);

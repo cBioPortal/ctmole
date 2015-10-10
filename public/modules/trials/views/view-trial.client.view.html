@@ -88,20 +88,16 @@
 
 				<div ng-if="trialAlterations.length > 0">
 					<span class="trialAddType" ng-repeat="x in trialAlterations">
-							<h2><small>{{x.name + "     " + x.symbol}}
-								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.symbol, x.name)"></i></small></h2>
+							<h2><small>{{x.gene + "     " + x.alteration}}
+								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
 					</span>
 				</div>
 				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
 				<br/><br/>
 
-				<div ng-if="trial.completeStauts === null ? true : false">
-					<h3>Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h3>
-				</div>
-
-				<div ng-if="trial.completeStauts !== null ? true : false">
-					<h3 ng-if="!trial.completeStauts">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h3>
-					<h3 ng-if="trial.completeStauts">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h3>
+				<div>
+					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
+					<h4 ng-if="trialMappings.completeStatus">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h4>
 				</div>
 				<br/><br/>
 			</div>

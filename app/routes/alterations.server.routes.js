@@ -35,30 +35,29 @@
 module.exports = function(app) {
 	var users = require('../../app/controllers/users');
 	var alterations = require('../../app/controllers/alterations');
-	var mappings = require('../../app/controllers/mappings');
+	//var mappings = require('../../app/controllers/mappings');
 
 	// Alterations Routes
 	app.route('/alterations')
 		.get(alterations.list)
 		.post(users.requiresLogin, alterations.create);
 
-	app.route('/alterations/trials/:nctIds')
-		.get(alterations.readAlterations);
+	app.route('/alterations/:Ids')
+		.get(alterations.alterationByID);
 
-	app.route('/alterations/:alterationSymbol/:geneRecordName')
-		.get(alterations.read)
-		.put(users.requiresLogin, alterations.update)
-		.delete(users.requiresLogin, alterations.delete);
 
-	app.route('alterations/:newAlterationSymbol/:geneName/:nctId')
-		.get(alterations.read)
+	app.route('/alterations/:alteration/:gene')
+		.get(alterations.alterationByTwoIDs)
 		.put(users.requiresLogin, alterations.update)
 		.post(users.requiresLogin, alterations.create)
 		.delete(users.requiresLogin, alterations.delete);
 
-
+	app.route('/alterationGeneral/:searchEngineKeyword')
+		.get(alterations.generalSearch)
 
 	// Finish by binding the Alteration middleware
-	app.param('alterationSymbol', alterations.alterationByTwoIDs);
-	app.param('nctIds', alterations.alterationByNctIds);
+	//app.param('Ids', alterations.alterationByID);
+
+
+
 };

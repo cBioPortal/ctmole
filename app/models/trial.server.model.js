@@ -85,9 +85,6 @@ var TrialSchema = new Schema({
 	},
 	lastUpdatedStatusDate:{
 		type: String
-	},
-	completeStauts: {
-		type: Boolean
 	}
 });
 
