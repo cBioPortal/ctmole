@@ -133,18 +133,15 @@ exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recr
 
 exports.generalSearch = function(req, res) {
 	var keywords = req.params.searchEngineKeyword; console.log('hereing...', keywords );
-
-	var keywordsArr = keywords.split(",");
-	var finalStr = '';
-	var tempStr = '';
-	for(var i = 0;i < keywordsArr.length;i++)
+	keywords = JSON.parse(keywords);
+	var searchTerm = keywords.keyword;
+	_.each(keywords.genes, function(gene)
 	{
-		tempStr = '\"' + keywordsArr[i].trim() + '\"';
-		finalStr += tempStr;
-	}
-	console.log('hereing...', finalStr );
+		searchTerm += " " + gene ;
+	});
+	console.log('hereingyuiea...', keywords.countries, searchTerm);
 
-	Trial.find( { $text: { $search: finalStr } }).exec(function(err, trials) {
+	Trial.find( {"countries": {$in: keywords.countries}, $text: { $search: searchTerm } }).exec(function(err, trials) {
 
 	if (err) {
 		return res.status(400).send({

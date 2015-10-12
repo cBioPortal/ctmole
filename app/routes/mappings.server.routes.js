@@ -55,7 +55,10 @@ module.exports = function(app) {
 		.get(mappings.generalSearch);
 
 	app.route('/mappingStatus/:status')
-		.get(mappings.fetchByStatus)
+		.get(mappings.fetchByStatus);
+
+	app.route('/mappingGeneral/mappingAltIds/:altId')
+		.get(mappings.fetchByAltId);
 
 	// Finish by binding the Mapping middleware
 	//app.param('mappingId', mappings.mappingByID);

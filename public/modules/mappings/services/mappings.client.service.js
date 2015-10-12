@@ -72,6 +72,9 @@ angular.module('mappings').factory('Mappings', ['$resource',
 			searchByStatus: $resource('mappingStatus/:status', {status: '@completeStatus'
 			}, {
 				'query':  {method:'GET', isArray:true}
+			}),
+			searchByAltId: $resource('mappingGeneral/mappingAltId/:altId', {}, {
+				'query':  {method:'GET', isArray:true}
 			})
 
 		};

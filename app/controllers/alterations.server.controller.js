@@ -170,16 +170,15 @@ exports.hasAuthorization = function(req, res, next) {
 };
 
 exports.generalSearch = function(req, res) {
-	var keywords = req.params.searchEngineKeyword;
-	var keywordsArr = keywords.split(",");
-	var finalStr = '';
-	var tempStr = '';
-	for(var i = 0;i < keywordsArr.length;i++)
+	var keywords = req.params.searchEngineKeyword; console.log('hereing...', keywords );
+	keywords = JSON.parse(keywords);
+	var searchTerm = keywords.keyword;
+	_.each(keywords.genes, function(gene)
 	{
-		tempStr = '\"' + keywordsArr[i].trim() + '\"';
-		finalStr += tempStr;
-	}
-	Alteration.find( { $text: { $search: finalStr } }).exec(function(err, alterations) {
+		searchTerm += " " + gene ;
+	});
+
+	Alteration.find( { $text: { $search: searchTerm} }).exec(function(err, alterations) {
 
 		if (err) {
 			return res.status(400).send({
