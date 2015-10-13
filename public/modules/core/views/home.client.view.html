@@ -7,9 +7,9 @@
 		<h3>Curation Status</h3>
 
 		<div class="radio" ng-init="status=1">
-		<label><input type="radio" ng-model="status" value="1" ng-change="search()">All</label><br/>
-		<label><input type="radio" ng-model="status" value="2" ng-change="search()">Incomplete</label><br/>
-		<label><input type="radio" ng-model="status" value="3" ng-change="search()">Complete</label>
+		<label><input type="radio" ng-model="status" value="1" ng-change="getCriteria('all', 'all', 'status')">All</label><br/>
+		<label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(false, 'incomplete', 'status')">Incomplete</label><br/>
+		<label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, 'complete', 'status')">Complete</label>
 	</div>
 
 		<h3>Location</h3>
@@ -53,7 +53,7 @@
 
 		<div class="input-group input-group-lg">
 			<input type="text" class="form-control" ng-model="searchKeyword" name="keywordInputBox" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
-			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search('first')"></i></span>
+			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search()"></i></span>
 		</div>
 
 		<br/><br/>
@@ -63,8 +63,8 @@
 
 
 		<div ng-if="showResult" class="well list-group">
-			<h2>MATCHING TRIALS | {{trials.length}}</h2><br/>
-			<a data-ng-repeat="trial in trials " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+			<h2>MATCHING TRIALS | {{filteredTrials.length}}</h2><br/>
+			<a data-ng-repeat="trial in filteredTrials = (trials | filter: searchCriteria())  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
 				<div>
 					<h3 data-ng-bind="trial.nctId"></h3>
 					<h3><small><p class="lead">Title: {{trial.title}} <br/>Phase: {{trial.phase}}<br/>Recruiting Status: {{trial.recruitingStatus}}<br/>Country: {{trial.countries.join(', ')}}</p></small></h3>

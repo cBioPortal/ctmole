@@ -44,10 +44,13 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.firstSearch = true;
 
 		$scope.countryCriteria = ['United States'];
-		$scope.searchStr = '';
+		$scope.criteria = [{type: 'country', value: ['United States']}];
+		$scope.types = ['country'];
 		$scope.geneCriteria = [];
 		$scope.mutationCriteria = [];
 		$scope.trialsNctIds = [];
+		$scope.comTrialIds = [];
+
 
 		$scope.find = function()
 		{
@@ -93,7 +96,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 										}
 									});
 
-									checkSelectedItems();
 									endSearch();
 
 								}
@@ -112,72 +114,31 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 		}
 
-		function checkSelectedItems()
-		{
-			_.each($scope.countryCriteria, function(country)
-			{
-				var countryItem =  document.getElementById(country);
-				if(countryItem != undefined)
-				{
-					console.log('first..', country);
-					countryItem.checked = true;
-				}
-			})
-
-			if($scope.firstSearch == true)
-			{
-				console.log('here...',$scope.genes);
-				_.each($scope.genes, function(gene){
-					if($scope.searchKeyword.toUpperCase() == gene)
-					{
-						var geneItem =  document.getElementById(gene);
-						if(geneItem != undefined)
-						{
-							console.log('first..', gene);
-							geneItem.checked = true;
-						}
-
-						$scope.geneCriteria.push(gene);
-					}
-
-				});
-
-			}
-			else
-			{
-				var checkedGenes = _.intersection($scope.genes, $scope.geneCriteria);
-				console.log('now it is here', checkedGenes);
-				_.each(checkedGenes, function(gene) {
-					var geneItem =  document.getElementById(gene);
-					if(geneItem != undefined)
-					{
-						console.log('hare..', gene);
-						geneItem.checked = true;
-					}
-
-				});
-			}
-
-
-
-		}
 
 		$scope.showAllCountries = function()
 		{
 			$scope.allCountries = true;
+			$scope.criteria = _.without($scope.criteria, _.where($scope.criteria, {type: 'country'}) );
+			$scope.criteria = [{type: 'country', value: ['United States']}];
+
 			document.getElementById('US').checked = true;
 			var otherCountries = document.getElementsByName("otherCountries");
 			for(var i = 0;i < otherCountries.length;i++)
 			{
 				otherCountries[i].checked = false;
 			}
-
 		}
 		$scope.hideAllCountries = function()
 		{
 			$scope.allCountries = false;
-			$scope.countryCriteria = ['United States'];
-			$scope.search();
+			_.each($scope.criteria, function(criterion)
+			{
+				if(criterion.type == 'country')
+				{
+					criterion.value = ['United States'];
+				}
+			});
+
 		}
 		$scope.search = function(searchStr) {
 			var searchKeyword = $scope.searchKeyword;
@@ -186,17 +147,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				bootbox.alert('please input keyword to start search!');
 				return false;
 			}
-			if(searchStr == 'first')
-			{
-				searchKeyword = {keyword: $scope.searchKeyword, countries: ["United States"]}
-			}
-			else
-			{
-				$scope.firstSearch = false;
-				searchKeyword = {keyword: $scope.searchKeyword, countries: $scope.countryCriteria, genes: $scope.geneCriteria}
-			}
-			$scope.searchStr = JSON.stringify(searchKeyword);
-			console.log('here is thete', searchKeyword);
+
 			$scope.loading = true;
 			$scope.showResult = false;
 			$scope.showRefine = false;
@@ -207,7 +158,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			$scope.mutationIDs = [];
 
 			//search in the trial table
-			Trials.searchEngine.query({searchEngineKeyword: $scope.searchStr}, function (data) {
+			Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
 				for(var i = 0;i < data.length;i++)
 				{
 					$scope.countries = $scope.countries.concat(data[i].countries);
@@ -216,7 +167,8 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.countries = _.uniq($scope.countries);
 				$scope.countries = _.without($scope.countries,"United States" );
 				$scope.countries.sort();
-				searchInAlteration($scope.searchStr);
+				searchMappingByStatus();
+				searchInAlteration(searchKeyword);
 			});
 			//search in the mapping table
 			function searchMappingByStatus()
@@ -228,57 +180,12 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					function (data) {
 						if(data.length > 0)
 						{
-							var nctIds = [];
 							for(var i = 0;i < data.length;i++)
 							{
-								nctIds.push(data[i].nctId);
-							}
-							if($scope.status == 3)
-							{
-								$scope.trialsNctIds = _.intersection($scope.trialsNctIds, nctIds);
-							}
-							else if($scope.status == 2)
-							{
-								_.each(nctIds, function(nctId){
-									$scope.trialsNctIds = _.without($scope.trialsNctIds, nctId);
-								});
+								$scope.comTrialIds.push(data[i].nctId);
 							}
 
-							if($scope.mutationCriteria.length > 0)
-							{
-								_.each($scope.mutationCriteria, function(mutation)
-								{
-									Alterations.alteration.get({alteration: mutation.alteration, gene: mutation.gene}, function (u, getResponseHeaders) {
-
-										console.log('alteration existed...');
-										Mappings.searchByAltId.query({altId: u._id},
-											function(a){
-												console.log(a, 'hello world');
-											},
-											function(b){
-												console.log(b, 'this is error');
-											}
-										);
-
-									});
-								});
-
-							}
-
-							Trials.nctIds.query({nctIds: $scope.trialsNctIds},
-								function(trialData)
-								{
-									$scope.trials = trialData;
-									autoCreateFilters(trialData);
-
-								},
-								function(trialDataError)
-								{
-									console.log('not found data', trialDataError);
-								})
-
-						} console.log('hits in the mapping table', $scope.trialsNctIds);
-
+						}
 					},
 					function(error)
 					{
@@ -320,7 +227,17 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 											$scope.trialsNctIds = $scope.trialsNctIds.concat(nctIds);
 											$scope.trialsNctIds = _.uniq($scope.trialsNctIds);
 
-											searchMappingByStatus();
+											Trials.nctIds.query({nctIds: $scope.trialsNctIds},
+												function(trialData)
+												{
+													$scope.trials = trialData;
+													autoCreateFilters(trialData);
+
+												},
+												function(trialDataError)
+												{
+													console.log('not found data', trialDataError);
+												})
 
 
 										}
@@ -345,47 +262,120 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 		};
 
+		$scope.searchCriteria = function() {
+			return function(trial) {
+				var tempStr = JSON.stringify(trial);
+				var finalFlag = true;
+				var flags = [];
+
+				var types = _.uniq($scope.types);
+				for(var i = 0;i < types.length;i++)
+				{
+					flags.push({type: types[i], value: false});
+				}
+				_.each($scope.criteria, function(criterion)
+				{
+					var index = $scope.criteria.map(function(e) { return e.type; }).indexOf(criterion.type);
+					if(criterion.type == 'status')
+					{
+						if(criterion.value == 'all')
+						{
+							flags[index].value = true;
+						}
+						else if(criterion.value == 'incomplete')
+						{
+							if ($scope.comTrialIds.indexOf(trial.nctId) == -1)
+							{
+								flags[index].value = true;
+							}
+							else
+							{
+								flags[index].value = false;
+							}
+						}
+						else if(criterion.value == 'complete')
+						{
+							if ($scope.comTrialIds.indexOf(trial.nctId) != -1)
+							{
+								flags[index].value = true;
+							}
+							else
+							{
+								flags[index].value = false;
+							}
+						}
+					}
+					else
+					{
+						var searchStr = '';
+						for(var i = 0;i < criterion.value.length-1;i++)
+						{
+							searchStr += criterion.value[i] + '|';
+						}
+						searchStr += criterion.value[criterion.value.length-1];
+						 console.log('hello world', searchStr);
+						var patt = new RegExp(searchStr);
+						if(tempStr.match(patt) != undefined)
+						{
+							flags[index].value = true;
+						}
+					}
+
+				});
+
+				for(var i = 0;i < flags.length;i++)
+				{
+					finalFlag = finalFlag && flags[i].value;
+				}
+				return finalFlag;
+			}
+		};
+
+
 		$scope.getCriteria = function(checked, value, type)
 		{
-			if(checked)
+			var index = $scope.criteria.map(function(e) { return e.type; }).indexOf(type);
+			if(type == 'status')
 			{
-				switch(type)
+				if($scope.types.indexOf('status') !== -1)
 				{
-					case 'country':
-						$scope.countryCriteria.push(value);
-						break;
-					case 'gene':
-						$scope.geneCriteria.push(value);
-						break;
-					case 'mutation':
-						$scope.mutationCriteria.push(value);
-						break;
+					_.each($scope.criteria, function(criterion)
+					{
+						if(criterion.type == 'status')
+						{
+							criterion.value = value;
+						}
+					});
 				}
+				else
+				{
+					$scope.criteria.push({type: 'status', value: value});
+					$scope.types.push('status');
+				}
+
 			}
 			else
 			{
-				switch(type)
+				if(checked)
 				{
-					case 'country':
-						$scope.countryCriteria = _.without($scope.countryCriteria, value);
-						break;
-					case 'gene':
-						$scope.geneCriteria = _.without($scope.geneCriteria, value);
-						break;
-					case 'mutation':
-						$scope.mutationCriteria = _.without($scope.mutationCriteria, value);
-						break;
+					if ($scope.types.indexOf(type) == -1)
+					{
+						$scope.criteria.push({type: type, value: [value]});
+						$scope.types.push(type);
+					}
+					else
+					{
+						$scope.criteria[index].value.push(value);
+					}
+
+
+				}
+				else
+				{
+					$scope.criteria[index].value = _.without($scope.criteria[index].value, value);
+					$scope.types.splice($scope.types.indexOf(type), 1);
 				}
 			}
-
-			$scope.geneCriteria = _.uniq($scope.geneCriteria);
-			$scope.countryCriteria = _.uniq($scope.countryCriteria);
-			$scope.mutationCriteria = _.uniq($scope.mutationCriteria);
-
-			console.log('here is gene criteria', $scope.geneCriteria, $scope.countryCriteria, $scope.mutationCriteria);
-
-			$scope.search();
-
 		};
 
 
