@@ -64,53 +64,70 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			$scope.showResult = true;
 			$scope.showRefine = true;
 		}
+		function compare(a,b) {
+			if (a.last_nom < b.last_nom)
+				return -1;
+			if (a.last_nom > b.last_nom)
+				return 1;
+			return 0;
+		}
 
 		function autoCreateFilters(data)
 		{
-			for(var i = 0;i < data.length;i++)
+			_.each(data, function(trialItem)
 			{
-				Mappings.mappingSearch.get({
-						Idvalue: data[i].nctId
-					},
-					function(a)
-					{
-						var alteration_id = [];
-						for(var i = 0;i < a.alteration.length;i++)
+					Mappings.mappingSearch.get({
+							Idvalue: trialItem.nctId
+						},
+						function(a)
 						{
-							alteration_id.push(a.alteration[i].alteration_Id);
-						}
-						if(alteration_id.length > 0)
-						{
-							Alterations.alterationByIds.query({
-									Ids: alteration_id
-								},
-								function(alterations)
-								{
-									_.map(alterations, function(value){
-										if($scope.mutationIDs.indexOf(value._id) == -1)
-										{
-											$scope.mutationIDs.push(value._id);
-											$scope.mutations.push({gene: value.gene, alteration: value.alteration});
-											$scope.genes.push(value.gene);
-											$scope.genes = _.uniq($scope.genes);
-										}
-									});
+							var alteration_id = [];
+							for(var i = 0;i < a.alteration.length;i++)
+							{
+								alteration_id.push(a.alteration[i].alteration_Id);
+							}
+							if(alteration_id.length > 0)
+							{
+								Alterations.alterationByIds.query({
+										Ids: alteration_id
+									},
+									function(alterations)
+									{
+										_.map(alterations, function(value){
+											if($scope.mutationIDs.indexOf(value._id) == -1)
+											{
+												$scope.mutationIDs.push(value._id);
+												$scope.mutations.push({gene: value.gene, alteration: value.alteration, nctIds: [ trialItem.nctId ] });
+												$scope.genes.push(value.gene);
+												$scope.genes = _.uniq($scope.genes);
+											}
+											else
+											{
+												_.each($scope.mutations, function(mutation)
+												{
+													if(mutation.gene == value.gene && mutation.alteration == value.alteration)
+													{
+														mutation.nctIds.push(trialItem.nctId);
+													}
+												});
+											}
+										});
+										$scope.mutations.sort(compare);
+										$scope.genes.sort();
+										endSearch();
+									}
+								);
 
-									endSearch();
 
-								}
-							);
+							}
 
+						},
+						function(b)
+						{}
+					);
 
-						}
+			});
 
-					},
-					function(b)
-					{}
-				);
-
-
-			}
 
 		}
 
@@ -118,9 +135,13 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.showAllCountries = function()
 		{
 			$scope.allCountries = true;
-			$scope.criteria = _.without($scope.criteria, _.where($scope.criteria, {type: 'country'}) );
-			$scope.criteria = [{type: 'country', value: ['United States']}];
-
+			_.each($scope.criteria, function(criterion)
+			{
+				if(criterion.type == 'country')
+				{
+					criterion.value = ['United States'];
+				}
+			});
 			document.getElementById('US').checked = true;
 			var otherCountries = document.getElementsByName("otherCountries");
 			for(var i = 0;i < otherCountries.length;i++)
@@ -168,7 +189,19 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				$scope.countries = _.without($scope.countries,"United States" );
 				$scope.countries.sort();
 				searchMappingByStatus();
-				searchInAlteration(searchKeyword);
+
+				Trials.nctIds.query({nctIds: $scope.trialsNctIds},
+					function(trialData)
+					{
+						$scope.trials = trialData;
+						autoCreateFilters(trialData);
+
+					},
+					function(trialDataError)
+					{
+						console.log('not found data', trialDataError);
+					})
+
 			});
 			//search in the mapping table
 			function searchMappingByStatus()
@@ -194,72 +227,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				);
 			}
 
-			function searchInAlteration(searchKeyword)
-			{
-				//search in the alteration table
-				Alterations.searchEngine.query({
-						searchEngineKeyword: searchKeyword
-					},
-					function(alterationData)
-					{
-						if(alterationData.length > 0)
-						{
-							var alterationIds = "";
-							for(var i = 0;i < alterationData.length;i++)
-							{
-								alterationIds += alterationData[i]._id + " ";
-							}
-							if(alterationIds.length > 0)
-							{
-								Mappings.searchEngine.query({
-										searchEngineKeyword: alterationIds
-									},
-
-									function (data) {
-										if(data.length > 0)
-										{
-											var nctIds = [];
-											for(var i = 0;i < data.length;i++)
-											{
-												nctIds.push(data[i].nctId);
-											}
-
-											$scope.trialsNctIds = $scope.trialsNctIds.concat(nctIds);
-											$scope.trialsNctIds = _.uniq($scope.trialsNctIds);
-
-											Trials.nctIds.query({nctIds: $scope.trialsNctIds},
-												function(trialData)
-												{
-													$scope.trials = trialData;
-													autoCreateFilters(trialData);
-
-												},
-												function(trialDataError)
-												{
-													console.log('not found data', trialDataError);
-												})
-
-
-										}
-
-
-									},
-									function(error)
-									{
-										console.log('did not find data', error);
-									}
-								);
-							}
-						}
-
-					},
-					function(alterationDataError)
-					{
-						console.log('No hits in the alteration table');
-					}
-				)
-			}
-
 		};
 
 		$scope.searchCriteria = function() {
@@ -268,7 +235,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				var finalFlag = true;
 				var flags = [];
 
-				var types = _.uniq($scope.types);
+				var types = $scope.types;
 				for(var i = 0;i < types.length;i++)
 				{
 					flags.push({type: types[i], value: false});
@@ -305,6 +272,22 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 							}
 						}
 					}
+					else if(criterion.type == 'mutation')
+					{
+						var mutationNctIds = [];
+						_.each(criterion.value, function(item)
+						{
+							mutationNctIds = mutationNctIds.concat(item.nctIds);
+						});
+						if (mutationNctIds.indexOf(trial.nctId) != -1)
+						{
+							flags[index].value = true;
+						}
+						else
+						{
+							flags[index].value = false;
+						}
+					}
 					else
 					{
 						var searchStr = '';
@@ -313,7 +296,6 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 							searchStr += criterion.value[i] + '|';
 						}
 						searchStr += criterion.value[criterion.value.length-1];
-						 console.log('hello world', searchStr);
 						var patt = new RegExp(searchStr);
 						if(tempStr.match(patt) != undefined)
 						{
@@ -372,10 +354,20 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				}
 				else
 				{
-					$scope.criteria[index].value = _.without($scope.criteria[index].value, value);
-					$scope.types.splice($scope.types.indexOf(type), 1);
+					if($scope.criteria[index].value.length > 1)
+					{
+						$scope.criteria[index].value = _.without($scope.criteria[index].value, value);
+					}
+					else
+					{
+						$scope.criteria.splice(index, 1);
+						$scope.types = _.without($scope.types, type);
+					}
+
 				}
 			}
+
+
 		};
 
 
