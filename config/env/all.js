@@ -75,7 +75,7 @@ module.exports = {
 				'public/lib/angular-datatables/dist/angular-datatables.js',
 				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
 				'public/lib/bootbox/bootbox.js',
-				'public/lib/bootbox/bootbox.min.js',
+				'public/lib/bootbox/bootbox.min.js'
 			]
 		},
 		css: [

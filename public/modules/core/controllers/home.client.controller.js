@@ -30,7 +30,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-'use strict';
+
 
 
 angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'Trials','Mappings','Alterations',
@@ -50,6 +50,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		$scope.mutationCriteria = [];
 		$scope.trialsNctIds = [];
 		$scope.comTrialIds = [];
+		$scope.trials = [];
 
 
 		$scope.find = function()
@@ -177,6 +178,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 			$scope.genes = [];
 			$scope.mutations = [];
 			$scope.mutationIDs = [];
+			$scope.tumorTypes = [];
 
 			//search in the trial table
 			Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
@@ -184,23 +186,21 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				{
 					$scope.countries = $scope.countries.concat(data[i].countries);
 					$scope.trialsNctIds.push(data[i].nctId);
+					_.each(data[i].tumorTypes, function(tumorItem)
+					{
+
+						$scope.tumorTypes.push(tumorItem.tumorTypeId);
+					});
 				}
+				$scope.tumorTypes = _.uniq($scope.tumorTypes);
+				$scope.tumorTypes.sort();
+
 				$scope.countries = _.uniq($scope.countries);
-				$scope.countries = _.without($scope.countries,"United States" );
 				$scope.countries.sort();
+
 				searchMappingByStatus();
-
-				Trials.nctIds.query({nctIds: $scope.trialsNctIds},
-					function(trialData)
-					{
-						$scope.trials = trialData;
-						autoCreateFilters(trialData);
-
-					},
-					function(trialDataError)
-					{
-						console.log('not found data', trialDataError);
-					})
+				$scope.trials = data;
+				autoCreateFilters(data);
 
 			});
 			//search in the mapping table
@@ -245,11 +245,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					var index = $scope.criteria.map(function(e) { return e.type; }).indexOf(criterion.type);
 					if(criterion.type == 'status')
 					{
-						if(criterion.value == 'all')
-						{
-							flags[index].value = true;
-						}
-						else if(criterion.value == 'incomplete')
+						if(criterion.value == 'incomplete')
 						{
 							if ($scope.comTrialIds.indexOf(trial.nctId) == -1)
 							{
@@ -316,24 +312,34 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 		$scope.getCriteria = function(checked, value, type)
 		{
+
 			var index = $scope.criteria.map(function(e) { return e.type; }).indexOf(type);
-			if(type == 'status')
+			if(type == 'status' || type == 'tumor' || type == 'country')
 			{
-				if($scope.types.indexOf('status') !== -1)
+				if(value.length == 0)
 				{
-					_.each($scope.criteria, function(criterion)
-					{
-						if(criterion.type == 'status')
-						{
-							criterion.value = value;
-						}
-					});
+					$scope.types = _.without($scope.types, type);
+					$scope.criteria.splice(index, 1);
 				}
 				else
 				{
-					$scope.criteria.push({type: 'status', value: value});
-					$scope.types.push('status');
+					if($scope.types.indexOf(type) !== -1)
+					{
+						_.each($scope.criteria, function(criterion)
+						{
+							if(criterion.type == type)
+							{
+								criterion.value = value;
+							}
+						});
+					}
+					else
+					{
+						$scope.criteria.push({type: type, value: value});
+						$scope.types.push(type);
+					}
 				}
+
 
 			}
 			else
@@ -367,9 +373,9 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 				}
 			}
 
-
 		};
 
 
 	}
 ]);
+

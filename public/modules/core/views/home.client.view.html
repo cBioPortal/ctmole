@@ -1,13 +1,13 @@
-
+<br/><br/><br/>
 <section data-ng-controller="HomeController" data-ng-init="find()">
 
-	<br/><br/><br/><br/>
+
 	<div class="col-md-2" ng-show="showRefine">
 
 		<h3>Curation Status</h3>
 
 		<div class="radio" ng-init="status=1">
-		<label><input type="radio" ng-model="status" value="1" ng-change="getCriteria('all', 'all', 'status')">All</label><br/>
+		<label><input type="radio" ng-model="status" value="1" ng-change="getCriteria('all', '', 'status')">All</label><br/>
 		<label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(false, 'incomplete', 'status')">Incomplete</label><br/>
 		<label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, 'complete', 'status')">Complete</label>
 	</div>
@@ -22,14 +22,11 @@
 		</div>
 
 		<div ng-show="allCountries">
-				<div class="checkbox">
-					<input id="US" type="checkbox" ng-model="US" ng-change="getCriteria(US, 'United States', 'country')" ng-checked="true"><label for="US"> United States</label>
-				</div>
-				<div class="checkbox" ng-if="countries.length>1" ng-repeat="x in countries">
-					<input id="{{x}}" name="otherCountries" ng-model="country" ng-change="getCriteria(country, x, 'country')" type="checkbox"><label for="{{x}}"> {{x}}</label>
-				</div>
-
+			<select chosen multiple ng-options="x as x for x in countries" style="width:200px;" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
+			</select>
+			<br/><br/>
 		</div>
+
 		<h3>Gene</h3>
 		<div class="checkbox" ng-repeat="y in genes">
 			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox"><label for="{{y}}"> {{y}}</label>
@@ -41,6 +38,11 @@
 			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
 
+		<h3>Tumor Types</h3>
+<br/>
+		<select chosen multiple ng-options="m as m for m in tumorTypes" style="width:200px;" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
+		</select>
+		<br/>
 
 		<br/><br/>
 		<small>
