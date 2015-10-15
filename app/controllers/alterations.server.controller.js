@@ -130,19 +130,23 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 exports.alterationByID = function(req, res) {
 	var altArr = req.params.Ids.split(",");
 	var newArr = [];
+	console.log(altArr);
 	for(var i = 0;i < altArr.length;i++)
 	{
 		newArr.push(ObjectId(altArr[i]));
 	}
 
+	console.log(newArr);
 
 	Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function(err, alterations) {
 
 		if (err) {
+			console.log('alterationByID error-----');
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
+			console.log('alterationByID success-----');
 			res.jsonp(alterations);
 		}
 	});
