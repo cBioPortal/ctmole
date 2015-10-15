@@ -53,6 +53,38 @@ var ApplicationConfiguration = (function() {
 		registerModule: registerModule
 	};
 })();
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Start by defining the main module and adding the module dependencies
@@ -73,38 +105,326 @@ angular.element(document).ready(function() {
 	//Then init the app
 	angular.bootstrap(document, [ApplicationConfiguration.applicationModuleName]);
 });
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('alterations');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('cancertypes');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('drugs');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('genes');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('mappings');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('trials');
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 'use strict';
 
@@ -112,7 +432,7 @@ ApplicationConfiguration.registerModule('users');
 angular.module('alterations').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', '/');
+		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', false);
         Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
 		Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
 		Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
@@ -121,6 +441,38 @@ angular.module('alterations').run(['Menus',
         Menus.addSubMenuItem('topbar', '/', 'Search Trial', 'trials/search');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Setting up route
@@ -146,6 +498,38 @@ angular.module('alterations').config(['$stateProvider',
 		});
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Alterations controller
@@ -200,20 +584,55 @@ angular.module('alterations').controller('AlterationsController', ['$scope', '$s
 
 		// Find a list of Alterations
 		$scope.find = function() {
-			$scope.alterations = Alterations.query();
+			$scope.alterations = Alterations.alteration.query();
 		};
 
 		// Find existing Alteration
 		$scope.findOne = function() {
-			$scope.alteration = Alterations.get({ 
-				alterationId: $stateParams.alterationId
+			$scope.alteration = Alterations.alteration.get({
+				alterationSymbol: $stateParams.alterationSymbol,
+				geneRecordName: $stateParams.geneRecordName
 			});
 		};
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Alterations service used to communicate Alterations REST endpoints
+/*
 angular.module('alterations').factory('Alterations', ['$resource',
 	function($resource) {
 		return $resource('alterations/:alterationId', { alterationId: '@_id'
@@ -224,6 +643,70 @@ angular.module('alterations').factory('Alterations', ['$resource',
 		});
 	}
 ]);
+
+*/
+
+angular.module('alterations').factory('Alterations', ['$resource',
+	function($resource) {
+		return {
+			alterationByIds: $resource('alterations/:Ids', {Ids:[]}, {query: {isArray: true}}),
+
+			alteration: $resource('alterations/:alteration/:gene', { alteration: '@alteration',gene: '@gene'
+			}, {
+				update: {
+					method: 'PUT'
+				},
+				query: {isArray: true}
+			}),
+			searchEngine: $resource('alterationGeneral/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			})
+
+
+		};
+	}
+]);
+
+
+
+
+
+
+
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Configuring the Articles module
@@ -235,6 +718,38 @@ angular.module('cancertypes').run(['Menus',
 		// Menus.addSubMenuItem('topbar', 'cancertypes', 'New Cancertype', 'cancertypes/create');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Setting up route
@@ -251,15 +766,48 @@ angular.module('cancertypes').config(['$stateProvider',
 			templateUrl: 'modules/cancertypes/views/create-cancertype.client.view.html'
 		}).
 		state('viewCancertype', {
-			url: '/cancertypes/:cancertypeId',
+			url: '/cancertypes/:cancertypeSymbol',
 			templateUrl: 'modules/cancertypes/views/view-cancertype.client.view.html'
 		}).
 		state('editCancertype', {
-			url: '/cancertypes/:cancertypeId/edit',
+			url: '/cancertypes/:cancertypeSymbol/edit',
 			templateUrl: 'modules/cancertypes/views/edit-cancertype.client.view.html'
 		});
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Cancertypes controller
@@ -306,7 +854,7 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 			var cancertype = $scope.cancertype ;
 
 			cancertype.$update(function() {
-				$location.path('cancertypes/' + cancertype._id);
+				$location.path('cancertypes/' + cancertype.symbol);
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -319,8 +867,8 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 
 		// Find existing Cancertype
 		$scope.findOne = function() {
-			$scope.cancertype = Cancertypes.get({ 
-				cancertypeId: $stateParams.cancertypeId
+			$scope.cancertype = Cancertypes.cancertype.get({
+				cancertypeSymbol: $stateParams.cancertypeSymbol
 			});
 		};
 
@@ -329,8 +877,42 @@ angular.module('cancertypes').controller('CancertypesController', ['$scope', '$s
 		};
 	}
 ]);
-'use strict';
 
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+'use strict';
+/*
 //Cancertypes service used to communicate Cancertypes REST endpoints
 angular.module('cancertypes').factory('Cancertypes', ['$resource',
 	function($resource) {
@@ -342,6 +924,65 @@ angular.module('cancertypes').factory('Cancertypes', ['$resource',
 		});
 	}
 ]);
+
+*/
+
+
+angular.module('cancertypes').factory('Cancertypes', ['$resource',
+	function($resource) {
+		return {
+			cancertype: $resource('cancertypes/:cancertypeSymbol', { cancertypeSymbol: '@symbol'
+			}, {
+				update: {
+					method: 'PUT'
+				},
+				query: {isArray: true}
+			}),
+			newCancertype: $resource('cancertypes/:newCancertypeSymbol/:nctId', { newCancertypeSymbol: '@symbol'
+			}),
+			nctIds: $resource('cancertypes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+		};
+	}
+]);
+
+
+
+
+
+
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Setting up route
@@ -358,6 +999,38 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 		});
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
@@ -376,15 +1049,432 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		});
 	}
 ]);
-'use strict';
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 
-angular.module('core').controller('HomeController', ['$scope', 'Authentication',
-	function($scope, Authentication) {
+
+
+angular.module('core').controller('HomeController', ['$scope', 'Authentication', 'Trials','Mappings','Alterations',
+	function($scope, Authentication, Trials, Mappings, Alterations) {
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
+		$scope.loading = false;
+		$scope.showResult = false;
+		$scope.showRefine = false;
+		$scope.allCountries = false;
+		$scope.firstSearch = true;
+
+		$scope.countryCriteria = ['United States'];
+		$scope.criteria = [{type: 'country', value: ['United States']}];
+		$scope.types = ['country'];
+		$scope.geneCriteria = [];
+		$scope.mutationCriteria = [];
+		$scope.trialsNctIds = [];
+		$scope.comTrialIds = [];
+		$scope.trials = [];
+
+
+		$scope.find = function()
+		{
+			document.getElementById("USRadio").checked = true;
+		}
+
+
+		function endSearch()
+		{
+			$scope.loading = false;
+			$scope.showResult = true;
+			$scope.showRefine = true;
+		}
+		function compare(a,b) {
+			if (a.last_nom < b.last_nom)
+				return -1;
+			if (a.last_nom > b.last_nom)
+				return 1;
+			return 0;
+		}
+
+		function autoCreateFilters(data)
+		{
+			_.each(data, function(trialItem)
+			{
+					Mappings.mappingSearch.get({
+							Idvalue: trialItem.nctId
+						},
+						function(a)
+						{
+							var alteration_id = [];
+							for(var i = 0;i < a.alteration.length;i++)
+							{
+								alteration_id.push(a.alteration[i].alteration_Id);
+							}
+							if(alteration_id.length > 0)
+							{
+								Alterations.alterationByIds.query({
+										Ids: alteration_id
+									},
+									function(alterations)
+									{
+										_.map(alterations, function(value){
+											if($scope.mutationIDs.indexOf(value._id) == -1)
+											{
+												$scope.mutationIDs.push(value._id);
+												$scope.mutations.push({gene: value.gene, alteration: value.alteration, nctIds: [ trialItem.nctId ] });
+												$scope.genes.push(value.gene);
+												$scope.genes = _.uniq($scope.genes);
+											}
+											else
+											{
+												_.each($scope.mutations, function(mutation)
+												{
+													if(mutation.gene == value.gene && mutation.alteration == value.alteration)
+													{
+														mutation.nctIds.push(trialItem.nctId);
+													}
+												});
+											}
+										});
+										$scope.mutations.sort(compare);
+										$scope.genes.sort();
+										endSearch();
+									}
+								);
+
+
+							}
+
+						},
+						function(b)
+						{}
+					);
+
+			});
+
+
+		}
+
+
+		$scope.showAllCountries = function()
+		{
+			$scope.allCountries = true;
+			_.each($scope.criteria, function(criterion)
+			{
+				if(criterion.type == 'country')
+				{
+					criterion.value = ['United States'];
+				}
+			});
+
+		}
+		$scope.hideAllCountries = function()
+		{
+			$scope.allCountries = false;
+			_.each($scope.criteria, function(criterion)
+			{
+				if(criterion.type == 'country')
+				{
+					criterion.value = ['United States'];
+				}
+			});
+
+		}
+		$scope.search = function(searchStr) {
+			var searchKeyword = $scope.searchKeyword;
+			if(searchKeyword === undefined)
+			{
+				bootbox.alert('please input keyword to start search!');
+				return false;
+			}
+
+			$scope.loading = true;
+			$scope.showResult = false;
+			$scope.showRefine = false;
+
+			$scope.countries = [];
+			$scope.genes = [];
+			$scope.mutations = [];
+			$scope.mutationIDs = [];
+			$scope.tumorTypes = [];
+
+			//search in the trial table
+			Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
+				if(data.length == 0)
+				{
+					bootbox.alert('Sorry no result found! Please change your input to restart search');
+					$scope.searchKeyword = '';
+					$scope.loading = false;
+					return false;
+				}
+				else
+				{
+					for(var i = 0;i < data.length;i++)
+					{
+						$scope.countries = $scope.countries.concat(data[i].countries);
+						$scope.trialsNctIds.push(data[i].nctId);
+						_.each(data[i].tumorTypes, function(tumorItem)
+						{
+
+							$scope.tumorTypes.push(tumorItem.tumorTypeId);
+						});
+					}
+					$scope.tumorTypes = _.uniq($scope.tumorTypes);
+					$scope.tumorTypes.sort();
+
+					$scope.countries = _.uniq($scope.countries);
+					$scope.countries.sort();
+
+					searchMappingByStatus();
+					$scope.trials = data;
+					autoCreateFilters(data);
+				}
+
+
+			},
+			function(error)
+			{
+
+				console.log('search trial error happened');
+			}
+			);
+			//search in the mapping table
+			function searchMappingByStatus()
+			{
+
+				Mappings.searchByStatus.query({
+						status: true
+					},
+					function (data) {
+						if(data.length > 0)
+						{
+							for(var i = 0;i < data.length;i++)
+							{
+								$scope.comTrialIds.push(data[i].nctId);
+							}
+
+						}
+					},
+					function(error)
+					{
+						console.log('No hits in the mapping table');
+					}
+				);
+			}
+
+		};
+
+		$scope.searchCriteria = function() {
+			return function(trial) {
+				var tempStr = JSON.stringify(trial);
+				var finalFlag = true;
+				var flags = [];
+
+				var types = $scope.types;
+				for(var i = 0;i < types.length;i++)
+				{
+					flags.push({type: types[i], value: false});
+				}
+				_.each($scope.criteria, function(criterion)
+				{
+					var index = $scope.criteria.map(function(e) { return e.type; }).indexOf(criterion.type);
+					if(criterion.type == 'status')
+					{
+						if(criterion.value == 'incomplete')
+						{
+							if ($scope.comTrialIds.indexOf(trial.nctId) == -1)
+							{
+								flags[index].value = true;
+							}
+							else
+							{
+								flags[index].value = false;
+							}
+						}
+						else if(criterion.value == 'complete')
+						{
+							if ($scope.comTrialIds.indexOf(trial.nctId) != -1)
+							{
+								flags[index].value = true;
+							}
+							else
+							{
+								flags[index].value = false;
+							}
+						}
+					}
+					else if(criterion.type == 'mutation')
+					{
+						var mutationNctIds = [];
+						_.each(criterion.value, function(item)
+						{
+							mutationNctIds = mutationNctIds.concat(item.nctIds);
+						});
+						if (mutationNctIds.indexOf(trial.nctId) != -1)
+						{
+							flags[index].value = true;
+						}
+						else
+						{
+							flags[index].value = false;
+						}
+					}
+					else
+					{
+						var searchStr = '';
+						for(var i = 0;i < criterion.value.length-1;i++)
+						{
+							searchStr += criterion.value[i] + '|';
+						}
+						searchStr += criterion.value[criterion.value.length-1];
+						var patt = new RegExp(searchStr);
+						if(tempStr.match(patt) != undefined)
+						{
+							flags[index].value = true;
+						}
+					}
+
+				});
+
+				for(var i = 0;i < flags.length;i++)
+				{
+					finalFlag = finalFlag && flags[i].value;
+				}
+				return finalFlag;
+			}
+		};
+
+
+		$scope.getCriteria = function(checked, value, type)
+		{
+
+			var index = $scope.criteria.map(function(e) { return e.type; }).indexOf(type);
+			if(type == 'status' || type == 'tumor' || type == 'country')
+			{
+				if(value.length == 0)
+				{
+					$scope.types = _.without($scope.types, type);
+					$scope.criteria.splice(index, 1);
+				}
+				else
+				{
+					if($scope.types.indexOf(type) !== -1)
+					{
+						_.each($scope.criteria, function(criterion)
+						{
+							if(criterion.type == type)
+							{
+								criterion.value = value;
+							}
+						});
+					}
+					else
+					{
+						$scope.criteria.push({type: type, value: value});
+						$scope.types.push(type);
+					}
+				}
+
+
+			}
+			else
+			{
+				if(checked)
+				{
+					if ($scope.types.indexOf(type) == -1)
+					{
+						$scope.criteria.push({type: type, value: [value]});
+						$scope.types.push(type);
+					}
+					else
+					{
+						$scope.criteria[index].value.push(value);
+					}
+
+
+				}
+				else
+				{
+					if($scope.criteria[index].value.length > 1)
+					{
+						$scope.criteria[index].value = _.without($scope.criteria[index].value, value);
+					}
+					else
+					{
+						$scope.criteria.splice(index, 1);
+						$scope.types = _.without($scope.types, type);
+					}
+
+				}
+			}
+
+		};
+
+
 	}
 ]);
+
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Menu service used for managing  menus
@@ -551,6 +1641,38 @@ angular.module('core').service('Menus', [
 		this.addMenu('topbar');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Configuring the Articles module
@@ -562,6 +1684,38 @@ angular.module('drugs').run(['Menus',
 		// Menus.addSubMenuItem('topbar', 'drugs', 'New Drug', 'drugs/create');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Setting up route
@@ -587,6 +1741,38 @@ angular.module('drugs').config(['$stateProvider',
 		});
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Drugs controller
@@ -652,6 +1838,38 @@ angular.module('drugs').controller('DrugsController', ['$scope', '$stateParams',
 		};
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Drugs service used to communicate Drugs REST endpoints
@@ -673,6 +1891,38 @@ angular.module('drugs').factory('Drugs', ['$resource',
 		
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Configuring the Articles module
@@ -684,6 +1934,38 @@ angular.module('genes').run(['Menus',
 		// Menus.addSubMenuItem('topbar', 'genes', 'New Gene', 'genes/create');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Setting up route
@@ -700,15 +1982,48 @@ angular.module('genes').config(['$stateProvider',
 			templateUrl: 'modules/genes/views/create-gene.client.view.html'
 		}).
 		state('viewGene', {
-			url: '/genes/:geneId',
+			url: '/genes/:symbol',
 			templateUrl: 'modules/genes/views/view-gene.client.view.html'
 		}).
 		state('editGene', {
-			url: '/genes/:geneId/edit',
+			url: '/genes/:symbol/edit',
 			templateUrl: 'modules/genes/views/edit-gene.client.view.html'
 		});
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Genes controller
@@ -768,12 +2083,45 @@ angular.module('genes').controller('GenesController', ['$scope', '$stateParams',
 
 		// Find existing Gene
 		$scope.findOne = function() {
-			$scope.gene = Genes.gene.get({ 
-				geneId: $stateParams.geneId
+			$scope.gene = Genes.gene.get({
+				symbol: $stateParams.symbol
 			});
 		};
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 angular.module('genes').filter('asc', [
@@ -786,35 +2134,137 @@ angular.module('genes').filter('asc', [
 		};
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Genes service used to communicate Genes REST endpoints
 angular.module('genes').factory('Genes', ['$resource',
 	function($resource) {
 		return {
-            gene: $resource('genes/:geneId', { geneId: '@_id'
+            gene: $resource('genes/:symbol', { symbol: '@symbol'
     		}, {
     			update: {
     				method: 'PUT'
     			},
                 query: {isArray: true}
     		}),
-            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}, put: {}})
         };
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Configuring the Articles module
-angular.module('mappings',['localytics.directives', 'angular-underscore']).run(['Menus',
+angular.module('mappings',['localytics.directives', 'angular-underscore', 'datatables', 'datatables.bootstrap'])
+.constant('Venn', window.venn)
+.constant('D3', window.d3)
+.constant('S', window.S)
+.constant('_', window._)
+.run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Mappings', 'mappings', 'dropdown', '/', true, ['*'], -1);
+		Menus.addMenuItem('topbar', 'Mappings', 'mappings', 'dropdown', false, true, ['*'], -1);
 		Menus.addSubMenuItem('topbar', 'mappings', 'Find common trials', 'mappings');
         Menus.addSubMenuItem('topbar', 'mappings', 'Assign trial', 'trials/assign');
 		// Menus.addSubMenuItem('topbar', 'mappings', 'New Mapping', 'mappings/create');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Setting up route
@@ -834,11 +2284,43 @@ angular.module('mappings').config(['$stateProvider',
 		});
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Mappings controller
-angular.module('mappings').controller('MappingsController', ['$scope', '$stateParams', '$location', '$window', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials',
-	function($scope, $stateParams, $location, $window, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials) {
+angular.module('mappings').controller('MappingsController', ['$scope', '$sce', '_', '$stateParams', '$location', '$window', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Authentication', 'Mappings', 'Genes', 'Alterations', 'Cancertypes', 'Drugs', 'Trials', 'Venn', 'D3', 'S',
+	function($scope, $sce, _, $stateParams, $location, $window, DTOptionsBuilder, DTColumnDefBuilder, Authentication, Mappings, Genes, Alterations, CancerTypes, Drugs, Trials, Venn, D3, S) {
 		$scope.authentication = Authentication;
 
 		$scope.init = function() {
@@ -850,10 +2332,11 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 		};
 
 		$scope.findList = function(group) {
-			$scope.selectedGroup = group;
-			$scope.trials = Trials.listWithnctIds.search($scope.selectedGroup.nctIds);
-			$window.open('#!/mappings/list');
+			searchTrialsBySelectedGroup(group, function(){
+				openMappingList();
+			});
 		};
+
 		// Find a list of Mappings
 		$scope.find = function() {
 		};
@@ -862,44 +2345,244 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 			var groups = [],
 				combined = [];
 
-			groups.push($scope.selectedGene);
-			groups.push($scope.selectedAlt);
-			groups.push($scope.selectedCancerType);
+			$scope.trials = [];
 
+			initCheckboxVal();
+
+			groups.push($scope.selectedVariants.gene);
+			groups.push($scope.selectedVariants.alt);
+			groups.push($scope.selectedVariants.cancerType);
 			groups = $scope.compact(groups);
-			combined = combination(groups);
 
-			$scope.trailGroups = combined;
+			combined = combination(groups);
+			venn(groups, angular.copy(combined));
+			
+			$scope.trailGroups = combined.map(function(e){e.name = e.name.join(', '); return e;});
+			$scope.$watch('checkboxVal', function(n, o){
+				if($scope.trials && $scope.trials.length > 0){
+					var nctIds = $scope.trials.map(function(d){return d.nctId;});
+					for(var key in n) {
+						if(!n[key]) {
+							nctIds = _.difference(nctIds, $scope.selectedVariants[key].nctIds);
+						}
+					}
+					$scope.selectedTrials = $scope.trials.filter(function(d){
+						if(nctIds.indexOf(d.nctId) !== -1) {
+							return true;
+						}else {
+							return false;
+						}
+					});
+				}
+			}, true);
 		};
 
 		$scope.example = function() {
 			$scope.genes.forEach(function(d){
 				if (d.symbol === 'BRAF'){
-					$scope.selectedGene = d;
+					$scope.selectedVariants.gene = d;
 				}
 			});
 			$scope.alts.forEach(function(d){
 				if (d.symbol === 'V600E'){
-					$scope.selectedAlt = d;
+					$scope.selectedVariants.alt = d;
 				}
 			});
 			$scope.cancerTypes.forEach(function(d){
+				// if (d.symbol === 'colorectal cancer'){
 				if (d.symbol === 'melanoma'){
-					$scope.selectedCancerType = d;
+					$scope.selectedVariants.cancerType = d;
 				}
 			});
 			$scope.search();
 		};
 
-		$scope.showTrials = function() {
-			console.log($scope);
+		$scope.showCheckbox = function(variant) {
+			if(!variant) {
+				return false;
+			}
+			if($scope.selectedGroup.variants.indexOf(variant) === -1) {
+				return true;
+			}else {
+				return false;
+			}
 		};
+
+		function searchTrialsBySelectedGroup(group, callback) {
+			$scope.selectedGroup = group;
+			Trials.listWithnctIds.search($scope.selectedGroup.nctIds, function(data){
+				$scope.trials =  data.map(function(d){
+					var regex = new RegExp($scope.selectedGroup.label.replace(/,\s*/g, '|'), 'gi');
+					var ec = d.eligibilityCriteria.replace(/[\n\r]{2}\s+/g, 'zhxzhx').replace(/[\n\r]{1}\s+/g, ' ').replace(/zhxzhx/g, '\n');
+					
+					for(var key in $scope.selectedVariants) {
+						var _symbol = $scope.selectedVariants[key].symbol;
+						var _regex = new RegExp(_symbol, 'g');
+						if(key === 'alt') {
+							var subGene = /([a-zA-Z]+\d+)[a-zA-Z]+/.exec(_symbol);
+							_regex = new RegExp(_symbol + '|' + subGene[1], 'g');
+						}
+						var _html = '<span class="highlight">' + _symbol + '</span>';
+						// console.log(_regex, _html);
+						ec = ec.replace(_regex, _html);
+					}
+
+					d.eligibilityCriteria = S(ec).lines().filter(function(e){
+						if(regexIndexOf(e, regex, 0, d) !== -1) {
+							return true;
+						}else {
+							return false;
+						}
+					});
+					d.intervention = d.drugs.map(function(e){ return e.drugName;}).join(', ');
+					return d;
+				});
+				$scope.selectedTrials = angular.copy($scope.trials);
+				initCheckboxVal();
+				console.log($scope.selectedTrials.map(function(d){ return d.nctId;}));
+				if(angular.isFunction(callback)) {
+					callback();
+				}
+			});
+		}
+
+		function initCheckboxVal() {
+		    $scope.checkboxVal = {};
+			for(var key in $scope.selectedVariants){
+				$scope.checkboxVal[key] = true;
+			}
+		}
+
+		function openMappingList() {
+			$window.open('#!/mappings/list');
+		}
+
+		function regexIndexOf(string, regex, startpos, d) {
+		    var indexOf = string.substring(startpos || 0).search(regex);
+		    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
+		}
+		function venn(groups, combined) {
+			var sets = groups.map(function(e,i){
+				var datum = {};
+                datum.name = e.symbol;
+                datum.sets = [i];
+				datum.label = e.symbol;
+				datum.size = e.nctIds.length;
+				datum.nctIds = e.nctIds;
+				datum.variants = [e.symbol];
+				return datum;
+			});
+
+		    var overlaps = combined.map(function(d){
+		    	var datum = {
+		    		sets: [],
+		    		size: 0,
+		    		label: '',
+                    name: '',
+		    		variants: [],
+		    		nctIds: []
+		    	};
+
+		    	d.name.forEach(function(e){
+		    		var _index = -1;
+
+		    		for (var i = 0; i < groups.length; i++) {
+		    			if(groups[i].symbol === e){
+		    				_index = i;
+		    				break;
+		    			}
+		    		}
+		    		if(_index !== -1) {
+		    			datum.sets.push(_index);
+		    			datum.variants.push(e);
+		    		}
+		    	});
+		    	datum.size = d.nctIds.length;
+		    	datum.nctIds = d.nctIds;
+		    	datum.label = '';
+                datum.name = datum.variants.join(', ');
+		    	return datum;
+		    }).filter(function(e){
+		    	if(e.sets.length > 1) {
+		    		return true;
+		    	}else {
+		    		return false;
+		    	}
+		    }).reverse();
+
+            sets = sets.concat(overlaps);
+
+		    var tooltip = D3.select('#venn').append('div')
+    			.attr('class', 'venntooltip');
+
+		    // get positions for each set
+            //sets = Venn.venn(sets);
+
+			// draw the diagram in the 'simple_example' div
+			D3.select('#venn svg').remove();
+
+            D3.selection.prototype.moveParentToFront = function() {
+                return this.each(function(){
+                    this.parentNode.parentNode.appendChild(this.parentNode);
+                });
+            };
+
+            var chart = Venn.VennDiagram()
+                .width(500)
+                .height(300);
+			var div = D3.select('#venn');
+            div.datum(sets).call(chart);
+
+            div.selectAll('path')
+                .style('stroke-opacity', 0)
+                .style('stroke', '#fff')
+                .style('stroke-width', 0);
+
+            div.selectAll('g')
+                .on('mouseover', function(d, i) {
+                    // sort all the areas relative to the current item
+                    Venn.sortAreas(div, d);
+
+                    var selection = D3.select(this).select('circle');
+
+                    selection.moveParentToFront()
+                       .transition()
+                       .style('fill-opacity', 0.5)
+                       .style('cursor', 'pointer')
+                       .style('stroke-opacity', 1);
+
+                    // Display a tooltip with the current size
+                    tooltip.transition().duration(400).style('opacity', 0.9);
+                    tooltip.text(d.size + ' users');
+                    // highlight the current path
+                    selection = D3.select(this).transition('tooltip').duration(400);
+                    selection.select('path')
+                        .style('stroke-width', 3)
+                        .style('fill-opacity', d.sets.length === 1 ? 0.4 : 0.1)
+                        .style('stroke-opacity', 1);
+                })
+                .on('mousemove', function() {
+                    tooltip.style('left', (D3.event.pageX) + 'px')
+                        .style('top', (D3.event.pageY - 28) + 'px');
+                })
+                .on('mouseout', function(d, i) {
+                    tooltip.transition().duration(400).style('opacity', 0);
+                    var selection = D3.select(this).transition('tooltip').duration(400);
+                    selection.select('path')
+                        .style('stroke-width', 0)
+                        .style('fill-opacity', d.sets.length === 1 ? 0.25 : 0.0)
+                        .style('stroke-opacity', 0);
+                })
+                .on('click',function(d, i) {
+                    searchTrialsBySelectedGroup(d);
+                });
+		}
 
 		function combination(array) {
 			var len = array.length;
 			var n = 1<<len;
 			var result = [];
-			for(var i=1;i<n;i++)    //从 1 循环到 2^len -1
+			for(var i=1;i<n;i++)
 			{
 				var content = {},
 					name = [],
@@ -907,7 +2590,7 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 				for(var j=0;j<len;j++)
 				{
 					var temp = i;
-					if(temp & (1<<j))   //对应位上为1，则输出对应的字符
+					if(temp & (1<<j))
 					{
 						name.push(array[j].symbol);
 						if(nctIds.length === 0) {
@@ -927,15 +2610,28 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 				}else {
 					return 1;
 				}
-			}).map(function(e){e.name = e.name.join(', '); return e;});
+			});
 		}
 
 		function initParams() {
-			$scope.selectedGene = '';
-			$scope.selectedAlt = '';
-			$scope.selectedCancerType = '';
+			$scope.selectedVariants = {
+				gene: '',
+				alt: '',
+				cancerType: ''
+			};
+
 			$scope.selectedGroup = {name: 'NA', nctIds: []};
 			$scope.trailGroups = []; //The item should have following structure {name:'', nctIds: []}
+			$scope.dtOptions = DTOptionsBuilder
+				.newOptions()
+				.withDOM('lifrtp')
+				.withBootstrap();
+			$scope.dtColumns =  [
+		        DTColumnDefBuilder.newColumnDef(0),
+		        DTColumnDefBuilder.newColumnDef(1),
+		        DTColumnDefBuilder.newColumnDef(2),
+		        DTColumnDefBuilder.newColumnDef(3).notSortable()
+		    ];
 		}
 
 		function geneList() {
@@ -955,19 +2651,122 @@ angular.module('mappings').controller('MappingsController', ['$scope', '$statePa
 		}
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Mappings service used to communicate Mappings REST endpoints
 angular.module('mappings').factory('Mappings', ['$resource',
 	function($resource) {
-		return $resource('mappings/:mappingId', { mappingId: '@_id'
-		}, {
-			update: {
-				method: 'PUT'
-			}
-		});
+
+		return{
+
+			mapping: $resource('mappings/:alteration/:nctId',
+				{alteration: '@alteration', nctId: '@nctId'},
+				{
+					update: {
+						method: 'PUT'
+					},
+					query: {isArray: true}
+				}),
+			mappingSearch: $resource('mappings/:Idvalue',
+				{},
+				{
+					update: {
+						method: 'PUT'
+					},
+					deleteAlt: {
+						method: 'PATCH'
+					},
+					completeStatus: {
+						method: 'POST',
+						isArray: false
+					},
+					get: {
+						method: 'GET',
+						isArray: false
+					}
+				}
+			),
+			searchEngine: $resource('mappingGeneral/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			}),
+			searchByStatus: $resource('mappingStatus/:status', {status: '@completeStatus'
+			}, {
+				'query':  {method:'GET', isArray:true}
+			}),
+			searchByAltId: $resource('mappingGeneral/mappingAltId/:altId', {}, {
+				'query':  {method:'GET', isArray:true}
+			})
+
+		};
+
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Configuring the Articles module
@@ -979,6 +2778,38 @@ angular.module('trials').run(['Menus',
 		// Menus.addSubMenuItem('topbar', 'trials', 'Search Trial', 'trials/search');
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Setting up route
@@ -1020,133 +2851,489 @@ angular.module('trials').config(['$stateProvider',
 		});
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 'use strict';
 
 // Trials controller
-angular.module('trials').controller('TrialsController', 
-	['$scope', 
-	'$stateParams', 
-	'$location', 
-	'Authentication', 
-	'Trials',
-	'Genes',
-	'Alterations',
-	'Cancertypes',
-	'Drugs',
-	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
-		$scope.authentication = Authentication;
-		$scope.nctId = '';
+angular.module('trials').controller('TrialsController',
+	['$scope',
+		'$stateParams',
+		'$location',
+		'Authentication',
+		'Trials',
+		'Genes',
+		'Alterations',
+		'Cancertypes',
+		'Drugs','Mappings',
+		function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs, Mappings) {
+			$scope.authentication = Authentication;
+			$scope.nctId = '';
+			$scope.drugHeader = ['Drug Name','Synonyms','FDA Approved','ATC Codes','Description'];
+			$scope.drugItems = ['drugName','synonyms','fdaApproved','atcCodes','description'];
+			$scope.tumorHeader = ['Name','Tissue','Clinical TrialKeywords'];
+			$scope.tumorItems = ['name','tissue','clinicalTrialKeywords'];
 
-		function syntaxHighlight(json) {
-			json = JSON.stringify(json, undefined, 4);
-		    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-		        var cls = 'number';
-		        if (/^"/.test(match)) {
-		            if (/:$/.test(match)) {
-		                cls = 'key';
-		            } else {
-		                cls = 'string';
-		            }
-		        } else if (/true|false/.test(match)) {
-		            cls = 'boolean';
-		        } else if (/null/.test(match)) {
-		            cls = 'null';
-		        }
-		        return '<span class="' + cls + '">' + match + '</span>';
-		    });
-		}
 
-		$scope.beautify = syntaxHighlight;
-		// Create new Trial
-		$scope.create = function() {
-			// Create new Trial object
-			var trial = new Trials ({
-				nctId: this.name
-			});
+			$scope.showVar = false;
+			$scope.alertShow = false;
+			$scope.showAll = false;
+			$scope.showAllDrugs = false;
 
-			// Redirect after save
-			trial.$save(function(response) {
-				$location.path('trials/' + response._id);
+			$scope.switchStatus = function()
+			{
 
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Remove existing Trial
-		$scope.remove = function( trial ) {
-			if ( trial ) { trial.$remove();
-
-				for (var i in $scope.trials ) {
-					if ($scope.trials [i] === trial ) {
-						$scope.trials.splice(i, 1);
+				Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function(u, getResponseHeaders){
+						console.log('found trial in the mapping table',u);
+						u.$completeStatus({Idvalue: $scope.trial.nctId},
+							function(response) {
+								console.log('success updated');
+								$scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+							}, function(response)  {
+								console.log('failed');
+							});
+					}, function(error){
+						console.log('error: ', error);
 					}
-				}
-			} else {
-				$scope.trial.$remove(function() {
-					$location.path('trials');
+				);
+
+			};
+			$scope.showAllTitle = function()
+			{
+				$scope.showVar = true;
+			};
+
+			$scope.showDrugs = function()
+			{
+				$scope.showAllDrugs = !$scope.showAllDrugs;
+			};
+
+			$scope.displayStyle = function()
+			{
+				$scope.showAll = !$scope.showAll;
+			};
+
+			// Create new Trial
+			$scope.create = function() {
+				// Create new Trial object
+				var trial = new Trials ({
+					nctId: this.name
 				});
+
+				// Redirect after save
+				trial.$save(function(response) {
+					$location.path('trials/' + response._id);
+
+					// Clear form fields
+					$scope.name = '';
+				}, function(errorResponse) {
+					$scope.error = errorResponse.data.message;
+				});
+			};
+
+			// Remove existing Trial
+			$scope.remove = function( trial ) {
+				if ( trial ) { trial.$remove();
+
+					for (var i in $scope.trials ) {
+						if ($scope.trials [i] === trial ) {
+							$scope.trials.splice(i, 1);
+						}
+					}
+				} else {
+					$scope.trial.$remove(function() {
+						$location.path('trials');
+					});
+				}
+			};
+
+			// Update existing Trial
+			$scope.update = function() {
+				var trial = $scope.trial ;
+
+				trial.$update(function() {
+					$location.path('trials/' + trial.nctId);
+				}, function(errorResponse) {
+					$scope.error = errorResponse.data.message;
+				});
+			};
+
+			// Find a list of Trials
+			$scope.find = function() {
+				$scope.trials = Trials.nctId.query();
+			};
+
+			function findAlterations(nctId)
+			{
+
+				var alteration_id = [];
+				Mappings.mappingSearch.get({
+						Idvalue: nctId
+					},
+					function(a)
+					{
+						for(var i = 0;i < a.alteration.length;i++)
+						{
+							alteration_id.push(a.alteration[i].alteration_Id);
+						}
+						if(alteration_id.length > 0)
+						{
+							$scope.trialAlterations = Alterations.alterationByIds.query({
+									Ids: alteration_id
+								}
+							);
+						}
+						else
+						{
+							$scope.trialAlterations = [];
+						}
+
+					},
+					function(b)
+					{
+						$scope.trialAlterations = [];
+						console.log('no alteration information for this trial ID')
+					});
+
 			}
-		};
+			// Find existing Trial
+			$scope.findOne = function() {
+				$scope.trial = Trials.nctId.get({
+					nctId: $stateParams.nctId
+				});
 
-		// Update existing Trial
-		$scope.update = function() {
-			var trial = $scope.trial ;
+				$scope.trialAlterations = findAlterations($stateParams.nctId);
 
-			trial.$update(function() {
-				$location.path('trials/' + trial.nctId);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+				//$scope.trialMappings = {completeStatus: false};
 
-		// Find a list of Trials
-		$scope.find = function() {
-			$scope.trials = Trials.nctId.query();
-		};
+				$scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+			};
 
-		// Find existing Trial
-		$scope.findOne = function() {
-			$scope.trial = Trials.nctId.get({ 
-				nctId: $stateParams.nctId
-			});
-		};
+			$scope.searchByKeyword = function() {
+				$scope.trials = Trials.keyword.query({
+					keyword: $scope.keyword
+				});
+				console.log($scope.trials);
+			};
 
-		$scope.searchByKeyword = function() {
-			$scope.trials = Trials.keyword.query({
-				keyword: $scope.keyword
-			});
-			console.log($scope.trials);
-		};
+			$scope.searchTrailBynctId = function() {
+				$location.path('trials/' + $scope.nctId);
+			};
 
-		$scope.searchTrailBynctId = function() {
-			$location.path('trials/' + $scope.nctId);
-		};
+			$scope.assignTrailBynctId = function() {
+				$scope.trial = Trials.nctId.get({
+					nctId: $scope.nctId
+				});
+				$scope.trialGenes = Genes.nctIds.get({
+					nctIds: [$scope.nctId]
+				});
+				console.log($scope.trialGenes);
+			};
 
-		$scope.assignTrailBynctId = function() {
-			$scope.trial = Trials.nctId.get({ 
-				nctId: $scope.nctId
-			});
-			$scope.trialGenes = Genes.nctIds.get({ 
-				nctIds: [$scope.nctId]
-			});
-			console.log($scope.trialGenes);
-		};
+			$scope.getDrugs = function(drugs) {
+				return drugs.map(function(e){return e.drugName;}).join(', ');
+			};
 
-		$scope.getDrugs = function(drugs) {
-			return drugs.map(function(e){return e.drugName;}).join(', ');
-		};
-	}
-]);
+			var getLists = function(str)
+			{
+				var slicedResult = [];
+
+				if((str.indexOf('1. ') !== -1 && (str.indexOf('1. ') < str.indexOf(' - ') ||  str.indexOf(' - ') === -1)))
+				{
+					slicedResult = str.replace(/(\d)[.]\s/g, '\u000B').split('\u000B');
+					slicedResult = _.map(slicedResult, function(value){
+						return value.slice(0,-1).trim();});
+					slicedResult =  _.compact(slicedResult);
+
+				}
+				else
+				{
+					slicedResult = str.split(' - ');
+					slicedResult = _.map(slicedResult, function(value){return value.trim();});
+					slicedResult =  _.compact(slicedResult);
+					//slicedResult = ["pear","watermelon","orange"];
+				}
+
+				slicedResult = _.map(slicedResult, function(element){return element.split('. ');});
+				slicedResult = _.flatten(slicedResult);
+				return slicedResult;
+			};
+
+			$scope.getEligibility = function(eligibility, elgType){
+				if(_.isUndefined(eligibility))
+				{
+					eligibility = '';
+				}
+				var m = eligibility.indexOf('Inclusion Criteria');
+				var n = eligibility.indexOf('Exclusion Criteria');
+				if((m === -1 && elgType === 'inclusion') || (n === -1 && elgType === 'exclusion'))
+				{
+					return '';
+				}
+				else
+				{
+					m += 20;
+					n += 20;
+
+					var output = '<ol>';
+
+					if(elgType === 'inclusion')
+					{
+						var inEligi = eligibility.substr(m,n-m-20);
+						var inEligiArray = getLists(inEligi);
+						_.each(inEligiArray,function(element){output = output + '<li>' + element + '</li>';});
+					}
+					else if(elgType === 'exclusion')
+					{
+						var exEligi = eligibility.substr(n);
+						var exEligiArray = getLists(exEligi);
+						_.each(exEligiArray,function(element){output = output + '<li>' + element + '</li>';});
+					}
+
+					output += '</ol>';
+					return output;
+				}
+
+			};
+
+
+			//Add new connection between alterations and current trial
+			$scope.addAlterationBynctId = function() {
+				Alterations.alteration.get({alteration: $scope.newAlteration, gene: $scope.newGene}, function (u, getResponseHeaders) {
+
+					console.log('alteration existed...');
+					Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+						function(a){
+							console.log('nctId record exist in mapping table...', a);
+							Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
+								function(mapRecord)
+								{
+									console.log('nothing else need to do', mapRecord);
+								},
+								function()
+								{
+									console.log('update alteration array');
+									a.$update({Idvalue: u._id},
+										function(){
+											console.log('successfully update alteration array');
+											$scope.trialAlterations = findAlterations($scope.trial.nctId);
+										},
+										function(){
+											console.log('update alteration array failed');
+										}
+									);
+								}
+							);
+
+						},
+						function(b){
+
+							//insert new mapping record
+							console.log('nctId record not exist in mapping table...');
+
+							Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
+								function()
+								{
+									console.log('success insert record in mapping table');
+									$scope.trialAlterations = findAlterations($scope.trial.nctId);
+								},
+								function(error)
+								{
+									console.log('did not insert successfully because of ', error);
+								}
+							);
+						}
+					);
+
+
+				}, function (getError) {
+					// the alteration didn't exist, so insert to both alteration and mapping, and update trial alteration information
+
+					console.log('alteration did not exist');
+
+					Alterations.alteration.save({alteration: $scope.newAlteration ,gene: $scope.newGene},
+						function(u, getResponseHeaders){
+							console.log('save alteration successfully');
+							//search mapping record by nctId
+							//also need to check if nctId record already exist or not like the above block
+							Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+								function(a){
+									console.log('nctId record exist in mapping table...', a);
+									Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
+										function(mapRecord)
+										{
+											console.log('nothing else need to do', mapRecord);
+										},
+										function()
+										{
+											console.log('update alteration array');
+											a.$update({Idvalue: u._id},
+												function(){
+													console.log('successfully update alteration array');
+													$scope.trialAlterations = findAlterations($scope.trial.nctId);
+												},
+												function(){
+													console.log('update alteration array failed');
+												}
+											);
+										}
+									);
+
+								},
+								function(b){
+
+									//insert new mapping record
+									console.log('nctId record not exist in mapping table...');
+
+									Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
+										function()
+										{
+											console.log('success insert record in mapping table');
+											$scope.trialAlterations = findAlterations($scope.trial.nctId);
+										},
+										function(error)
+										{
+											console.log('did not insert successfully because of ', error);
+										}
+									);
+								}
+							);
+
+
+						},function(){
+							console.log('failed to save alteration ');
+						}
+					);
+
+				});
+			};
+			$scope.deleteAlteration = function(alteration, gene) {
+				Alterations.alteration.get({alteration: alteration, gene: gene},
+					function(a)
+					{
+						console.log('find this alteration');
+						Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+							function(c)
+							{
+								console.log('find in mapping record', a._id);
+								c.$deleteAlt({Idvalue: a._id},
+									function(e)
+									{
+										console.log('delete successfully');
+										$scope.trialAlterations = findAlterations($scope.trial.nctId);
+									},
+									function(f)
+									{
+										console.log('delete failed',f);
+									}
+								);
+							},
+							function(d)
+							{
+								console.log('not find mapping record');
+							}
+						)
+					},
+					function(b)
+					{
+						console.log('not find this alteration');
+					}
+				)
+			};
+
+			$scope.updateTrial = function()
+			{
+
+				Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function(u, getResponseHeaders){
+
+						u.$update(function(response) {
+							$scope.trial = Trials.nctId.get({
+								nctId: $stateParams.nctId
+							});
+							console.log('success updated');
+						}, function(response)  {
+							console.log('failed');
+						});
+					}, function(error){
+						console.log('error: ', error);
+					}
+				);
+
+
+			};
+
+		}
+	]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 //Trials service used to communicate Trials REST endpoints
 angular.module('trials').factory('Trials', ['$resource',
 	function($resource) {
 		return  {
-			nctId: $resource('trials/:nctId', { nctId: '@_id'
+			nctId: $resource('trials/:nctId', { nctId: '@nctId'
 				}, {
 					update: {
 						method: 'PUT'
@@ -1155,10 +3342,58 @@ angular.module('trials').factory('Trials', ['$resource',
 			keyword: $resource('trials/search/:keyword', { keyword: '@_id'}),
 			listWithnctIds: $resource('trials/list', {nctIds: []}, {
 				search: {method: 'POST', isArray: true}
+			}),
+			updateRequestedTrial: $resource('trials/:requestednctId', { requestednctId: '@nctId'
+			}, {
+				update: {
+					method: 'PUT'
+				},
+				updateStatus:{method: 'POST'}
+			}),
+			searchEngine: $resource('trials/search/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			}),
+			nctIds: $resource('trialsMultiSearch/:nctIds', {nctIds: []
+			}, {
+				'query':  {method:'GET', isArray:true}
 			})
 		};
 	}
 ]);
+
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Config HTTP Error Handling
@@ -1189,6 +3424,38 @@ angular.module('users').config(['$httpProvider',
 		]);
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Setting up route
@@ -1234,6 +3501,38 @@ angular.module('users').config(['$stateProvider',
 		});
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 angular.module('users').controller('AuthenticationController', ['$scope', '$http', '$location', 'Authentication',
@@ -1268,6 +3567,38 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		};
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 angular.module('users').controller('PasswordController', ['$scope', '$stateParams', '$http', '$location', 'Authentication',
@@ -1312,6 +3643,38 @@ angular.module('users').controller('PasswordController', ['$scope', '$stateParam
 		};
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
@@ -1384,6 +3747,38 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 	}
 ]);
 
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Authentication service for user variables
@@ -1399,6 +3794,38 @@ angular.module('users').factory('Authentication', [
 		return _this._data;
 	}
 ]);
+/*
+ * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
+ * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
+ * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
+ * obligations to provide maintenance, support, updates, enhancements or
+ * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
+ * liable to any party for direct, indirect, special, incidental or
+ * consequential damages, including lost profits, arising out of the use of this
+ * software and its documentation, even if Memorial Sloan-Kettering Cancer
+ * Center has been advised of the possibility of such damage.
+ */
+
+/*
+ * This file is part of CT-MOLE.
+ *
+ * CT-MOLE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 // Users service used for communicating with the users REST endpoint
