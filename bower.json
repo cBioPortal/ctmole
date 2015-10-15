@@ -24,7 +24,8 @@
     "string": "~3.0.0",
     "angular-datatables": "~0.4.0",
     "fontawesome": "~4.3.0",
-    "animate.css": "~3.2.0"
+    "animate.css": "~3.2.0",
+    "bootbox.js": "bootbox#~4.4.0"
   },
   "resolutions": {
     "angular": "~1.2.28"
