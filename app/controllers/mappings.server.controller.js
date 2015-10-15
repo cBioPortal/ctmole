@@ -95,7 +95,6 @@ exports.deleteAlt = function(req, res) {
 			break;
 		}
 	}
-
 	Mapping.update({nctId: req.body.nctId},{$set: {alteration: alterationArray}}).populate('user', 'displayName').exec(function(err, mappings) {
 		if (err) {
 			return res.status(400).send({

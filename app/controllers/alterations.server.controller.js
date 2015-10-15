@@ -150,7 +150,7 @@ exports.alterationByID = function(req, res) {
 };
 
 
-exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
+exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'alteration': req.params.alteration.toUpperCase(), 'gene': req.params.gene.toUpperCase()}).populate('user', 'displayName').exec(function(err, alteration) {
 	if (err) return next(err);
 	if (! alteration) return next(new Error('Failed to find Alteration '));
 	req.alteration = alteration ;
