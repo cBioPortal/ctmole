@@ -179,13 +179,13 @@ exports.mappingBynctId = function(req, res, next, Idvalue) {
 });
 };
 
-exports.mappingBynctIdAlt = function(req, res, next) { Mapping.findOne({nctId: req.params.nctId, alteration: { $in: [{alteration_Id: req.params.alteration, status: 'manually'} ] }}).populate('user', 'displayName').exec(function(err, mapping) {
+exports.mappingBynctIdAlt = function(req, res) { Mapping.findOne({nctId: req.params.nctId, alteration: { $in: [{alteration_Id: req.params.alteration, status: 'manually'} ] }}).populate('user', 'displayName').exec(function(err, mapping) {
 
-	if (err) return next(err);
+	//if (err) return next(err);
 	if (! mapping) return next(new Error('Failed to find Mapping '));
 	req.mapping = mapping ;
 	res.jsonp(req.mapping);
-	next();
+	//next();
 });
 };
 

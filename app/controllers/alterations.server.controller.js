@@ -154,12 +154,12 @@ exports.alterationByID = function(req, res) {
 };
 
 
-exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
-	if (err) return next(err);
+exports.alterationByTwoIDs = function(req, res) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
+	//if (err) return next(err);
 	if (! alteration) return next(new Error('Failed to find Alteration '));
 	req.alteration = alteration ;
 	res.jsonp(req.alteration);
-	next();
+	//next();
 });
 };
 
