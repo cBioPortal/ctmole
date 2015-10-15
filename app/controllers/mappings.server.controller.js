@@ -236,7 +236,6 @@ exports.generalSearch = function(req, res) {
 
 exports.fetchByStatus = function(req, res) {
 
-console.log('status testing...', req.params.status);
 	Mapping.find( {completeStatus: req.params.status}).exec(function(err, mappings) {
 
 		if (err) {
@@ -252,11 +251,9 @@ console.log('status testing...', req.params.status);
 
 
 exports.fetchByAltId = function(req, res) {
-console.log('here4343...');
-	//Mapping.find( {alteration: {$elemMatch: {alteration_Id: "5617dbde3e0c962d35740ee5" }}} )
 	Mapping.find( {completeStatus: true}).exec(function(err, mappings) {
 
-		if (err) { 	console.log('status testing567...', req.params.altId);
+		if (err) {
 
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

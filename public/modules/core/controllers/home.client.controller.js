@@ -143,12 +143,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 					criterion.value = ['United States'];
 				}
 			});
-			document.getElementById('US').checked = true;
-			var otherCountries = document.getElementsByName("otherCountries");
-			for(var i = 0;i < otherCountries.length;i++)
-			{
-				otherCountries[i].checked = false;
-			}
+
 		}
 		$scope.hideAllCountries = function()
 		{
@@ -182,27 +177,44 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 			//search in the trial table
 			Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
-				for(var i = 0;i < data.length;i++)
+				if(data.length == 0)
 				{
-					$scope.countries = $scope.countries.concat(data[i].countries);
-					$scope.trialsNctIds.push(data[i].nctId);
-					_.each(data[i].tumorTypes, function(tumorItem)
-					{
-
-						$scope.tumorTypes.push(tumorItem.tumorTypeId);
-					});
+					bootbox.alert('Sorry no result found! Please change your input to restart search');
+					$scope.searchKeyword = '';
+					$scope.loading = false;
+					return false;
 				}
-				$scope.tumorTypes = _.uniq($scope.tumorTypes);
-				$scope.tumorTypes.sort();
+				else
+				{
+					for(var i = 0;i < data.length;i++)
+					{
+						$scope.countries = $scope.countries.concat(data[i].countries);
+						$scope.trialsNctIds.push(data[i].nctId);
+						_.each(data[i].tumorTypes, function(tumorItem)
+						{
 
-				$scope.countries = _.uniq($scope.countries);
-				$scope.countries.sort();
+							$scope.tumorTypes.push(tumorItem.tumorTypeId);
+						});
+					}
+					$scope.tumorTypes = _.uniq($scope.tumorTypes);
+					$scope.tumorTypes.sort();
 
-				searchMappingByStatus();
-				$scope.trials = data;
-				autoCreateFilters(data);
+					$scope.countries = _.uniq($scope.countries);
+					$scope.countries.sort();
 
-			});
+					searchMappingByStatus();
+					$scope.trials = data;
+					autoCreateFilters(data);
+				}
+
+
+			},
+			function(error)
+			{
+
+				console.log('search trial error happened');
+			}
+			);
 			//search in the mapping table
 			function searchMappingByStatus()
 			{
