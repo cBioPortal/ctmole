@@ -82,44 +82,45 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 						},
 						function(a)
 						{
-							var alteration_id = [];
-							for(var i = 0;i < a.alteration.length;i++)
-							{
-								alteration_id.push(a.alteration[i].alteration_Id);
-							}
-							if(alteration_id.length > 0)
-							{
-								Alterations.alterationByIds.query({
-										Ids: alteration_id
-									},
-									function(alterations)
-									{
-										_.map(alterations, function(value){
-											if($scope.mutationIDs.indexOf(value._id) == -1)
-											{
-												$scope.mutationIDs.push(value._id);
-												$scope.mutations.push({gene: value.gene, alteration: value.alteration, nctIds: [ trialItem.nctId ] });
-												$scope.genes.push(value.gene);
-												$scope.genes = _.uniq($scope.genes);
-											}
-											else
-											{
-												_.each($scope.mutations, function(mutation)
+							if(a.alteration) {
+								var alteration_id = [];
+								for(var i = 0;i < a.alteration.length;i++)
+								{
+									alteration_id.push(a.alteration[i].alteration_Id);
+								}
+								if(alteration_id.length > 0)
+								{
+									Alterations.alterationByIds.query({
+											Ids: alteration_id
+										},
+										function(alterations)
+										{
+											_.map(alterations, function(value){
+												if($scope.mutationIDs.indexOf(value._id) == -1)
 												{
-													if(mutation.gene == value.gene && mutation.alteration == value.alteration)
+													$scope.mutationIDs.push(value._id);
+													$scope.mutations.push({gene: value.gene, alteration: value.alteration, nctIds: [ trialItem.nctId ] });
+													$scope.genes.push(value.gene);
+													$scope.genes = _.uniq($scope.genes);
+												}
+												else
+												{
+													_.each($scope.mutations, function(mutation)
 													{
-														mutation.nctIds.push(trialItem.nctId);
-													}
-												});
-											}
-										});
-										$scope.mutations.sort(compare);
-										$scope.genes.sort();
-										endSearch();
-									}
-								);
+														if(mutation.gene == value.gene && mutation.alteration == value.alteration)
+														{
+															mutation.nctIds.push(trialItem.nctId);
+														}
+													});
+												}
+											});
+											$scope.mutations.sort(compare);
+											$scope.genes.sort();
+										}
+									);
 
 
+								}
 							}
 
 						},
@@ -177,35 +178,39 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 			//search in the trial table
 			Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
-				if(data.length == 0)
-				{
-					bootbox.alert('Sorry no result found! Please change your input to restart search');
-					$scope.searchKeyword = '';
-					$scope.loading = false;
-					return false;
-				}
-				else
-				{
-					for(var i = 0;i < data.length;i++)
-					{
-						$scope.countries = $scope.countries.concat(data[i].countries);
-						$scope.trialsNctIds.push(data[i].nctId);
-						_.each(data[i].tumorTypes, function(tumorItem)
+					if(data instanceof  Array) {
+
+						if(data.length == 0)
 						{
+							bootbox.alert('Sorry no result found! Please change your input to restart search');
+							$scope.searchKeyword = '';
+							$scope.loading = false;
+							return false;
+						}
+						else
+						{
+							for(var i = 0;i < data.length;i++)
+							{
+								$scope.countries = $scope.countries.concat(data[i].countries);
+								$scope.trialsNctIds.push(data[i].nctId);
+								_.each(data[i].tumorTypes, function(tumorItem)
+								{
 
-							$scope.tumorTypes.push(tumorItem.tumorTypeId);
-						});
+									$scope.tumorTypes.push(tumorItem.tumorTypeId);
+								});
+							}
+							$scope.tumorTypes = _.uniq($scope.tumorTypes);
+							$scope.tumorTypes.sort();
+
+							$scope.countries = _.uniq($scope.countries);
+							$scope.countries.sort();
+
+							searchMappingByStatus();
+							$scope.trials = data;
+							autoCreateFilters(data);
+							endSearch();
+						}
 					}
-					$scope.tumorTypes = _.uniq($scope.tumorTypes);
-					$scope.tumorTypes.sort();
-
-					$scope.countries = _.uniq($scope.countries);
-					$scope.countries.sort();
-
-					searchMappingByStatus();
-					$scope.trials = data;
-					autoCreateFilters(data);
-				}
 
 
 			},

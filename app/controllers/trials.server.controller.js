@@ -60,7 +60,6 @@ exports.create = function(req, res) {
 		'lastChangeDate': 'test'});
 */
 	trial.user = req.user;
-	console.log(trial);
 	trial.save(function(err) {
 		if (err) { console.log(err);
 			return res.status(400).send({
@@ -271,7 +270,6 @@ exports.updateTrial = function(req, res) {
 			if(result.hasOwnProperty('clinical_study'))
 			{
 				updateRequiredTrial = result.clinical_study;
-				console.log(updateRequiredTrial.eligibility[0].criteria);
 				trial.recruitingStatus = updateRequiredTrial.overall_status;
 				var d = new Date();
 				trial.lastUpdatedStatusDate = d.toDateString();

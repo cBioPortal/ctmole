@@ -141,12 +141,10 @@ exports.alterationByID = function(req, res) {
 	Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function(err, alterations) {
 
 		if (err) {
-			console.log('alterationByID error-----');
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			console.log('alterationByID success-----');
 			res.jsonp(alterations);
 		}
 	});
@@ -154,11 +152,15 @@ exports.alterationByID = function(req, res) {
 };
 
 
-exports.alterationByTwoIDs = function(req, res) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
+exports.alterationByTwoIDs = function(req, res) {
+	Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
 	//if (err) return next(err);
-	if (! alteration) return next(new Error('Failed to find Alteration '));
-	req.alteration = alteration ;
-	res.jsonp(req.alteration);
+	if (alteration) {
+		req.alteration = alteration ;
+		res.jsonp(req.alteration);
+	}else {
+		res.jsonp();
+	}
 	//next();
 });
 };
