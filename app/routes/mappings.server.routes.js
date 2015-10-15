@@ -42,7 +42,7 @@ module.exports = function(app) {
 		.post(users.requiresLogin, mappings.create);
 
 	app.route('/mappings/:Idvalue')
-		.get(mappings.mappingBynctId)
+		.get(mappings.read)
 		.put(users.requiresLogin, mappings.update)
 		.patch(users.requiresLogin, mappings.deleteAlt)
 		.post(users.requiresLogin, mappings.completeTrial);
@@ -61,7 +61,7 @@ module.exports = function(app) {
 		.get(mappings.fetchByAltId);
 
 	// Finish by binding the Mapping middleware
-	//app.param('mappingId', mappings.mappingByID);
+	app.param('Idvalue', mappings.mappingBynctId);
 
 
 };

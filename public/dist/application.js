@@ -2998,7 +2998,7 @@ angular.module('trials').controller('TrialsController',
 
 				var alteration_id = [];
 				Mappings.mappingSearch.get({
-						Idvalue: nctId
+						Idvalue: nctId,
 					},
 					function(a)
 					{
