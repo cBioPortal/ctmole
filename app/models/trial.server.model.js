@@ -36,12 +36,12 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-    autoIncrement = require('mongoose-auto-increment');
+	Schema = mongoose.Schema;
+    //autoIncrement = require('mongoose-auto-increment');
 
-var connection = mongoose.createConnection('mongodb://localhost/clinicaltrials-test');
+//var connection = mongoose.createConnection('mongodb://localhost/clinicaltrials-test');
 
-autoIncrement.initialize(connection);
+//autoIncrement.initialize(connection);
 
 /**
  * Trial Schema
@@ -79,9 +79,15 @@ var TrialSchema = new Schema({
 	lastChangeDate: {
 		type: String,
 		trim: true
+	},
+	arm_group: {
+		type: Array
+	},
+	lastUpdatedStatusDate:{
+		type: String
 	}
 });
 
 
-TrialSchema.plugin(autoIncrement.plugin, {model: 'clinicaltrial', field: 'trialId'});
+//TrialSchema.plugin(autoIncrement.plugin, {model: 'clinicaltrial', field: 'trialId'});
 mongoose.model('clinicaltrial', TrialSchema);

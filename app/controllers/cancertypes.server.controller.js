@@ -44,7 +44,9 @@ var mongoose = require('mongoose'),
  * Create a Cancertype
  */
 exports.create = function(req, res) {
-	var cancertype = new Cancertype(req.body);
+	//var cancertype = new Cancertype(req.body);
+	var cancertype = new Cancertype({'symbol': req.body.newCancertypeSymbol,'nctIds': [req.body.nctId]});
+	//var cancertype = req.cancertype ;
 	cancertype.user = req.user;
 
 	cancertype.save(function(err) {
@@ -63,6 +65,9 @@ exports.create = function(req, res) {
  */
 exports.read = function(req, res) {
 	res.jsonp(req.cancertype);
+};
+exports.readCancertypes = function(req, res) {
+	res.jsonp(req.cancertypes);
 };
 
 /**
@@ -118,13 +123,29 @@ exports.list = function(req, res) { Cancertype.find().sort('-created').populate(
 /**
  * Cancertype middleware
  */
-exports.cancertypeByID = function(req, res, next, id) { Cancertype.findOne({'symbol': id}).populate('user', 'displayName').exec(function(err, cancertype) {
+exports.cancertypeByID = function(req, res, next, cancertypeSymbol) { Cancertype.findOne({'symbol': cancertypeSymbol}).populate('user', 'displayName').exec(function(err, cancertype) {
 		if (err) return next(err);
-		if (! cancertype) return next(new Error('Failed to load Cancertype ' + id));
+		if (! cancertype) return next(new Error('Failed to load Cancertype ' + cancertypeSymbol));
 		req.cancertype = cancertype ;
 		next();
 	});
 };
+
+exports.cancertypeByNctIds = function(req, res, next, ids) {
+
+	console.log(ids);
+	if(!(ids instanceof Array)) {
+		ids = [ids];
+	}
+	Cancertype.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, cancertypes) {
+		if (err) return next(err);
+		if (! cancertypes) return next(new Error('Failed to load Cancertype ' + ids));
+		req.cancertypes = cancertypes ;
+		next();
+	});
+};
+
+
 
 /**
  * Cancertype authorization middleware

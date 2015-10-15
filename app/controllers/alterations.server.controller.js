@@ -40,11 +40,14 @@ var mongoose = require('mongoose'),
 	Alteration = mongoose.model('Alteration'),
 	_ = require('lodash');
 
+var ObjectId = mongoose.Types.ObjectId; ;
+
 /**
  * Create a Alteration
  */
 exports.create = function(req, res) {
-	var alteration = new Alteration(req.body);
+	//var alteration = new Alteration(req.body);
+	var alteration = new Alteration({'alteration': req.body.alteration.toUpperCase(), 'gene': req.body.gene.toUpperCase()});
 	alteration.user = req.user;
 
 	alteration.save(function(err) {
@@ -63,6 +66,11 @@ exports.create = function(req, res) {
  */
 exports.read = function(req, res) {
 	res.jsonp(req.alteration);
+};
+
+
+exports.readAlterations = function(req, res) {
+	res.jsonp(req.alterations);
 };
 
 /**
@@ -118,12 +126,37 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 /**
  * Alteration middleware
  */
-exports.alterationByID = function(req, res, next, id) { Alteration.findOne({'symbol': id}).populate('user', 'displayName').exec(function(err, alteration) {
-		if (err) return next(err);
-		if (! alteration) return next(new Error('Failed to load Alteration ' + id));
-		req.alteration = alteration ;
-		next();
+
+exports.alterationByID = function(req, res) {
+	var altArr = req.params.Ids.split(",");
+	var newArr = [];
+	for(var i = 0;i < altArr.length;i++)
+	{
+		newArr.push(ObjectId(altArr[i]));
+	}
+
+
+	Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function(err, alterations) {
+
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(alterations);
+		}
 	});
+
+};
+
+
+exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
+	if (err) return next(err);
+	if (! alteration) return next(new Error('Failed to find Alteration '));
+	req.alteration = alteration ;
+	res.jsonp(req.alteration);
+	next();
+});
 };
 
 /**
@@ -134,4 +167,27 @@ exports.hasAuthorization = function(req, res, next) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();
+};
+
+exports.generalSearch = function(req, res) {
+	var keywords = req.params.searchEngineKeyword;
+	var keywordsArr = keywords.split(",");
+	var finalStr = '';
+	var tempStr = '';
+	for(var i = 0;i < keywordsArr.length;i++)
+	{
+		tempStr = '\"' + keywordsArr[i].trim() + '\"';
+		finalStr += tempStr;
+	}
+
+	Alteration.find( { $text: { $search: finalStr} }).exec(function(err, alterations) {
+
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(alterations);
+		}
+	});
 };

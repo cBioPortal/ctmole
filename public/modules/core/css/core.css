@@ -18,3 +18,11 @@ h1 span {
 	font-size: 20px;
 	margin: 0 10px;
 }
+.resultStyle{
+	font-size: 20px;
+}
+.searchIcon{
+	cursor:pointer;
+	margin:0px;
+	padding:0px
+}

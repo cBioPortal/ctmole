@@ -55,6 +55,7 @@ module.exports = {
 			js: [
 				'public/lib/jquery/dist/jquery.js',
 				'public/lib/angular/angular.js',
+				'public/_lib/bootstrap/js/bootstrap.js',
 				'public/lib/angular-resource/angular-resource.js',
 				'public/lib/angular-cookies/angular-cookies.js',
 				'public/lib/angular-animate/angular-animate.js',
@@ -72,7 +73,9 @@ module.exports = {
 				'public/lib/string/lib/string.js',
 				'public/lib/datatables/media/js/jquery.dataTables.js',
 				'public/lib/angular-datatables/dist/angular-datatables.js',
-				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js'
+				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
+				'public/lib/bootbox/bootbox.js',
+				'public/lib/bootbox/bootbox.min.js'
 			]
 		},
 		css: [

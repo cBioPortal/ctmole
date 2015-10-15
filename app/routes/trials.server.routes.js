@@ -34,6 +34,7 @@
 
 module.exports = function(app) {
 	var trials = require('../../app/controllers/trials');
+	var users = require('../../app/controllers/users');
 
 	// Trials Routes
 	app.route('/trials')
@@ -42,8 +43,15 @@ module.exports = function(app) {
 
 	app.route('/trials/:nctId')
 		.get(trials.read)
-		.put(trials.update)
+		//.put(trials.update)
 		.delete(trials.delete);
+
+	app.route('/trials/:requestednctId')
+		.get(trials.read)
+		.put(trials.updateTrial);
+
+	app.route('/trials/search/:searchEngineKeyword')
+		.get(trials.generalSearch);
 
 	app.route('/trials/search/:keyword')
 		.get(trials.search);
@@ -51,7 +59,12 @@ module.exports = function(app) {
 	app.route('/trials/list')
 		.post(trials.searchList);
 
+	app.route('/trialsMultiSearch/:nctIds')
+		.get(trials.multiTrials);
+
+
 	// Finish by binding the Trial middleware
 	app.param('nctId', trials.trialByID);
+	app.param('requestednctId', trials.trialByID);
 	app.param('keyword', trials.searchByKeyword);
 };

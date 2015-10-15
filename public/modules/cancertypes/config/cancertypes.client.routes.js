@@ -46,11 +46,11 @@ angular.module('cancertypes').config(['$stateProvider',
 			templateUrl: 'modules/cancertypes/views/create-cancertype.client.view.html'
 		}).
 		state('viewCancertype', {
-			url: '/cancertypes/:cancertypeId',
+			url: '/cancertypes/:cancertypeSymbol',
 			templateUrl: 'modules/cancertypes/views/view-cancertype.client.view.html'
 		}).
 		state('editCancertype', {
-			url: '/cancertypes/:cancertypeId/edit',
+			url: '/cancertypes/:cancertypeSymbol/edit',
 			templateUrl: 'modules/cancertypes/views/edit-cancertype.client.view.html'
 		});
 	}

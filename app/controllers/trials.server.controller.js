@@ -40,15 +40,29 @@ var mongoose = require('mongoose'),
 	Trial = mongoose.model('clinicaltrial'),
 	_ = require('lodash');
 
+var request = require('request');
+var parseString = require('xml2js').parseString;
+
 /**
  * Create a Trial
  */
 exports.create = function(req, res) {
 	var trial = new Trial(req.body);
-	trial.user = req.user;
+/*console.log('testing here 123...');
 
+		var trial = new Trial({ 'nctId': 'NCT02270606',
+		'title': 'test',
+		'purpose': 'test',
+		'recruitingStatus': 'test',
+		'eligibilityCriteria': 'test',
+		'phase': 'test',
+		'diseaseCondition': 'test',
+		'lastChangeDate': 'test'});
+*/
+	trial.user = req.user;
+	console.log(trial);
 	trial.save(function(err) {
-		if (err) {
+		if (err) { console.log(err);
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
@@ -67,8 +81,9 @@ exports.read = function(req, res) {
 
 /**
  * Update a Trial
- */
+
 exports.update = function(req, res) {
+
 	var trial = req.trial ;
 
 	trial = _.extend(trial , req.body);
@@ -82,8 +97,9 @@ exports.update = function(req, res) {
 			res.jsonp(trial);
 		}
 	});
-};
 
+};
+*/
 /**
  * Delete an Trial
  */
@@ -115,6 +131,30 @@ exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recr
 	});
 };
 
+exports.generalSearch = function(req, res) {
+	var keywords = req.params.searchEngineKeyword; console.log('hereing...', keywords );
+
+	var keywordsArr = keywords.split(",");
+	var finalStr = '';
+	var tempStr = '';
+	for(var i = 0;i < keywordsArr.length;i++)
+	{
+		tempStr = '\"' + keywordsArr[i].trim() + '\"';
+		finalStr += tempStr;
+	}
+
+	Trial.find( { $text: { $search: finalStr } }).exec(function(err, trials) {
+
+	if (err) {
+		return res.status(400).send({
+			message: errorHandler.getErrorMessage(err)
+		});
+	} else {
+		res.jsonp(trials);
+	}
+});
+};
+
 exports.search = function(req, res) {
 	res.jsonp(req.trials);
 };
@@ -123,9 +163,57 @@ exports.search = function(req, res) {
  */
 exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).exec(function(err, trial) {
 		if (err) return next(err);
-		if (! trial) return next(new Error('Failed to load Trial ' + id));
+
+		if (! trial)
+		{
+
+			var nctId = id;
+			var url = 'http://clinicaltrials.gov/ct2/show/' + nctId + '?displayxml=true';
+
+			var updateRequiredTrial;
+			request(url, function(error, response, body){
+				parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+					if(typeof result != 'undefined' && result.hasOwnProperty('clinical_study'))
+					{
+						updateRequiredTrial = result.clinical_study;
+						trial = new Trial({nctId: nctId});
+						trial.recruitingStatus = updateRequiredTrial.overall_status;
+						trial.title = updateRequiredTrial.brief_title;
+						trial.purpose = updateRequiredTrial.brief_summary[0].textblock;
+						trial.phase = updateRequiredTrial.phase;
+						trial.eligibilityCriteria = updateRequiredTrial.eligibility[0].criteria[0].textblock[0];
+						trial.diseaseCondition = updateRequiredTrial.condition_browse[0].mesh_term.toString();
+						trial.arm_group = updateRequiredTrial.arm_group;
+						var d = new Date();
+						trial.lastUpdatedStatusDate = d.toDateString();
+
+						trial.save(function(err) {
+							if (err) {
+								//return res.status(400).send({
+								//	message: errorHandler.getErrorMessage(err)
+								//});
+								console.log('error happened when inserting new record: ');
+								console.log(err);
+							} else {
+								console.log('success insert record ');
+								//res.jsonp(trial);
+							}
+						});
+					}
+					else
+					{
+						trial = null;
+						console.log(nctId, 'does not have clinical study attribute.');
+					}
+
+
+				});
+			});
+
+		}
 		req.trial = trial;
 		next();
+
 	});
 };
 
@@ -169,4 +257,61 @@ exports.hasAuthorization = function(req, res, next) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();
+};
+
+exports.updateTrial = function(req, res) {
+
+	var trial = req.trial;
+	var nctId = req.body.nctId;
+	var url = 'http://clinicaltrials.gov/ct2/show/' + nctId + '?displayxml=true';
+
+	var updateRequiredTrial;
+	request(url, function(error, response, body){
+		parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+			if(result.hasOwnProperty('clinical_study'))
+			{
+				updateRequiredTrial = result.clinical_study;
+				console.log(updateRequiredTrial.eligibility[0].criteria);
+				trial.recruitingStatus = updateRequiredTrial.overall_status;
+				var d = new Date();
+				trial.lastUpdatedStatusDate = d.toDateString();
+
+				trial.save(function(err) {
+					if (err) {
+						return res.status(400).send({
+							message: errorHandler.getErrorMessage(err)
+						});
+						console.log('error happened when inserting new record: ');
+						console.log(err);
+					} else {
+						console.log('success inserting new record');
+						res.jsonp(trial);
+					}
+				});
+			}
+			else
+			{
+				console.log(nctId, 'does not have clinical study attribute.');
+			}
+
+
+		});
+	});
+
+};
+
+
+exports.multiTrials = function(req, res) {
+	var nctIds = req.params.nctIds;
+	nctIds = nctIds.split(',');
+
+	Trial.find({'nctId': {$in: nctIds}}).exec(function(err, trials) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(trials);
+		}
+	});
 };

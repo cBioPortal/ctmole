@@ -84,13 +84,14 @@ angular.module('alterations').controller('AlterationsController', ['$scope', '$s
 
 		// Find a list of Alterations
 		$scope.find = function() {
-			$scope.alterations = Alterations.query();
+			$scope.alterations = Alterations.alteration.query();
 		};
 
 		// Find existing Alteration
 		$scope.findOne = function() {
-			$scope.alteration = Alterations.get({ 
-				alterationId: $stateParams.alterationId
+			$scope.alteration = Alterations.alteration.get({
+				alterationSymbol: $stateParams.alterationSymbol,
+				geneRecordName: $stateParams.geneRecordName
 			});
 		};
 	}

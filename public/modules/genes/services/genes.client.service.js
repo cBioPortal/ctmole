@@ -36,14 +36,14 @@
 angular.module('genes').factory('Genes', ['$resource',
 	function($resource) {
 		return {
-            gene: $resource('genes/:geneId', { geneId: '@_id'
+            gene: $resource('genes/:symbol', { symbol: '@symbol'
     		}, {
     			update: {
     				method: 'PUT'
     			},
                 query: {isArray: true}
     		}),
-            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+            nctIds: $resource('genes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}, put: {}})
         };
 	}
 ]);

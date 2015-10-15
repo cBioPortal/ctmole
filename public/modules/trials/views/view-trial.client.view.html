@@ -1,23 +1,188 @@
+
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
-	<div class="page-header">
-		<h1 data-ng-bind="trial.nctId"></h1>
+	<span class="content_right_head" ng-click="showAllTitle()" ng-show="!showVar">{{trial.title}}</span>
+	<span class="content_all" ng-show="showVar">{{trial.title}}</span>
+
+	<div class="row">
+		<div class="col-sm-4 panel panel-default">
+			<div class="panel-body">
+				<h1>Overview</h1><br/>
+
+				<hr>
+
+				<h2><small><p>{{trial.nctId}}</p></small></h2>
+				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
+				<h2><small><p>{{trial.phase}}</p></small></h2>
+
+				<h2><small><p class="test" tooltip="Last Updated Time
+				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
+					<i ng-click="updateTrial()" class="fa fa-refresh"></i></p>
+				</small></h2>
+
+				<div ng-show="showAllDrugs" class="addBGColor">
+				<h2><small>
+					<p>{{trial.drugs[0].drugName}}<i ng-click="showDrugs()" class="fa fa-compress"></i></p>
+					<p ng-if="$index > 0" ng-repeat="x in trial.drugs">{{x.drugName}}</p>
+				</small>
+				</h2>
+				</div>
+
+				<div ng-show="!showAllDrugs">
+					<h2><small>
+						<p>{{trial.drugs[0].drugName}}<a ng-if="trial.drugs.length > 1" ng-click="showDrugs()">    and {{trial.drugs.length-1}} more</a></p>
+
+					</small>
+					</h2>
+				</div>
+
+
+
+				<div ng-show="showAll" class="addBGColor">
+				<h2><small>
+					<p>{{trial.countries[0]}}
+					<i ng-click="displayStyle()" class="fa fa-compress"></i>
+					</p>
+					<p ng-if="$index > 0" ng-repeat="x in trial.countries">{{x}}</p>
+				</small></h2>
+				</div>
+
+				<div ng-show="!showAll">
+					<h2><small>
+						<p>{{trial.countries[0]}}
+							<a  ng-if="trial.countries.length > 1" ng-click="displayStyle()"> and {{trial.countries.length-1}} more </a>
+						</p>
+
+					</small></h2>
+				</div>
+
+
+				<br/>
+
+				<label class="headerStyle">ALTERATIONS</label>
+
+
+				<div class="modal fade" id="myModal" role="dialog">
+					<div class="modal-dialog">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Add a new alteration</h4>
+							</div>
+							<div class="modal-body">
+								Gene: <input ng-model="newGene">
+								Alteration: <input ng-model="newAlteration">
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId()">Submit</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+
+				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
+
+				<div ng-if="trialAlterations.length > 0">
+					<span class="trialAddType" ng-repeat="x in trialAlterations">
+							<h2><small>{{x.gene + "     " + x.alteration}}
+								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
+					</span>
+				</div>
+				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
+				<br/><br/>
+
+				<div>
+					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
+					<h4 ng-if="trialMappings.completeStatus">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h4>
+				</div>
+				<br/><br/>
+			</div>
+		</div>
+		<div class="col-sm-8">
+
+			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="heading">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" href="#collapse" aria-expanded="true" aria-controls="collapseOne">
+								Purpose
+							</a>
+						</h4>
+					</div>
+					<div id="collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading">
+						<div class="panel-body">
+							<p data-ng-bind="trial.purpose"></p>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="headingNew">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" href="#collapseNew" aria-expanded="true" aria-controls="collapseOne">
+								ARM
+							</a>
+						</h4>
+					</div>
+					<div id="collapseNew" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNew">
+						<div class="panel-body">
+							<table class="table table-striped">
+
+								<tr ng-repeat="x in trial.arm_group">
+									<td>{{x.arm_group_type.toString()}}: {{x.arm_group_label.toString()}}</td>
+									<td>{{x.description.toString()}}</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+
+
+
+
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="headingOne">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								Inclusion Criteria
+							</a>
+						</h4>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+						<div class="panel-body">
+							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"inclusion")'></p>
+
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="headingTwo">
+						<h4 class="panel-title">
+							<a class="collapsed" role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								Exclusion Criteria
+							</a>
+						</h4>
+					</div>
+					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+						<div class="panel-body">
+							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"exclusion")'></p>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
 	</div>
-	<div class="pull-right" data-ng-show="authentication.user._id == trial.user._id">
-		<a class="btn btn-primary" href="/#!/trials/{{trial.nctId}}/edit">
-			<i class="glyphicon glyphicon-edit"></i>
-		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i>
-		</a>
-	</div>
-	<div>
-		<table class="table">
-			<tr ng-repeat="(key, value) in trial">
-				<td>{{key}}</td>
-				<td ng-bind-html="beautify(value)"></td>
-			</tr>
-		</table>
-	</div>
+
+
+	<br/><br/>
 	<small>
 		<em class="text-muted">
 			Powered by OncoKB

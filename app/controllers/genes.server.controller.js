@@ -125,9 +125,9 @@ exports.list = function(req, res) { Gene.find().exec(function(err, genes) {
 /**
  * Gene middleware
  */
-exports.geneByID = function(req, res, next, id) { Gene.findOne({'symbol': id}).populate('user', 'displayName').exec(function(err, gene) {
+exports.geneByID = function(req, res, next, symbol) { Gene.findOne({'symbol': symbol}).populate('user', 'displayName').exec(function(err, gene) {
 		if (err) return next(err);
-		if (! gene) return next(new Error('Failed to load Gene ' + id));
+		if (! gene) return next(new Error('Failed to load Gene ' + symbol));
 		req.gene = gene ;
 		next();
 	});
@@ -149,6 +149,22 @@ exports.geneByNctIds = function(req, res, next, ids) {
 	});
 };
 
+
+/**
+ * Gene middleware
+ */
+exports.geneByNctId = function(req, res, next, ids) {
+
+	if(!(ids instanceof Array)) {
+		ids = [ids];
+	}
+	Gene.find({nctIds: {$in: ids}},{'_id':0,'symbol':1}).populate('user', 'displayName').exec(function(err, genes) {
+		if (err) return next(err);
+		if (! genes) return next(new Error('Failed to load Gene ' + ids));
+		req.genes = genes ;
+		next();
+	});
+};
 /**
  * Gene authorization middleware
  */

@@ -33,6 +33,7 @@
 'use strict';
 
 //Alterations service used to communicate Alterations REST endpoints
+/*
 angular.module('alterations').factory('Alterations', ['$resource',
 	function($resource) {
 		return $resource('alterations/:alterationId', { alterationId: '@_id'
@@ -43,3 +44,34 @@ angular.module('alterations').factory('Alterations', ['$resource',
 		});
 	}
 ]);
+
+*/
+
+angular.module('alterations').factory('Alterations', ['$resource',
+	function($resource) {
+		return {
+			alterationByIds: $resource('alterations/:Ids', {Ids:[]}, {query: {isArray: true}}),
+
+			alteration: $resource('alterations/:alteration/:gene', { alteration: '@alteration',gene: '@gene'
+			}, {
+				update: {
+					method: 'PUT'
+				},
+				query: {isArray: true}
+			}),
+			searchEngine: $resource('alterationGeneral/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			})
+
+
+		};
+	}
+]);
+
+
+
+
+
+
+

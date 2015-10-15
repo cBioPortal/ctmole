@@ -41,11 +41,27 @@ module.exports = function(app) {
 		.get(mappings.list)
 		.post(users.requiresLogin, mappings.create);
 
-	app.route('/mappings/:mappingId')
-		.get(mappings.read)
-		.put(users.requiresLogin, mappings.hasAuthorization, mappings.update)
-		.delete(users.requiresLogin, mappings.hasAuthorization, mappings.delete);
+	app.route('/mappings/:Idvalue')
+		.get(mappings.mappingBynctId)
+		.put(users.requiresLogin, mappings.update)
+		.patch(users.requiresLogin, mappings.deleteAlt)
+		.post(users.requiresLogin, mappings.completeTrial);
+
+	app.route('/mappings/:alteration/:nctId')
+		.get(mappings.mappingBynctIdAlt)
+		.post(users.requiresLogin, mappings.create);
+
+	app.route('/mappingGeneral/:searchEngineKeyword')
+		.get(mappings.generalSearch);
+
+	app.route('/mappingStatus/:status')
+		.get(mappings.fetchByStatus);
+
+	app.route('/mappingGeneral/mappingAltIds/:altId')
+		.get(mappings.fetchByAltId);
 
 	// Finish by binding the Mapping middleware
-	app.param('mappingId', mappings.mappingByID);
+	//app.param('mappingId', mappings.mappingByID);
+
+
 };

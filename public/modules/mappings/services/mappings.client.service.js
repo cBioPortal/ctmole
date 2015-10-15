@@ -35,11 +35,49 @@
 //Mappings service used to communicate Mappings REST endpoints
 angular.module('mappings').factory('Mappings', ['$resource',
 	function($resource) {
-		return $resource('mappings/:mappingId', { mappingId: '@_id'
-		}, {
-			update: {
-				method: 'PUT'
-			}
-		});
+
+		return{
+
+			mapping: $resource('mappings/:alteration/:nctId',
+				{alteration: '@alteration', nctId: '@nctId'},
+				{
+					update: {
+						method: 'PUT'
+					},
+					query: {isArray: true}
+				}),
+			mappingSearch: $resource('mappings/:Idvalue',
+				{},
+				{
+					update: {
+						method: 'PUT'
+					},
+					deleteAlt: {
+						method: 'PATCH'
+					},
+					completeStatus: {
+						method: 'POST',
+						isArray: false
+					},
+					get: {
+						method: 'GET',
+						isArray: false
+					}
+				}
+			),
+			searchEngine: $resource('mappingGeneral/:searchEngineKeyword', {
+			}, {
+				'query':  {method:'GET', isArray:true}
+			}),
+			searchByStatus: $resource('mappingStatus/:status', {status: '@completeStatus'
+			}, {
+				'query':  {method:'GET', isArray:true}
+			}),
+			searchByAltId: $resource('mappingGeneral/mappingAltId/:altId', {}, {
+				'query':  {method:'GET', isArray:true}
+			})
+
+		};
+
 	}
 ]);

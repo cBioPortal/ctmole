@@ -28,125 +28,416 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
 // Trials controller
-angular.module('trials').controller('TrialsController', 
-	['$scope', 
-	'$stateParams', 
-	'$location', 
-	'Authentication', 
-	'Trials',
-	'Genes',
-	'Alterations',
-	'Cancertypes',
-	'Drugs',
-	function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs) {
-		$scope.authentication = Authentication;
-		$scope.nctId = '';
+angular.module('trials').controller('TrialsController',
+	['$scope',
+		'$stateParams',
+		'$location',
+		'Authentication',
+		'Trials',
+		'Genes',
+		'Alterations',
+		'Cancertypes',
+		'Drugs','Mappings',
+		function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs, Mappings) {
+			$scope.authentication = Authentication;
+			$scope.nctId = '';
+			$scope.drugHeader = ['Drug Name','Synonyms','FDA Approved','ATC Codes','Description'];
+			$scope.drugItems = ['drugName','synonyms','fdaApproved','atcCodes','description'];
+			$scope.tumorHeader = ['Name','Tissue','Clinical TrialKeywords'];
+			$scope.tumorItems = ['name','tissue','clinicalTrialKeywords'];
 
-		function syntaxHighlight(json) {
-			json = JSON.stringify(json, undefined, 4);
-		    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-		        var cls = 'number';
-		        if (/^"/.test(match)) {
-		            if (/:$/.test(match)) {
-		                cls = 'key';
-		            } else {
-		                cls = 'string';
-		            }
-		        } else if (/true|false/.test(match)) {
-		            cls = 'boolean';
-		        } else if (/null/.test(match)) {
-		            cls = 'null';
-		        }
-		        return '<span class="' + cls + '">' + match + '</span>';
-		    });
-		}
 
-		$scope.beautify = syntaxHighlight;
-		// Create new Trial
-		$scope.create = function() {
-			// Create new Trial object
-			var trial = new Trials ({
-				nctId: this.name
-			});
+			$scope.showVar = false;
+			$scope.alertShow = false;
+			$scope.showAll = false;
+			$scope.showAllDrugs = false;
 
-			// Redirect after save
-			trial.$save(function(response) {
-				$location.path('trials/' + response._id);
+			$scope.switchStatus = function()
+			{
 
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Remove existing Trial
-		$scope.remove = function( trial ) {
-			if ( trial ) { trial.$remove();
-
-				for (var i in $scope.trials ) {
-					if ($scope.trials [i] === trial ) {
-						$scope.trials.splice(i, 1);
+				Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function(u, getResponseHeaders){
+						console.log('found trial in the mapping table',u);
+						u.$completeStatus({Idvalue: $scope.trial.nctId},
+							function(response) {
+								console.log('success updated');
+								$scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+							}, function(response)  {
+								console.log('failed');
+							});
+					}, function(error){
+						console.log('error: ', error);
 					}
-				}
-			} else {
-				$scope.trial.$remove(function() {
-					$location.path('trials');
+				);
+
+			};
+			$scope.showAllTitle = function()
+			{
+				$scope.showVar = true;
+			};
+
+			$scope.showDrugs = function()
+			{
+				$scope.showAllDrugs = !$scope.showAllDrugs;
+			};
+
+			$scope.displayStyle = function()
+			{
+				$scope.showAll = !$scope.showAll;
+			};
+
+			// Create new Trial
+			$scope.create = function() {
+				// Create new Trial object
+				var trial = new Trials ({
+					nctId: this.name
 				});
+
+				// Redirect after save
+				trial.$save(function(response) {
+					$location.path('trials/' + response._id);
+
+					// Clear form fields
+					$scope.name = '';
+				}, function(errorResponse) {
+					$scope.error = errorResponse.data.message;
+				});
+			};
+
+			// Remove existing Trial
+			$scope.remove = function( trial ) {
+				if ( trial ) { trial.$remove();
+
+					for (var i in $scope.trials ) {
+						if ($scope.trials [i] === trial ) {
+							$scope.trials.splice(i, 1);
+						}
+					}
+				} else {
+					$scope.trial.$remove(function() {
+						$location.path('trials');
+					});
+				}
+			};
+
+			// Update existing Trial
+			$scope.update = function() {
+				var trial = $scope.trial ;
+
+				trial.$update(function() {
+					$location.path('trials/' + trial.nctId);
+				}, function(errorResponse) {
+					$scope.error = errorResponse.data.message;
+				});
+			};
+
+			// Find a list of Trials
+			$scope.find = function() {
+				$scope.trials = Trials.nctId.query();
+			};
+
+			function findAlterations(nctId)
+			{
+
+				var alteration_id = [];
+				Mappings.mappingSearch.get({
+						Idvalue: nctId
+					},
+					function(a)
+					{
+						for(var i = 0;i < a.alteration.length;i++)
+						{
+							alteration_id.push(a.alteration[i].alteration_Id);
+						}
+						if(alteration_id.length > 0)
+						{
+							$scope.trialAlterations = Alterations.alterationByIds.query({
+									Ids: alteration_id
+								}
+							);
+						}
+						else
+						{
+							$scope.trialAlterations = [];
+						}
+
+					},
+					function(b)
+					{
+						$scope.trialAlterations = [];
+						console.log('no alteration information for this trial ID')
+					});
+
 			}
-		};
+			// Find existing Trial
+			$scope.findOne = function() {
+				$scope.trial = Trials.nctId.get({
+					nctId: $stateParams.nctId
+				});
 
-		// Update existing Trial
-		$scope.update = function() {
-			var trial = $scope.trial ;
+				$scope.trialAlterations = findAlterations($stateParams.nctId);
 
-			trial.$update(function() {
-				$location.path('trials/' + trial.nctId);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+				//$scope.trialMappings = {completeStatus: false};
 
-		// Find a list of Trials
-		$scope.find = function() {
-			$scope.trials = Trials.nctId.query();
-		};
+				$scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+			};
 
-		// Find existing Trial
-		$scope.findOne = function() {
-			$scope.trial = Trials.nctId.get({ 
-				nctId: $stateParams.nctId
-			});
-		};
+			$scope.searchByKeyword = function() {
+				$scope.trials = Trials.keyword.query({
+					keyword: $scope.keyword
+				});
+				console.log($scope.trials);
+			};
 
-		$scope.searchByKeyword = function() {
-			$scope.trials = Trials.keyword.query({
-				keyword: $scope.keyword
-			});
-			console.log($scope.trials);
-		};
+			$scope.searchTrailBynctId = function() {
+				$location.path('trials/' + $scope.nctId);
+			};
 
-		$scope.searchTrailBynctId = function() {
-			$location.path('trials/' + $scope.nctId);
-		};
+			$scope.assignTrailBynctId = function() {
+				$scope.trial = Trials.nctId.get({
+					nctId: $scope.nctId
+				});
+				$scope.trialGenes = Genes.nctIds.get({
+					nctIds: [$scope.nctId]
+				});
+				console.log($scope.trialGenes);
+			};
 
-		$scope.assignTrailBynctId = function() {
-			$scope.trial = Trials.nctId.get({ 
-				nctId: $scope.nctId
-			});
-			$scope.trialGenes = Genes.nctIds.get({ 
-				nctIds: [$scope.nctId]
-			});
-			console.log($scope.trialGenes);
-		};
+			$scope.getDrugs = function(drugs) {
+				return drugs.map(function(e){return e.drugName;}).join(', ');
+			};
 
-		$scope.getDrugs = function(drugs) {
-			return drugs.map(function(e){return e.drugName;}).join(', ');
-		};
-	}
-]);
+			var getLists = function(str)
+			{
+				var slicedResult = [];
+
+				if((str.indexOf('1. ') !== -1 && (str.indexOf('1. ') < str.indexOf(' - ') ||  str.indexOf(' - ') === -1)))
+				{
+					slicedResult = str.replace(/(\d)[.]\s/g, '\u000B').split('\u000B');
+					slicedResult = _.map(slicedResult, function(value){
+						return value.slice(0,-1).trim();});
+					slicedResult =  _.compact(slicedResult);
+
+				}
+				else
+				{
+					slicedResult = str.split(' - ');
+					slicedResult = _.map(slicedResult, function(value){return value.trim();});
+					slicedResult =  _.compact(slicedResult);
+					//slicedResult = ["pear","watermelon","orange"];
+				}
+
+				slicedResult = _.map(slicedResult, function(element){return element.split('. ');});
+				slicedResult = _.flatten(slicedResult);
+				return slicedResult;
+			};
+
+			$scope.getEligibility = function(eligibility, elgType){
+				if(_.isUndefined(eligibility))
+				{
+					eligibility = '';
+				}
+				var m = eligibility.indexOf('Inclusion Criteria');
+				var n = eligibility.indexOf('Exclusion Criteria');
+				if((m === -1 && elgType === 'inclusion') || (n === -1 && elgType === 'exclusion'))
+				{
+					return '';
+				}
+				else
+				{
+					m += 20;
+					n += 20;
+
+					var output = '<ol>';
+
+					if(elgType === 'inclusion')
+					{
+						var inEligi = eligibility.substr(m,n-m-20);
+						var inEligiArray = getLists(inEligi);
+						_.each(inEligiArray,function(element){output = output + '<li>' + element + '</li>';});
+					}
+					else if(elgType === 'exclusion')
+					{
+						var exEligi = eligibility.substr(n);
+						var exEligiArray = getLists(exEligi);
+						_.each(exEligiArray,function(element){output = output + '<li>' + element + '</li>';});
+					}
+
+					output += '</ol>';
+					return output;
+				}
+
+			};
+
+
+			//Add new connection between alterations and current trial
+			$scope.addAlterationBynctId = function() {
+				Alterations.alteration.get({alteration: $scope.newAlteration, gene: $scope.newGene}, function (u, getResponseHeaders) {
+
+					console.log('alteration existed...');
+					Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+						function(a){
+							console.log('nctId record exist in mapping table...', a);
+							Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
+								function(mapRecord)
+								{
+									console.log('nothing else need to do', mapRecord);
+								},
+								function()
+								{
+									console.log('update alteration array');
+									a.$update({Idvalue: u._id},
+										function(){
+											console.log('successfully update alteration array');
+											$scope.trialAlterations = findAlterations($scope.trial.nctId);
+										},
+										function(){
+											console.log('update alteration array failed');
+										}
+									);
+								}
+							);
+
+						},
+						function(b){
+
+							//insert new mapping record
+							console.log('nctId record not exist in mapping table...');
+
+							Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
+								function()
+								{
+									console.log('success insert record in mapping table');
+									$scope.trialAlterations = findAlterations($scope.trial.nctId);
+								},
+								function(error)
+								{
+									console.log('did not insert successfully because of ', error);
+								}
+							);
+						}
+					);
+
+
+				}, function (getError) {
+					// the alteration didn't exist, so insert to both alteration and mapping, and update trial alteration information
+
+					console.log('alteration did not exist');
+
+					Alterations.alteration.save({alteration: $scope.newAlteration ,gene: $scope.newGene},
+						function(u, getResponseHeaders){
+							console.log('save alteration successfully');
+							//search mapping record by nctId
+							//also need to check if nctId record already exist or not like the above block
+							Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+								function(a){
+									console.log('nctId record exist in mapping table...', a);
+									Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
+										function(mapRecord)
+										{
+											console.log('nothing else need to do', mapRecord);
+										},
+										function()
+										{
+											console.log('update alteration array');
+											a.$update({Idvalue: u._id},
+												function(){
+													console.log('successfully update alteration array');
+													$scope.trialAlterations = findAlterations($scope.trial.nctId);
+												},
+												function(){
+													console.log('update alteration array failed');
+												}
+											);
+										}
+									);
+
+								},
+								function(b){
+
+									//insert new mapping record
+									console.log('nctId record not exist in mapping table...');
+
+									Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
+										function()
+										{
+											console.log('success insert record in mapping table');
+											$scope.trialAlterations = findAlterations($scope.trial.nctId);
+										},
+										function(error)
+										{
+											console.log('did not insert successfully because of ', error);
+										}
+									);
+								}
+							);
+
+
+						},function(){
+							console.log('failed to save alteration ');
+						}
+					);
+
+				});
+			};
+			$scope.deleteAlteration = function(alteration, gene) {
+				Alterations.alteration.get({alteration: alteration, gene: gene},
+					function(a)
+					{
+						console.log('find this alteration');
+						Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+							function(c)
+							{
+								console.log('find in mapping record', a._id);
+								c.$deleteAlt({Idvalue: a._id},
+									function(e)
+									{
+										console.log('delete successfully');
+										$scope.trialAlterations = findAlterations($scope.trial.nctId);
+									},
+									function(f)
+									{
+										console.log('delete failed',f);
+									}
+								);
+							},
+							function(d)
+							{
+								console.log('not find mapping record');
+							}
+						)
+					},
+					function(b)
+					{
+						console.log('not find this alteration');
+					}
+				)
+			};
+
+			$scope.updateTrial = function()
+			{
+
+				Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function(u, getResponseHeaders){
+
+						u.$update(function(response) {
+							$scope.trial = Trials.nctId.get({
+								nctId: $stateParams.nctId
+							});
+							console.log('success updated');
+						}, function(response)  {
+							console.log('failed');
+						});
+					}, function(error){
+						console.log('error: ', error);
+					}
+				);
+
+
+			};
+
+		}
+	]);
