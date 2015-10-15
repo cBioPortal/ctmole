@@ -162,7 +162,11 @@ exports.hasAuthorization = function(req, res, next) {
 
 //find mapping record by nctId
 
-exports.mappingBynctId = function(req, res, next) { Mapping.findOne({nctId: req.params.Idvalue}).populate('user', 'displayName').exec(function(err, mapping) {
+exports.mappingBynctId = function(req, res, next) {
+	console.log('---------------------');
+	console.log('MappingBynctId---', req.params.Idvalue);
+	console.log('---------------------');
+	Mapping.findOne({nctId: req.params.Idvalue}).populate('user', 'displayName').exec(function(err, mapping) {
 	if (err) return next(err);
 	if (! mapping)
 	{
