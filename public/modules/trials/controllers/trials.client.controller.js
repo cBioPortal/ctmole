@@ -145,26 +145,30 @@ angular.module('trials').controller('TrialsController',
 
 				var alteration_id = [];
 				Mappings.mappingSearch.get({
-						Idvalue: nctId
+						Idvalue: nctId,
 					},
 					function(a)
 					{
-						for(var i = 0;i < a.alteration.length;i++)
-						{
-							alteration_id.push(a.alteration[i].alteration_Id);
-						}
-						if(alteration_id.length > 0)
-						{
-							$scope.trialAlterations = Alterations.alterationByIds.query({
-									Ids: alteration_id
-								}
-							);
-						}
-						else
-						{
+						if(a.alteration) {
+							for(var i = 0;i < a.alteration.length;i++)
+							{
+								alteration_id.push(a.alteration[i].alteration_Id);
+							}
+							if(alteration_id.length > 0)
+							{
+								$scope.trialAlterations = Alterations.alterationByIds.query({
+										Ids: alteration_id
+									}
+								);
+							}
+							else
+							{
+								$scope.trialAlterations = [];
+							}
+						}else{
 							$scope.trialAlterations = [];
+							console.log('no alteration information for this trial ID')
 						}
-
 					},
 					function(b)
 					{
@@ -278,87 +282,37 @@ angular.module('trials').controller('TrialsController',
 			$scope.addAlterationBynctId = function() {
 				Alterations.alteration.get({alteration: $scope.newAlteration, gene: $scope.newGene}, function (u, getResponseHeaders) {
 
-					console.log('alteration existed...');
-					Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-						function(a){
-							console.log('nctId record exist in mapping table...', a);
-							Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
-								function(mapRecord)
-								{
-									console.log('nothing else need to do', mapRecord);
-								},
-								function()
-								{
-									console.log('update alteration array');
-									a.$update({Idvalue: u._id},
-										function(){
-											console.log('successfully update alteration array');
-											$scope.trialAlterations = findAlterations($scope.trial.nctId);
-										},
-										function(){
-											console.log('update alteration array failed');
-										}
-									);
-								}
-							);
+					if(u._id) {
 
-						},
-						function(b){
-
-							//insert new mapping record
-							console.log('nctId record not exist in mapping table...');
-
-							Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
-								function()
-								{
-									console.log('success insert record in mapping table');
-									$scope.trialAlterations = findAlterations($scope.trial.nctId);
-								},
-								function(error)
-								{
-									console.log('did not insert successfully because of ', error);
-								}
-							);
-						}
-					);
-
-
-				}, function (getError) {
-					// the alteration didn't exist, so insert to both alteration and mapping, and update trial alteration information
-
-					console.log('alteration did not exist');
-
-					Alterations.alteration.save({alteration: $scope.newAlteration ,gene: $scope.newGene},
-						function(u, getResponseHeaders){
-							console.log('save alteration successfully');
-							//search mapping record by nctId
-							//also need to check if nctId record already exist or not like the above block
-							Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-								function(a){
+						console.log('alteration existed...');
+						Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+							function(a){
+								if(a._id) {
 									console.log('nctId record exist in mapping table...', a);
 									Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
 										function(mapRecord)
 										{
-											console.log('nothing else need to do', mapRecord);
+											if(mapRecord._id) {
+												console.log('nothing else need to do', mapRecord);
+											}else{
+												console.log('update alteration array');
+												a.$update({Idvalue: u._id},
+													function(){
+														console.log('successfully update alteration array');
+														$scope.trialAlterations = findAlterations($scope.trial.nctId);
+													},
+													function(){
+														console.log('update alteration array failed');
+													}
+												);
+											}
 										},
 										function()
 										{
-											console.log('update alteration array');
-											a.$update({Idvalue: u._id},
-												function(){
-													console.log('successfully update alteration array');
-													$scope.trialAlterations = findAlterations($scope.trial.nctId);
-												},
-												function(){
-													console.log('update alteration array failed');
-												}
-											);
+
 										}
 									);
-
-								},
-								function(b){
-
+								}else {
 									//insert new mapping record
 									console.log('nctId record not exist in mapping table...');
 
@@ -374,13 +328,83 @@ angular.module('trials').controller('TrialsController',
 										}
 									);
 								}
-							);
+
+							},
+							function(b){
 
 
-						},function(){
-							console.log('failed to save alteration ');
-						}
-					);
+							}
+						);
+
+					}else {
+						Alterations.alteration.save({alteration: $scope.newAlteration ,gene: $scope.newGene},
+							function(u, getResponseHeaders){
+								console.log('save alteration successfully');
+								//search mapping record by nctId
+								//also need to check if nctId record already exist or not like the above block
+								Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
+									function(a){
+										if(a._id) {
+											console.log('nctId record exist in mapping table...', a);
+											Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
+												function(mapRecord)
+												{
+													if(mapRecord._id) {
+														console.log('nothing else need to do', mapRecord);
+													}else{
+														console.log('update alteration array');
+														a.$update({Idvalue: u._id},
+															function(){
+																console.log('successfully update alteration array');
+																$scope.trialAlterations = findAlterations($scope.trial.nctId);
+															},
+															function(){
+																console.log('update alteration array failed');
+															}
+														);
+													}
+												},
+												function()
+												{
+
+												}
+											);
+										}else {
+											//insert new mapping record
+											console.log('nctId record not exist in mapping table...');
+
+											Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
+												function()
+												{
+													console.log('success insert record in mapping table');
+													$scope.trialAlterations = findAlterations($scope.trial.nctId);
+												},
+												function(error)
+												{
+													console.log('did not insert successfully because of ', error);
+												}
+											);
+										}
+									},
+									function(b){
+
+
+									}
+								);
+
+
+							},function(){
+								console.log('failed to save alteration ');
+							}
+						);
+					}
+
+				}, function (getError) {
+					// the alteration didn't exist, so insert to both alteration and mapping, and update trial alteration information
+
+					console.log('alteration did not exist');
+
+
 
 				});
 			};

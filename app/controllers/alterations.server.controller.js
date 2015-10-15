@@ -130,11 +130,13 @@ exports.list = function(req, res) { Alteration.find().sort('-created').populate(
 exports.alterationByID = function(req, res) {
 	var altArr = req.params.Ids.split(",");
 	var newArr = [];
+	console.log(altArr);
 	for(var i = 0;i < altArr.length;i++)
 	{
 		newArr.push(ObjectId(altArr[i]));
 	}
 
+	console.log(newArr);
 
 	Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function(err, alterations) {
 
@@ -150,12 +152,16 @@ exports.alterationByID = function(req, res) {
 };
 
 
-exports.alterationByTwoIDs = function(req, res, next) { Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
-	if (err) return next(err);
-	if (! alteration) return next(new Error('Failed to find Alteration '));
-	req.alteration = alteration ;
-	res.jsonp(req.alteration);
-	next();
+exports.alterationByTwoIDs = function(req, res) {
+	Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
+	//if (err) return next(err);
+	if (alteration) {
+		req.alteration = alteration ;
+		res.jsonp(req.alteration);
+	}else {
+		res.jsonp();
+	}
+	//next();
 });
 };
 

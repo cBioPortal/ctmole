@@ -162,7 +162,8 @@ exports.hasAuthorization = function(req, res, next) {
 
 //find mapping record by nctId
 
-exports.mappingBynctId = function(req, res, next) { Mapping.findOne({nctId: req.params.Idvalue}).populate('user', 'displayName').exec(function(err, mapping) {
+exports.mappingBynctId = function(req, res, next, Idvalue) {
+	Mapping.findOne({nctId: Idvalue}).populate('user', 'displayName').exec(function(err, mapping) {
 	if (err) return next(err);
 	if (! mapping)
 	{
@@ -170,18 +171,22 @@ exports.mappingBynctId = function(req, res, next) { Mapping.findOne({nctId: req.
 		return next();
 	}
 	req.mapping = mapping ;
-	res.jsonp(req.mapping);
+	//res.jsonp(req.mapping);
 	next();
 });
 };
 
-exports.mappingBynctIdAlt = function(req, res, next) { Mapping.findOne({nctId: req.params.nctId, alteration: { $in: [{alteration_Id: req.params.alteration, status: 'manually'} ] }}).populate('user', 'displayName').exec(function(err, mapping) {
+exports.mappingBynctIdAlt = function(req, res) {
 
-	if (err) return next(err);
-	if (! mapping) return next(new Error('Failed to find Mapping '));
-	req.mapping = mapping ;
-	res.jsonp(req.mapping);
-	next();
+	Mapping.findOne({nctId: req.params.nctId, alteration: { $elemMatch: {alteration_Id: req.params.alteration, status: 'manually'}}}).populate('user', 'displayName').exec(function(err, mapping) {
+
+		//if (err) return next(err);
+	if (! mapping) {
+		res.jsonp();
+	}else {
+		res.jsonp(mapping);
+	}
+	//next();
 });
 };
 
