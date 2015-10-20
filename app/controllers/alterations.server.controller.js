@@ -28,7 +28,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
@@ -36,164 +36,217 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Alteration = mongoose.model('Alteration'),
-	_ = require('lodash');
+    errorHandler = require('./errors'),
+    Alteration = mongoose.model('Alteration'),
+    Mapping = mongoose.model('Mapping'),
+    _ = require('lodash');
 
-var ObjectId = mongoose.Types.ObjectId; ;
+var ObjectId = mongoose.Types.ObjectId;
 
 /**
  * Create a Alteration
  */
-exports.create = function(req, res) {
-	//var alteration = new Alteration(req.body);
-	var alteration = new Alteration({'alteration': req.body.alteration.toUpperCase(), 'gene': req.body.gene.toUpperCase()});
-	alteration.user = req.user;
+exports.create = function (req, res) {
+    //var alteration = new Alteration(req.body);
+    var alteration = new Alteration({
+        'alteration': req.body.alteration.toUpperCase(),
+        'gene': req.body.gene.toUpperCase()
+    });
+    alteration.user = req.user;
 
-	alteration.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(alteration);
-		}
-	});
+    alteration.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(alteration);
+        }
+    });
 };
 
 /**
  * Show the current Alteration
  */
-exports.read = function(req, res) {
-	res.jsonp(req.alteration);
+exports.read = function (req, res) {
+    res.jsonp(req.alteration);
 };
 
 
-exports.readAlterations = function(req, res) {
-	res.jsonp(req.alterations);
+exports.readAlterations = function (req, res) {
+    res.jsonp(req.alterations);
 };
 
 /**
  * Update a Alteration
  */
-exports.update = function(req, res) {
-	var alteration = req.alteration ;
+exports.update = function (req, res) {
+    var alteration = req.alteration;
 
-	alteration = _.extend(alteration , req.body);
+    alteration = _.extend(alteration, req.body);
 
-	alteration.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(alteration);
-		}
-	});
+    alteration.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(alteration);
+        }
+    });
 };
 
 /**
  * Delete an Alteration
  */
-exports.delete = function(req, res) {
-	var alteration = req.alteration ;
+exports.delete = function (req, res) {
+    var alteration = req.alteration;
 
-	alteration.remove(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(alteration);
-		}
-	});
+    alteration.remove(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(alteration);
+        }
+    });
 };
 
 /**
  * List of Alterations
  */
-exports.list = function(req, res) { Alteration.find().sort('-created').populate('user', 'displayName').exec(function(err, alterations) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(alterations);
-		}
-	});
+exports.list = function (req, res) {
+    Alteration.find().sort('-created').populate('user', 'displayName').exec(function (err, alterations) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(alterations);
+        }
+    });
 };
 
 /**
  * Alteration middleware
  */
 
-exports.alterationByID = function(req, res) {
-	var altArr = req.params.Ids.split(",");
-	var newArr = [];
-	console.log(altArr);
-	for(var i = 0;i < altArr.length;i++)
-	{
-		newArr.push(ObjectId(altArr[i]));
-	}
+exports.alterationByID = function (req, res) {
+    var altArr = req.params.Ids.split(",");
+    var newArr = [];
+    console.log(altArr);
+    for (var i = 0; i < altArr.length; i++) {
+        newArr.push(ObjectId(altArr[i]));
+    }
 
-	console.log(newArr);
+    console.log(newArr);
 
-	Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function(err, alterations) {
+    Alteration.find({'_id': {$in: newArr}}).populate('user', 'displayName').exec(function (err, alterations) {
 
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(alterations);
-		}
-	});
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(alterations);
+        }
+    });
 
 };
 
 
-exports.alterationByTwoIDs = function(req, res) {
-	Alteration.findOne({'alteration': req.params.alteration, 'gene': req.params.gene}).populate('user', 'displayName').exec(function(err, alteration) {
-	//if (err) return next(err);
-	if (alteration) {
-		req.alteration = alteration ;
-		res.jsonp(req.alteration);
-	}else {
-		res.jsonp();
-	}
-	//next();
-});
+exports.alterationByTwoIDs = function (req, res) {
+    Alteration.findOne({
+        'alteration': req.params.alteration,
+        'gene': req.params.gene
+    }).populate('user', 'displayName').exec(function (err, alteration) {
+        //if (err) return next(err);
+        if (alteration) {
+            req.alteration = alteration;
+            res.jsonp(req.alteration);
+        } else {
+            res.jsonp();
+        }
+        //next();
+    });
 };
 
 /**
  * Alteration authorization middleware
  */
-exports.hasAuthorization = function(req, res, next) {
-	if (req.alteration.user.id !== req.user.id) {
-		return res.status(403).send('User is not authorized');
-	}
-	next();
+exports.hasAuthorization = function (req, res, next) {
+    if (req.alteration.user.id !== req.user.id) {
+        return res.status(403).send('User is not authorized');
+    }
+    next();
 };
 
-exports.generalSearch = function(req, res) {
-	var keywords = req.params.searchEngineKeyword;
-	var keywordsArr = keywords.split(",");
-	var finalStr = '';
-	var tempStr = '';
-	for(var i = 0;i < keywordsArr.length;i++)
-	{
-		tempStr = '\"' + keywordsArr[i].trim() + '\"';
-		finalStr += tempStr;
-	}
+exports.generalSearch = function (req, res) {
+    var keywords = req.params.searchEngineKeyword;
+    var keywordsArr = keywords.split(",");
+    var finalStr = '';
+    var tempStr = '';
+    for (var i = 0; i < keywordsArr.length; i++) {
+        tempStr = '\"' + keywordsArr[i].trim() + '\"';
+        finalStr += tempStr;
+    }
 
-	Alteration.find( { $text: { $search: finalStr} }).exec(function(err, alterations) {
+    Alteration.find({$text: {$search: finalStr}}).exec(function (err, alterations) {
 
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(alterations);
-		}
-	});
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(alterations);
+        }
+    });
 };
+
+
+exports.addNewAlteration = function (req, res) {
+
+    var result = '';
+    console.log(req.params, req.body);
+    Alteration.findOne({
+        'alteration': req.params.alteration.toUpperCase(),
+        'gene': req.params.gene.toUpperCase()
+    }).populate('user', 'displayName').exec(function (err, alteration) {
+
+        if (alteration) {
+            console.log('found record');
+
+            Mapping.findOne({nctId: req.params.nctId}).populate('user', 'displayName').exec(function (err, mapping) {
+                if (err) return next(err);
+                if (!mapping) {
+                    console.log('Mapping record not exist yet', (alteration._id).valueOf());
+                    var mapping = new Mapping({
+                        nctId: req.params.nctId,
+                        alteration: [{alteration_Id: (alteration._id).valueOf(), status: 'manually'}],
+                        completeStatus: false
+                    });
+                    mapping.user = req.user;
+                    mapping.save(function (err) {
+                        if (err) {
+                            console.log('failed to create mapping record');
+                        } else {
+                            console.log('create mapping record successfully');
+                        }
+                    });
+                }
+                else {
+                    result = 'third';
+                }
+
+            });
+
+            result = 'first';
+        } else {
+            console.log('not found record');
+            result = 'second';
+        }
+        res.jsonp(result);
+    });
+};
+

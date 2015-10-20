@@ -85,6 +85,9 @@ var TrialSchema = new Schema({
 	},
 	lastUpdatedStatusDate:{
 		type: String
+	},
+	alterationsFetched:{
+		type: Array
 	}
 });
 
