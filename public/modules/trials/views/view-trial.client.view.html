@@ -14,10 +14,10 @@
 				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
 				<h2><small><p>{{trial.phase}}</p></small></h2>
 
-				<h2><small><p class="test" tooltip="Last Updated Time
+				<!--<h2><small><p class="test" tooltip="Last Updated Time
 				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
-					<i ng-click="updateTrial()" class="fa fa-refresh"></i></p>
-				</small></h2>
+				 	<i ng-click="updateTrial()" class="fa fa-refresh"></i> </p>
+				</small></h2>-->
 
 				<div ng-show="showAllDrugs" class="addBGColor">
 				<h2><small>
@@ -55,7 +55,7 @@
 					</small></h2>
 				</div>
 
-
+				<a href="https://clinicaltrials.gov/ct2/results?term=NCT00725062&Search=Search"><h2><small>View In ClinicalTrials.gov</small></h2></a>
 				<br/>
 
 				<label class="headerStyle">ALTERATIONS</label>
@@ -84,22 +84,31 @@
 				</div>
 
 
-				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
+				<p ng-show="trial.alterationsFetched.length == 0 && true || false">No information available</p>
 
-				<div ng-if="trialAlterations.length > 0">
-					<span class="trialAddType" ng-repeat="x in trialAlterations">
-							<h2><small>{{x.gene + "     " + x.alteration}}
+				<div ng-if="trial.alterationsFetched.length > 0">
+					<span class="trialAddType" ng-repeat="x in trial.alterationsFetched">
+							<h2 class="fixMargin"><small>{{x.gene + "     " + x.alteration}}
 								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
 					</span>
 				</div>
 				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
 				<br/><br/>
 
+				<div class="form-group">
+					<label for="comment" class="headerStyle">Comment </label>
+					<button type="button" class="btn btn-primary btn-xs leftMargin">Save</button>
+					<textarea class="form-control" rows="5" id="comment"></textarea>
+				</div>
+
 				<div>
 					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
 					<h4 ng-if="trialMappings.completeStatus">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h4>
 				</div>
-				<br/><br/>
+
+
+
+
 			</div>
 		</div>
 		<div class="col-sm-8">

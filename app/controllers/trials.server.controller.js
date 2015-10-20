@@ -38,10 +38,15 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors'),
 	Trial = mongoose.model('clinicaltrial'),
+	Mapping = mongoose.model('Mapping'),
+	Alteration = mongoose.model('Alteration'),
 	_ = require('lodash');
+
+var ObjectId = mongoose.Types.ObjectId;
 
 var request = require('request');
 var parseString = require('xml2js').parseString;
+
 
 /**
  * Create a Trial
@@ -130,8 +135,8 @@ exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recr
 	});
 };
 
-exports.generalSearch = function(req, res) {
-	var keywords = req.params.searchEngineKeyword; console.log('hereing...', keywords );
+exports.generalSearch = function(req, res, searchEngineKeyword) {
+	var keywords = req.params.searchEngineKeyword;
 
 	var keywordsArr = keywords.split(",");
 	var finalStr = '';
@@ -141,7 +146,7 @@ exports.generalSearch = function(req, res) {
 		tempStr = '\"' + keywordsArr[i].trim() + '\"';
 		finalStr += tempStr;
 	}
-
+	var counter = 0;
 	Trial.find( { $text: { $search: finalStr } }).exec(function(err, trials) {
 
 	if (err) {
@@ -149,10 +154,68 @@ exports.generalSearch = function(req, res) {
 			message: errorHandler.getErrorMessage(err)
 		});
 	} else {
-		res.jsonp(trials);
+		if (trials.length === 0) {
+			console.log('no trials found');
+			res.jsonp();
+		}
+		else {
+		_.each(trials, function (trial) {
+
+			Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
+
+				if (mapErr) {
+					console.log('error happens when searching for mapping record');
+				}
+				else if (!mapping) {
+					counter++;
+					console.log('Failed to find Mapping ');
+					if (counter === trials.length) {
+						console.log('return from here mapping');
+						res.jsonp(trials);
+					}
+				}
+				else {
+
+					Alteration.find({
+						_id: {
+							$in: mapping.alteration.map(function (e) {
+								return ObjectId(e.alteration_Id);
+							})
+						}
+					}).exec(function (altErr, alteration) {
+						counter++;
+						if (altErr) {
+							console.log('error happens when searching for alteration record');
+						}
+						else if (!alteration) {
+							console.log('Failed to find Alteration ');
+							if (counter === trials.length) {
+								console.log('returned from here, last trial has no alteration');
+								res.jsonp(trials);
+							}
+						}
+						else {
+
+							trial.alterationsFetched = alteration;
+							if (counter === trials.length) {
+								console.log('return from here, last trial has alterations');
+								res.jsonp(trials);
+							}
+						}
+
+					});
+
+				}
+
+			});
+
+		});
+	}
 	}
 });
 };
+
+
 
 exports.search = function(req, res) {
 	res.jsonp(req.trials);
@@ -210,8 +273,56 @@ exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).
 			});
 
 		}
-		req.trial = trial;
-		next();
+
+		else
+		{
+				Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
+
+					if (mapErr) {
+						console.log('error happens when searching for mapping record');
+					}
+					else if (!mapping) {
+
+						console.log('Failed to find Mapping ');
+						req.trial = trial;
+						next();
+					}
+					else {
+
+						Alteration.find({
+							_id: {
+								$in: mapping.alteration.map(function (e) {
+									return ObjectId(e.alteration_Id);
+								})
+							}
+						}).exec(function (altErr, alteration) {
+
+							if (altErr) {
+								console.log('error happens when searching for alteration record');
+							}
+							else if (!alteration) {
+								console.log('Failed to find Alteration ');
+								console.log('returned from here, last trial has no alteration');
+								req.trial = trial;
+								next();
+							}
+							else {
+
+								trial.alterationsFetched = alteration;
+								console.log('return from here, last trial has alterations');
+								req.trial = trial;
+								next();
+							}
+
+						});
+
+					}
+
+				});
+
+
+		}
+
 
 	});
 };

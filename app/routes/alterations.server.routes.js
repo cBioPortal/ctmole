@@ -53,7 +53,11 @@ module.exports = function(app) {
 		.delete(users.requiresLogin, alterations.delete);
 
 	app.route('/alterationGeneral/:searchEngineKeyword')
-		.get(alterations.generalSearch)
+		.get(alterations.generalSearch);
+
+
+	app.route('/addAlteration/:alteration/:gene/:nctId')
+		.get(users.requiresLogin, alterations.addNewAlteration);
 
 	// Finish by binding the Alteration middleware
 	//app.param('Ids', alterations.alterationByID);
