@@ -101,10 +101,11 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 },
                 function (data) {
                     if (data.length > 0) {
+                        var tempcomTrialIds = [];
                         for (var i = 0; i < data.length; i++) {
-                            $scope.comTrialIds.push(data[i].nctId);
+                            tempcomTrialIds.push(data[i].nctId);
                         }
-
+                        $scope.comTrialIds = tempcomTrialIds;
                     }
                 },
                 function (error) {
