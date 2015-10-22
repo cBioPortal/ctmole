@@ -31,8 +31,9 @@
  */
 
 
-angular.module('core').controller('HomeController', ['$scope', '$location', 'Authentication', 'Trials', 'Mappings', 'Alterations',
-    function ($scope, $location, Authentication, Trials, Mappings, Alterations) {
+angular.module('core').controller('HomeController', ['$scope', '$location', '$rootScope','Authentication', 'Trials', 'Mappings', 'Alterations',
+    function ($scope, $location, $rootScope, Authentication, Trials, Mappings, Alterations) {
+
         // This provides Authentication context.
         $scope.authentication = Authentication;
         $scope.loading = false;
@@ -40,7 +41,9 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
         $scope.showRefine = false;
         $scope.allCountries = false;
         $scope.firstSearch = true;
+        $scope.refineFlag = false;
 
+        $scope.mutations = [];
         $scope.countryCriteria = ['United States'];
         $scope.criteria = [{type: 'country', value: ['United States']}];
         $scope.types = ['country'];
@@ -48,13 +51,15 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
         $scope.mutationCriteria = [];
         $scope.trialsNctIds = [];
         $scope.comTrialIds = [];
+        $scope.status = 1;
 
 
-        function endSearch() {
+
+    function endSearch() {
             $scope.loading = false;
             $scope.showResult = true;
             $scope.showRefine = true;
-            console.log($location);
+
         }
 
         function compare(a, b) {
@@ -83,6 +88,29 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
                 }
             });
 
+            $location.search('country', ['United States']);
+        }
+
+
+
+        //search in the mapping table
+        function searchMappingByStatus() {
+
+            Mappings.searchByStatus.query({
+                    status: true
+                },
+                function (data) {
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            $scope.comTrialIds.push(data[i].nctId);
+                        }
+
+                    }
+                },
+                function (error) {
+                    console.log('No hits in the mapping table');
+                }
+            );
         }
         $scope.search = function (searchStr) {
             var searchKeyword = $scope.searchKeyword;
@@ -124,6 +152,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
                                 if ($scope.mutationIDs.indexOf(value._id) == -1) {
                                     $scope.mutationIDs.push(value._id);
                                     $scope.mutations.push({
+                                        mutationID: value._id,
                                         gene: value.gene,
                                         alteration: value.alteration,
                                         nctIds: [data[i].nctId]
@@ -154,7 +183,22 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
                         $scope.trials = data;
 
                         endSearch();
-                    }
+
+                        $scope.previousSearch = $scope.searchKeyword;
+                        $location.search('query', $scope.searchKeyword);
+                        if($scope.refineFlag)
+                        {
+                            refine();
+                        }
+                        else
+                        {
+                            $location.search('country', 'United States');
+                            $location.search('status', 'all');
+                        }
+
+                        }
+
+
 
 
                 },
@@ -164,27 +208,163 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
                     endSearch();
                 }
             );
-            //search in the mapping table
-            function searchMappingByStatus() {
 
-                Mappings.searchByStatus.query({
-                        status: true
-                    },
-                    function (data) {
-                        if (data.length > 0) {
-                            for (var i = 0; i < data.length; i++) {
-                                $scope.comTrialIds.push(data[i].nctId);
-                            }
-
-                        }
-                    },
-                    function (error) {
-                        console.log('No hits in the mapping table');
-                    }
-                );
-            }
 
         };
+
+        function refine()
+        {
+            var location = $location.search();
+            var tempCriteria = [];
+            var tempTypes = [];
+
+
+            $scope.chosenGenes = [];
+            $scope.chosenMutations = [];
+            $scope.tumor = [];
+            $scope.status = 1;
+            console.log('here are the location ', location);
+            for(var property in location){
+                if(property !== 'query')
+                {
+                    if(property === 'status')
+                    {
+                        switch(location[property]){
+                            case 'all':
+                                $scope.status = 1;
+                                break;
+                            case 'incomplete':
+                                $scope.status = 2;
+                                break;
+                            case 'complete':
+                                $scope.status = 3;
+                                break;
+                        };
+                    }
+
+
+                    if(Array.isArray(location[property]))
+                    {
+                        if(property === 'mutation')
+                        {
+                            var temAlteration = [];
+                            _.each($scope.mutations, function(alterationItem){
+                                if(location[property].indexOf(alterationItem.mutationID) !== -1 )
+                                {
+                                    temAlteration.push(alterationItem);
+                                }
+                            });
+                            tempCriteria.push({type: property, value: temAlteration });
+                        }
+                        else
+                        {
+                            tempCriteria.push({type: property, value: location[property]});
+                        }
+
+                        if(property === 'tumor'){
+                            $scope.tumor = location[property];
+                        }
+                        else if(property === 'gene'){
+                            $scope.chosenGenes = location[property];
+                        }
+                        else if(property === 'mutation'){
+                            $scope.chosenMutations = location[property];
+                        }
+                        else if(property === 'country'){
+                            $scope.country = location[property];
+                        }
+                    }
+                    else
+                    {
+                        if(property === 'mutation')
+                        {
+                            var temAlteration = [];
+                            _.each($scope.mutations, function(alterationItem){
+                                if(location[property] === alterationItem.mutationID )
+                                {
+                                    temAlteration.push(alterationItem);
+                                }
+                            });
+                            tempCriteria.push({type: property, value: temAlteration });
+                        }
+                        else
+                        {
+                            tempCriteria.push({type: property, value: [location[property]]});
+                        }
+
+                        if(property === 'tumor'){
+                            $scope.tumor = [location[property]];
+                        }
+                        else if(property === 'gene'){
+                            $scope.chosenGenes = [location[property]];
+                        }
+                        else if(property === 'mutation'){
+                            $scope.chosenMutations = [location[property]];
+                        }
+                        else if(property === 'country'){
+                            $scope.country = [location[property]];
+                        }
+
+                    }
+
+                    if($scope.country.toString() === "United States")
+                    {
+                        document.getElementById("USRadio").checked = true;
+                        document.getElementById("countriesRadio").checked = false;
+                    }
+                    else
+                    {
+                        document.getElementById("USRadio").checked = false;
+                        document.getElementById("countriesRadio").checked = true;
+                        $scope.allCountries = true;
+                    }
+
+                    tempTypes.push(property);
+
+
+
+
+
+                }
+            }
+            $scope.criteria = tempCriteria;
+            $scope.types = tempTypes;
+            console.log('here is the criteria', $scope.country);
+        }
+
+        $scope.find = function(){
+
+
+            var location = $location.search();
+            if(location.query !== undefined)
+            {
+                $scope.searchKeyword = location.query;
+                $scope.search();
+
+                $scope.refineFlag = true;
+
+            }
+        }
+
+        $rootScope.$on("$locationChangeSuccess", function (event) {
+            var location = $location.search();
+            if(location.query !== undefined)
+            {
+                if($scope.previousSearch !== location.query)
+                {
+                    $scope.searchKeyword = location.query;
+                    $scope.search();
+                }
+                refine();
+            }
+            else
+            {
+                $scope.showResult = false;
+                $scope.showRefine = false;
+                $scope.searchKeyword = '';
+            }
+
+        });
 
         $scope.searchCriteria = function () {
             return function (trial) {
@@ -196,10 +376,12 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
                 for (var i = 0; i < types.length; i++) {
                     flags.push({type: types[i], value: false});
                 }
+
                 _.each($scope.criteria, function (criterion) {
                     var index = $scope.criteria.map(function (e) {
                         return e.type;
                     }).indexOf(criterion.type);
+
                     if (criterion.type == 'status') {
                         if (criterion.value == 'incomplete') {
                             if ($scope.comTrialIds.indexOf(trial.nctId) == -1) {
@@ -216,6 +398,9 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
                             else {
                                 flags[index].value = false;
                             }
+                        }
+                        else if (criterion.value == 'all') {
+                            flags[index].value = true;
                         }
                     }
                     else if (criterion.type == 'mutation') {
@@ -254,10 +439,14 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
 
         $scope.getCriteria = function (checked, value, type) {
 
+
             var index = $scope.criteria.map(function (e) {
                 return e.type;
             }).indexOf(type);
             if (type == 'status' || type == 'tumor' || type == 'country') {
+
+
+
                 if (value.length == 0) {
                     $scope.types = _.without($scope.types, type);
                     $scope.criteria.splice(index, 1);
@@ -301,10 +490,35 @@ angular.module('core').controller('HomeController', ['$scope', '$location', 'Aut
 
                 }
             }
+            var currParams = $location.search();
+
+            for (var paramName in currParams)
+            {
+                if(paramName !== 'query')
+                {
+                    $location.search(paramName, null);
+                }
+
+            }
+
+            _.each($scope.criteria, function(criterion){
+                if(criterion.type == 'mutation')
+                {
+                    $location.search(criterion.type, criterion.value.map(function(e){
+                        return e.mutationID;
+                    }));
+                }
+                else
+                {
+                    $location.search(criterion.type, criterion.value);
+                }
+
+
+            });
+
 
         };
 
 
     }
 ]);
-
