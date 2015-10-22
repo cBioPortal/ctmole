@@ -6,41 +6,41 @@
 
 		<h3>Curation Status</h3>
 
-		<div class="radio" ng-init="status=1">
-		<label><input type="radio" ng-model="status" value="1" ng-change="getCriteria('all', '', 'status')">All</label><br/>
+		<div class="radio">
+		<label><input type="radio" ng-model="status" value="1" ng-change="getCriteria('all', 'all', 'status')">All</label><br/>
 		<label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(false, 'incomplete', 'status')">Incomplete</label><br/>
 		<label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, 'complete', 'status')">Complete</label>
 	</div>
 
 		<h3>Location</h3>
-
+<!--
 		<div class="radio">
 			<label><input type="radio" name="country" id="USRadio" ng-click="hideAllCountries()" checked>United States</label>
 		</div>
 		<div class="radio">
-			<label><input type="radio" ng-click="showAllCountries()"  name="country">All Countries</label>
+			<label><input type="radio" id="countriesRadio" ng-click="showAllCountries()"  name="country">All Countries</label>
 		</div>
-
+-->
 		<div ng-show="allCountries">
-			<select chosen multiple ng-options="x as x for x in countries" style="width:200px;" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
+			<select chosen multiple ng-options="x as x for x in countries" class="multiSelect" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
 			</select>
 			<br/><br/>
 		</div>
 
 		<h3>Gene</h3>
 		<div class="checkbox" ng-repeat="y in genes">
-			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox"><label for="{{y}}"> {{y}}</label>
+			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="chosenGenes.indexOf(y) !== -1"><label for="{{y}}"> {{y}}</label>
 		</div>
 
 
 		<h3>Mutation</h3>
 		<div class="checkbox" ng-repeat="z in mutations">
-			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
+			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.mutationID) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
 
 		<h3>Tumor Types</h3>
 <br/>
-		<select chosen multiple ng-options="m as m for m in tumorTypes" style="width:200px;" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
+		<select chosen multiple ng-options="m as m for m in tumorTypes" class="multiSelect" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
 		</select>
 		<br/>
 
