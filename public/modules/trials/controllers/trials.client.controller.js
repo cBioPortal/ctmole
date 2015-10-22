@@ -60,14 +60,34 @@ angular.module('trials').controller('TrialsController',
             $scope.switchStatus = function () {
 
                 Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function (u, getResponseHeaders) {
-                        console.log('found trial in the mapping table', u);
-                        u.$completeStatus({Idvalue: $scope.trial.nctId},
-                            function (response) {
-                                console.log('success updated');
-                                $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
-                            }, function (response) {
-                                console.log('failed');
-                            });
+                        console.log('found trial in the mapping table', u.nctId);
+                        if(u.nctId == undefined)
+                        {
+                            console.log('not found');
+
+                            Mappings.mappingSave.save({nctId: $scope.trial.nctId},
+                                function (newMapping) {
+                                    $scope.trialMappings = newMapping;
+                                    console.log('success insert record in mapping table', newMapping);
+
+                                },
+                                function (error) {
+                                    console.log('did not insert successfully because of ', error);
+                                }
+                            );
+
+                        }
+                        else
+                        {
+                            u.$completeStatus({Idvalue: $scope.trial.nctId},
+                                function (response) {
+                                    console.log('success updated');
+                                    $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+                                }, function (response) {
+                                    console.log('failed');
+                                });
+                        }
+
                     }, function (error) {
                         console.log('error: ', error);
                     }
@@ -175,6 +195,7 @@ angular.module('trials').controller('TrialsController',
                     nctId: $stateParams.nctId
                 });
                 $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+                console.log('here is the mapping ', $scope.trialMappings);
             };
 
             $scope.searchByKeyword = function () {

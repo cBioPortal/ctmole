@@ -270,3 +270,22 @@ exports.fetchByAltId = function (req, res) {
         }
     });
 };
+
+
+exports.saveMapping = function (req, res) {
+    var mapping = new Mapping({
+        nctId: req.params.nctId,
+        alteration: [],
+        completeStatus: true
+    });
+    mapping.user = req.user;
+    mapping.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mapping);
+        }
+    });
+};

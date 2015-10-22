@@ -60,6 +60,9 @@ module.exports = function(app) {
 	app.route('/mappingGeneral/mappingAltIds/:altId')
 		.get(mappings.fetchByAltId);
 
+	app.route('/mappingSave/:nctId')
+		.post(users.requiresLogin, mappings.saveMapping);
+
 	// Finish by binding the Mapping middleware
 	app.param('Idvalue', mappings.mappingBynctId);
 

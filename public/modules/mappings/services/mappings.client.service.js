@@ -75,8 +75,10 @@ angular.module('mappings').factory('Mappings', ['$resource',
 			}),
 			searchByAltId: $resource('mappingGeneral/mappingAltId/:altId', {}, {
 				'query':  {method:'GET', isArray:true}
-			})
+			}),
+			mappingSave: $resource('mappingSave/:nctId', {nctId: '@nctId'}, {
 
+				})
 		};
 
 	}
