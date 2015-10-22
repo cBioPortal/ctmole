@@ -39,7 +39,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.loading = false;
         $scope.showResult = false;
         $scope.showRefine = false;
-        $scope.allCountries = false;
+        $scope.allCountries = true;
         $scope.firstSearch = true;
         $scope.refineFlag = false;
 
@@ -128,7 +128,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             $scope.mutations = [];
             $scope.mutationIDs = [];
             $scope.tumorTypes = [];
-
+            $scope.country = ['United States'];
 
             //search in the trial table
             Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
@@ -306,7 +306,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         }
 
                     }
-
+                    /*
                     if($scope.country.toString() === "United States")
                     {
                         document.getElementById("USRadio").checked = true;
@@ -318,7 +318,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         document.getElementById("countriesRadio").checked = true;
                         $scope.allCountries = true;
                     }
-
+ */
                     tempTypes.push(property);
 
 
@@ -337,11 +337,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
             var location = $location.search();
             if(location.query !== undefined)
-            {
+            {console.log('here');
                 $scope.searchKeyword = location.query;
-                $scope.search();
-
                 $scope.refineFlag = true;
+                $scope.search();
 
             }
         }

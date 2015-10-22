@@ -13,14 +13,14 @@
 	</div>
 
 		<h3>Location</h3>
-
+<!--
 		<div class="radio">
 			<label><input type="radio" name="country" id="USRadio" ng-click="hideAllCountries()" checked>United States</label>
 		</div>
 		<div class="radio">
 			<label><input type="radio" id="countriesRadio" ng-click="showAllCountries()"  name="country">All Countries</label>
 		</div>
-
+-->
 		<div ng-show="allCountries">
 			<select chosen multiple ng-options="x as x for x in countries" class="multiSelect" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
 			</select>
