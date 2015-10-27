@@ -59,7 +59,7 @@
 					</small></h2>
 				</div>
 
-				<a href="https://clinicaltrials.gov/ct2/results?term={{trial.nctId}}&Search=Search" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
+				<a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
 				<br/>
 
 				<label class="headerStyle">ALTERATIONS</label>
@@ -99,11 +99,7 @@
 				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
 				<br/><br/>
 
-				<div class="form-group">
-					<label for="comment" class="headerStyle">Comment </label>
-					<button type="button" class="btn btn-primary btn-xs leftMargin">Save</button>
-					<textarea class="form-control" rows="5" id="comment"></textarea>
-				</div>
+
 <!--
 				<div>
 					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
@@ -118,6 +114,20 @@
 					<option value="3">Curated</option>
 
 				</select>
+				<br/><br/>
+				<div class="form-group">
+					<label for="comment" class="headerStyle">Comment </label>
+					<button type="button" class="btn btn-primary btn-xs leftMargin">Save</button>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="showAllComments()">View All Comments</button>
+					<p ng-if="showAllCom">
+						<br/>
+						Hongxin: Sorafenib and Bevacizumab in Treating Patients With Metastatic Colorectal Cancer <br/>
+						JJ: This study is ongoing, but not recruiting participants.<br/>
+						Jiaojiao: Alliance for Clinical Trials in Oncology<br/>
+					</p>
+
+					<textarea class="form-control" rows="5" id="comment"></textarea>
+				</div>
 			</div>
 		</div>
 		<div class="col-sm-8">
@@ -139,7 +149,7 @@
 					</div>
 				</div>
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="trial.arm_group.length > 0">
 					<div class="panel-heading" role="tab" id="headingNew">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseNew" aria-expanded="true" aria-controls="collapseOne">
@@ -164,7 +174,7 @@
 
 
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="inclusionCriteria.length > 0">
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -174,12 +184,12 @@
 					</div>
 					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 						<div class="panel-body">
-							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"inclusion")'></p>
+							<p ng-bind-html='inclusionCriteria'></p>
 
 						</div>
 					</div>
 				</div>
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="exclusionCriteria.length > 0">
 					<div class="panel-heading" role="tab" id="headingTwo">
 						<h4 class="panel-title">
 							<a class="collapsed" role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -189,7 +199,7 @@
 					</div>
 					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
 						<div class="panel-body">
-							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"exclusion")'></p>
+							<p ng-bind-html='exclusionCriteria'></p>
 
 						</div>
 					</div>

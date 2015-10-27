@@ -366,7 +366,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 $scope.search();
 
             }
-            
+
         }
 
         $rootScope.$on("$locationChangeSuccess", function (event) {

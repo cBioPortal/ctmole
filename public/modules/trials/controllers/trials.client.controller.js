@@ -51,11 +51,19 @@ angular.module('trials').controller('TrialsController',
             $scope.tumorHeader = ['Name', 'Tissue', 'Clinical TrialKeywords'];
             $scope.tumorItems = ['name', 'tissue', 'clinicalTrialKeywords'];
 
+            $scope.inclusionCriteria = '';
+            $scope.exclusionCriteria = '';
+
 
             $scope.showVar = false;
             $scope.alertShow = false;
             $scope.showAll = false;
             $scope.showAllDrugs = false;
+            $scope.showAllCom = false;
+
+            $scope.showAllComments = function(){
+                $scope.showAllCom = !$scope.showAllCom;
+            }
 
             $scope.switchStatus = function (status) {
                 console.log('here is the status ', status);
@@ -190,6 +198,9 @@ angular.module('trials').controller('TrialsController',
             $scope.findOne = function () {
                 $scope.trial = Trials.nctId.get({
                     nctId: $stateParams.nctId
+                },function()
+                {
+                    $scope.getEligibility();
                 });
                 $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId}, function()
                     {
@@ -261,43 +272,39 @@ angular.module('trials').controller('TrialsController',
                 return slicedResult;
             };
 
-            $scope.getEligibility = function (eligibility, elgType) {
-                if (_.isUndefined(eligibility)) {
-                    eligibility = '';
-                }
+            $scope.getEligibility = function () {
+                var eligibility = $scope.trial.eligibilityCriteria;
                 var m = eligibility.indexOf('Inclusion Criteria');
                 var n = eligibility.indexOf('Exclusion Criteria');
-                if ((m === -1 && elgType === 'inclusion') || (n === -1 && elgType === 'exclusion')) {
-                    return '';
-                }
-                else {
+                if(m !== -1 && n !== -1)
+                {
                     m += 20;
                     n += 20;
 
                     var output = '<ol>';
 
-                    if (elgType === 'inclusion') {
-                        var inEligi = eligibility.substr(m, n - m - 20);
-                        var inEligiArray = getLists(inEligi);
-                        _.each(inEligiArray, function (element) {
-                            output = output + '<li>' + element + '</li>';
-                        });
-                    }
-                    else if (elgType === 'exclusion') {
-                        var exEligi = eligibility.substr(n);
-                        var exEligiArray = getLists(exEligi);
-                        _.each(exEligiArray, function (element) {
-                            output = output + '<li>' + element + '</li>';
-                        });
-                    }
+                    var inEligi = eligibility.substr(m, n - m - 20);
+                    var inEligiArray = getLists(inEligi);
 
+                    _.each(inEligiArray, function (element) {
+                        output = output + '<li>' + element + '</li>';
+                    });
                     output += '</ol>';
-                    return output;
+                    $scope.inclusionCriteria = output;
+
+                    var exEligi = eligibility.substr(n);
+                    var exEligiArray = getLists(exEligi);
+                    _.each(exEligiArray, function (element) {
+                        output = output + '<li>' + element + '</li>';
+                    });
+                    output += '</ol>';
+                    $scope.exclusionCriteria = output;
                 }
 
+
+
+
             };
-
-
             //Add new connection between alterations and current trial
             $scope.addAlterationBynctId = function () {
                 Alterations.alteration.get({
