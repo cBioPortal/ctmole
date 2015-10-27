@@ -57,18 +57,15 @@ angular.module('trials').controller('TrialsController',
             $scope.showAll = false;
             $scope.showAllDrugs = false;
 
-            $scope.switchStatus = function () {
-
+            $scope.switchStatus = function (status) {
+                console.log('here is the status ', status);
                 Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function (u, getResponseHeaders) {
-                        console.log('found trial in the mapping table', u.nctId);
                         if(u.nctId == undefined)
                         {
-                            console.log('not found');
 
                             Mappings.mappingSave.save({nctId: $scope.trial.nctId},
                                 function (newMapping) {
                                     $scope.trialMappings = newMapping;
-                                    console.log('success insert record in mapping table', newMapping);
 
                                 },
                                 function (error) {
@@ -79,7 +76,7 @@ angular.module('trials').controller('TrialsController',
                         }
                         else
                         {
-                            u.$completeStatus({Idvalue: $scope.trial.nctId},
+                            u.$completeStatus({Idvalue: status},
                                 function (response) {
                                     console.log('success updated');
                                     $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
@@ -194,8 +191,21 @@ angular.module('trials').controller('TrialsController',
                 $scope.trial = Trials.nctId.get({
                     nctId: $stateParams.nctId
                 });
-                $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
-                console.log('here is the mapping ', $scope.trialMappings);
+                $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId}, function()
+                    {
+                        if($scope.trialMappings.completeStatus === undefined)
+                        {
+                            $scope.trialStatus = 1;
+                        }
+                        else
+                        {
+                            $scope.trialStatus = $scope.trialMappings.completeStatus;
+                        }
+                    },
+                    function()
+                    {
+
+                    });
             };
 
             $scope.searchByKeyword = function () {

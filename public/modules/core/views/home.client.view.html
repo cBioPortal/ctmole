@@ -5,12 +5,21 @@
 	<div class="col-md-2" ng-show="showRefine">
 
 		<h3>Curation Status</h3>
+		<!--
+                <select class="form-control" ng-model="statusVal" ng-change="getCriteria(true, statusVal, 'status')" ng-init="statusVal='all'">
+                    <option value="all">All</option>
+                    <option value="1">Not Curated</option>
+                    <option value="2">Curatioption>
+                    <option value="3">Curated</option>
 
-		<div class="radio">
-		<label><input type="radio" ng-model="status" value="1" ng-change="getCriteria('all', 'all', 'status')">All</label><br/>
-		<label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(false, 'incomplete', 'status')">Incomplete</label><br/>
-		<label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, 'complete', 'status')">Complete</label>
-	</div>
+                </select> -->
+
+                <div class="radio">
+                <label><input type="radio" ng-model="status" value="4" ng-change="getCriteria('all', status, 'status')">All</label><br/>
+                <label><input type="radio" ng-model="status" value="1" ng-change="getCriteria(false, status, 'status')">Not Curated</label><br/>
+                <label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(true, status, 'status')">Curating</label><br/>
+                <label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, status, 'status')">Curated</label>
+                </div>
 
 		<h3>Location</h3>
 <!--
@@ -68,8 +77,8 @@
 			<h2>MATCHING TRIALS | {{filteredTrials.length}}</h2><br/>
 			<a data-ng-repeat="trial in filteredTrials = (trials | filter: searchCriteria())  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
 				<div>
-					<h3 data-ng-bind="trial.nctId"></h3>
-					<h3><small><p class="lead">Title: {{trial.title}} <br/>Phase: {{trial.phase}}<br/>Recruiting Status: {{trial.recruitingStatus}}<br/>Country: {{trial.countries.join(', ')}}</p></small></h3>
+					<h3 data-ng-bind="trial.title"></h3>
+					<h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/> {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
 				</div>
 			</a>
 

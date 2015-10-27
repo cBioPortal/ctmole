@@ -14,6 +14,10 @@
 				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
 				<h2><small><p>{{trial.phase}}</p></small></h2>
 
+				 <h2><small><p class="test">{{trial.recruitingStatus}}
+				 	 </p>
+				</small></h2>
+
 				<!--<h2><small><p class="test" tooltip="Last Updated Time
 				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
 				 	<i ng-click="updateTrial()" class="fa fa-refresh"></i> </p>
@@ -100,15 +104,20 @@
 					<button type="button" class="btn btn-primary btn-xs leftMargin">Save</button>
 					<textarea class="form-control" rows="5" id="comment"></textarea>
 				</div>
-
+<!--
 				<div>
 					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
 					<h4 ng-if="trialMappings.completeStatus">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h4>
 				</div>
+-->
 
+				<label class="headerStyle" for="sel1">Curation Status</label>
+				<select class="form-control" id="sel1" ng-model="trialStatus" ng-change="switchStatus(trialStatus)">
+					<option value="1">Not Curated</option>
+					<option value="2">Curating</option>
+					<option value="3">Curated</option>
 
-
-
+				</select>
 			</div>
 		</div>
 		<div class="col-sm-8">

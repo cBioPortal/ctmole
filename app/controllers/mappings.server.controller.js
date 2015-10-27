@@ -197,8 +197,8 @@ exports.mappingBynctIdAlt = function (req, res) {
 
 
 exports.completeTrial = function (req, res) {
-
-    Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: !req.body.completeStatus}}).exec(function (err, mapping) {
+console.log('here is the parameter from url ', req.params.Idvalue);
+    Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: req.params.Idvalue}}).exec(function (err, mapping) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

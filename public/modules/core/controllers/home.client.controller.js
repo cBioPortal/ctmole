@@ -51,7 +51,8 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.mutationCriteria = [];
         $scope.trialsNctIds = [];
         $scope.comTrialIds = [];
-        $scope.status = 1;
+        $scope.inComTrialIds = [];
+        $scope.status = 4;
 
 
 
@@ -70,7 +71,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             return 0;
         }
 
-
+        /*
         $scope.showAllCountries = function () {
             $scope.allCountries = true;
             _.each($scope.criteria, function (criterion) {
@@ -90,14 +91,14 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
             $location.search('country', ['United States']);
         }
-
+*/
 
 
         //search in the mapping table
         function searchMappingByStatus() {
 
             Mappings.searchByStatus.query({
-                    status: true
+                    status: '3'
                 },
                 function (data) {
                     if (data.length > 0) {
@@ -106,6 +107,24 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             tempcomTrialIds.push(data[i].nctId);
                         }
                         $scope.comTrialIds = tempcomTrialIds;
+                    }
+                },
+                function (error) {
+                    console.log('No hits in the mapping table');
+                }
+            );
+
+
+            Mappings.searchByStatus.query({
+                    status: '2'
+                },
+                function (data) {
+                    if (data.length > 0) {
+                        var tempcomTrialIds = [];
+                        for (var i = 0; i < data.length; i++) {
+                            tempcomTrialIds.push(data[i].nctId);
+                        }
+                        $scope.inComTrialIds = tempcomTrialIds;
                     }
                 },
                 function (error) {
@@ -193,8 +212,9 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         }
                         else
                         {
+                            $location.search('status', '4');
                             $location.search('country', 'United States');
-                            $location.search('status', 'all');
+
                         }
 
                         }
@@ -223,13 +243,14 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             $scope.chosenGenes = [];
             $scope.chosenMutations = [];
             $scope.tumor = [];
-            $scope.status = 1;
-            console.log('here are the location ', location);
+           // $scope.status = 4;
             for(var property in location){
                 if(property !== 'query')
                 {
                     if(property === 'status')
                     {
+                        $scope.status =  location[property];
+                       /* console.log('here is the status ',location[property]);
                         switch(location[property]){
                             case 'all':
                                 $scope.status = 1;
@@ -240,7 +261,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             case 'complete':
                                 $scope.status = 3;
                                 break;
-                        };
+                        };*/
                     }
 
 
@@ -330,20 +351,22 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             }
             $scope.criteria = tempCriteria;
             $scope.types = tempTypes;
-            console.log('here is the criteria', $scope.country);
         }
 
         $scope.find = function(){
-
+            $scope.refineFlag = false;
+            $scope.criteria = [{type: 'country', value: ['United States']}];
+            $scope.types = ['country'];
 
             var location = $location.search();
             if(location.query !== undefined)
-            {console.log('here');
+            {console.log('here go to search');
                 $scope.searchKeyword = location.query;
                 $scope.refineFlag = true;
                 $scope.search();
 
             }
+            
         }
 
         $rootScope.$on("$locationChangeSuccess", function (event) {
@@ -376,22 +399,30 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 for (var i = 0; i < types.length; i++) {
                     flags.push({type: types[i], value: false});
                 }
-
+console.log('here is the set criteraia ',$scope.criteria, types );
                 _.each($scope.criteria, function (criterion) {
                     var index = $scope.criteria.map(function (e) {
                         return e.type;
                     }).indexOf(criterion.type);
 
                     if (criterion.type == 'status') {
-                        if (criterion.value == 'incomplete') {
-                            if ($scope.comTrialIds.indexOf(trial.nctId) == -1) {
+                        if (criterion.value == '1') {
+                            if ($scope.comTrialIds.indexOf(trial.nctId) == -1 && $scope.inComTrialIds.indexOf(trial.nctId) == -1) {
                                 flags[index].value = true;
                             }
                             else {
                                 flags[index].value = false;
                             }
                         }
-                        else if (criterion.value == 'complete') {
+                        else if (criterion.value == '2') {
+                            if ($scope.inComTrialIds.indexOf(trial.nctId) != -1) {
+                                flags[index].value = true;
+                            }
+                            else {
+                                flags[index].value = false;
+                            }
+                        }
+                        else if (criterion.value == '3') {
                             if ($scope.comTrialIds.indexOf(trial.nctId) != -1) {
                                 flags[index].value = true;
                             }
@@ -399,7 +430,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                                 flags[index].value = false;
                             }
                         }
-                        else if (criterion.value == 'all') {
+                        else if (criterion.value == '4') {
                             flags[index].value = true;
                         }
                     }
@@ -438,13 +469,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
 
         $scope.getCriteria = function (checked, value, type) {
-
-
             var index = $scope.criteria.map(function (e) {
                 return e.type;
-            }).indexOf(type);
+            }).indexOf(type);  console.log($scope.criteria, $scope.types);
             if (type == 'status' || type == 'tumor' || type == 'country') {
-
 
 
                 if (value.length == 0) {
@@ -465,7 +493,6 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                     }
                 }
 
-
             }
             else {
                 if (checked) {
@@ -474,7 +501,9 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         $scope.types.push(type);
                     }
                     else {
+
                         $scope.criteria[index].value.push(value);
+
                     }
 
 
@@ -500,13 +529,15 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 }
 
             }
-
             _.each($scope.criteria, function(criterion){
                 if(criterion.type == 'mutation')
                 {
-                    $location.search(criterion.type, criterion.value.map(function(e){
+                    var tempArr = criterion.value.map(function(e){
+                        //return e.gene + '+' + e.alteration;
                         return e.mutationID;
-                    }));
+                    });
+                    $location.search(criterion.type, tempArr);
+
                 }
                 else
                 {

@@ -52,7 +52,7 @@ var MappingSchema = new Schema({
 		type: Array
 	},
 	completeStatus: {
-		type: Boolean
+		type: String
 	},
 	log: {
 		type: Array
