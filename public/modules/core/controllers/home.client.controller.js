@@ -399,7 +399,6 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 for (var i = 0; i < types.length; i++) {
                     flags.push({type: types[i], value: false});
                 }
-console.log('here is the set criteraia ',$scope.criteria, types );
                 _.each($scope.criteria, function (criterion) {
                     var index = $scope.criteria.map(function (e) {
                         return e.type;

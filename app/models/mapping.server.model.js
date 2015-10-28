@@ -56,6 +56,9 @@ var MappingSchema = new Schema({
 	},
 	log: {
 		type: Array
+	},
+	comments: {
+		type: Array
 	}
 	/*
 	created: {

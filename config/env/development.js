@@ -48,8 +48,8 @@ module.exports = {
 		callbackURL: 'http://localhost:3000/auth/twitter/callback'
 	},
 	google: {
-		clientID: process.env.GOOGLE_ID || 'APP_ID',
-		clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
+		clientID: process.env.CTMOLE_CLIENTID ,
+		clientSecret: process.env.CTMOLE_CLIENTSECRET ,
 		callbackURL: 'http://localhost:3000/auth/google/callback'
 	},
 	linkedin: {

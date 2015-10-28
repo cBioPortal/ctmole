@@ -47,7 +47,8 @@ exports.create = function (req, res) {
     var mapping = new Mapping({
         nctId: req.params.nctId,
         alteration: [{alteration_Id: req.params.alteration, status: 'manually'}],
-        completeStatus: false
+        completeStatus: '1',
+        log: [{date: new Date(), user: req.user._id, operationType:'add', alteration_Id: req.params.alteration}]
     });
     mapping.user = req.user;
     mapping.save(function (err) {
@@ -76,7 +77,9 @@ exports.update = function (req, res) {
     var alterationArray = req.body.alteration;
     alterationArray.push({alteration_Id: req.params.Idvalue, status: 'manually'});
 
-    Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray}}).populate('user', 'displayName').exec(function (err, mappings) {
+    req.body.log.push({date: new Date(), user: req.user._id, operationType:'add', alteration_Id: req.params.Idvalue});
+
+    Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray, log: req.body.log}}).populate('user', 'displayName').exec(function (err, mappings) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -97,7 +100,9 @@ exports.deleteAlt = function (req, res) {
             break;
         }
     }
-    Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray}}).populate('user', 'displayName').exec(function (err, mappings) {
+    req.body.log.push({date: new Date(), user: req.user._id, operationType:'delete', alteration_Id: req.params.Idvalue});
+
+    Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray, log: req.body.log }}).populate('user', 'displayName').exec(function (err, mappings) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -165,16 +170,21 @@ exports.hasAuthorization = function (req, res, next) {
 
 //find mapping record by nctId
 
-exports.mappingBynctId = function (req, res, next, Idvalue) {
-    Mapping.findOne({nctId: Idvalue}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) return next(err);
+exports.mappingBynctId = function (req, res) {
+    Mapping.findOne({nctId: req.params.Idvalue}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
         if (!mapping) {
-            console.log('Failed to find Mapping ');
-            return next();
+            console.log('No Mapping Record Exist');
+            res.jsonp();
+           // return next();
         }
-        req.mapping = mapping;
-        //res.jsonp(req.mapping);
-        next();
+        else
+        {
+            req.mapping = mapping;
+            res.jsonp(req.mapping);
+            //next();
+        }
+
     });
 };
 
@@ -197,8 +207,10 @@ exports.mappingBynctIdAlt = function (req, res) {
 
 
 exports.completeTrial = function (req, res) {
-console.log('here is the parameter from url ', req.params.Idvalue);
-    Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: req.params.Idvalue}}).exec(function (err, mapping) {
+
+    req.body.log.push({date: new Date(), user: req.user._id, operationType:'changeStatus', changetoStatus: req.params.Idvalue});
+
+    Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: req.params.Idvalue, log: req.body.log}}).exec(function (err, mapping) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -208,35 +220,6 @@ console.log('here is the parameter from url ', req.params.Idvalue);
         }
     });
 
-};
-
-
-exports.generalSearch = function (req, res) {
-    var keywords = req.params.searchEngineKeyword;
-    var keywordsArr = keywords.split(",");
-    var finalStr = '';
-    var tempStr = '';
-    if (keywordsArr.length > 1) {
-        for (var i = 0; i < keywordsArr.length; i++) {
-            tempStr = '\"' + keywordsArr[i].trim() + '\"';
-            finalStr += tempStr;
-        }
-    }
-    else {
-        finalStr = keywords;
-    }
-
-
-    Mapping.find({$text: {$search: finalStr}}).exec(function (err, mappings) {
-
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(mappings);
-        }
-    });
 };
 
 
@@ -287,5 +270,55 @@ exports.saveMapping = function (req, res) {
         } else {
             res.jsonp(mapping);
         }
+    });
+};
+
+
+
+exports.saveComments = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
+
+            var mapping = new Mapping({
+                nctId: req.params.trialID,
+                alteration: [],
+                completeStatus: '1',
+                comments: [req.params.comment]
+            });
+            mapping.user = req.user;
+            mapping.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.jsonp(mapping);
+                }
+            });
+
+           // res.jsonp();
+            // return next();
+        }
+        else
+        {
+            req.mapping = mapping;
+            mapping.comments.push(req.params.comment);
+
+            Mapping.update({nctId: req.params.trialID}, {$set: {comments: mapping.comments}}).exec(function (err, mapping) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    return res.jsonp(mapping);
+                }
+            });
+
+            //res.jsonp(req.mapping);
+            //next();
+        }
+
     });
 };

@@ -65,10 +65,6 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					}
 				}
 			),
-			searchEngine: $resource('mappingGeneral/:searchEngineKeyword', {
-			}, {
-				'query':  {method:'GET', isArray:true}
-			}),
 			searchByStatus: $resource('mappingStatus/:status', {status: '@completeStatus'
 			}, {
 				'query':  {method:'GET', isArray:true}
@@ -78,7 +74,12 @@ angular.module('mappings').factory('Mappings', ['$resource',
 			}),
 			mappingSave: $resource('mappingSave/:nctId', {nctId: '@nctId'}, {
 
-				})
+				}),
+			commentsSave: $resource('commentsSave/:trialID/:comment', {trialID: '@nctId'}, {
+				commentsSave: {
+					method: 'GET'
+				}
+			})
 		};
 
 	}

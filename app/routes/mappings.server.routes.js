@@ -42,7 +42,8 @@ module.exports = function(app) {
 		.post(users.requiresLogin, mappings.create);
 
 	app.route('/mappings/:Idvalue')
-		.get(mappings.read)
+		//.get(mappings.read)
+		.get(mappings.mappingBynctId)
 		.put(users.requiresLogin, mappings.update)
 		.patch(users.requiresLogin, mappings.deleteAlt)
 		.post(users.requiresLogin, mappings.completeTrial);
@@ -50,9 +51,6 @@ module.exports = function(app) {
 	app.route('/mappings/:alteration/:nctId')
 		.get(mappings.mappingBynctIdAlt)
 		.post(users.requiresLogin, mappings.create);
-
-	app.route('/mappingGeneral/:searchEngineKeyword')
-		.get(mappings.generalSearch);
 
 	app.route('/mappingStatus/:status')
 		.get(mappings.fetchByStatus);
@@ -63,8 +61,14 @@ module.exports = function(app) {
 	app.route('/mappingSave/:nctId')
 		.post(users.requiresLogin, mappings.saveMapping);
 
+	//need to change Idvalue from middleware or we have to duplicate mappingBynctId function
+	app.route('/commentsSave/:trialID/:comment')
+		.get(users.requiresLogin, mappings.saveComments);
+
+
 	// Finish by binding the Mapping middleware
-	app.param('Idvalue', mappings.mappingBynctId);
+	//app.param('Idvalue', mappings.mappingBynctId);
+
 
 
 };

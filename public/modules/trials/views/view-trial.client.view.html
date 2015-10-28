@@ -117,16 +117,20 @@
 				<br/><br/>
 				<div class="form-group">
 					<label for="comment" class="headerStyle">Comment </label>
-					<button type="button" class="btn btn-primary btn-xs leftMargin">Save</button>
-					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="showAllComments()">View All Comments</button>
-					<p ng-if="showAllCom">
-						<br/>
-						Hongxin: Sorafenib and Bevacizumab in Treating Patients With Metastatic Colorectal Cancer <br/>
-						JJ: This study is ongoing, but not recruiting participants.<br/>
-						Jiaojiao: Alliance for Clinical Trials in Oncology<br/>
-					</p>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="saveComments()">Save</button>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="showAllComments()"> All Comments</button>
 
-					<textarea class="form-control" rows="5" id="comment"></textarea>
+					<br/>
+					<ul class="list-group" ng-if="showAllCom">
+						<li class="list-group-item list-group-item-success" data-ng-repeat="x in trialComments">
+							{{ x }}
+						</li>
+					</ul>
+
+
+
+
+					<textarea class="form-control" rows="5" id="comment" ng-model="comment"></textarea>
 				</div>
 			</div>
 		</div>

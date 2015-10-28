@@ -66,7 +66,6 @@ angular.module('trials').controller('TrialsController',
             }
 
             $scope.switchStatus = function (status) {
-                console.log('here is the status ', status);
                 Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function (u, getResponseHeaders) {
                         if(u.nctId == undefined)
                         {
@@ -201,6 +200,7 @@ angular.module('trials').controller('TrialsController',
                 },function()
                 {
                     $scope.getEligibility();
+
                 });
                 $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId}, function()
                     {
@@ -211,6 +211,14 @@ angular.module('trials').controller('TrialsController',
                         else
                         {
                             $scope.trialStatus = $scope.trialMappings.completeStatus;
+                        }
+                        if($scope.trialMappings.comments === undefined)
+                        {
+                            $scope.trialComments = [];
+                        }
+                        else
+                        {
+                            $scope.trialComments = $scope.trialMappings.comments;
                         }
                     },
                     function()
@@ -301,7 +309,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.exclusionCriteria = output;
                 }
 
-
+             //   console.log('here  ', $scope.inclusionCriteria.length);
 
 
             };
@@ -454,7 +462,7 @@ angular.module('trials').controller('TrialsController',
                         console.log('find this alteration');
                         Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
                             function (c) {
-                                console.log('find in mapping record', a._id);
+
                                 c.$deleteAlt({Idvalue: a._id},
                                     function (e) {
                                         console.log('delete successfully');
@@ -501,6 +509,26 @@ angular.module('trials').controller('TrialsController',
 
 
             };
+
+
+            $scope.saveComments = function() {
+                if($scope.comment === undefined)
+                {
+                    bootbox.alert('write some comments before save it!');
+                    return false;
+                }
+                Mappings.commentsSave.commentsSave({trialID: $scope.trial.nctId,comment: $scope.comment},
+                function(){
+                    $scope.trialComments.push($scope.comment);
+                    console.log('successfully saved');
+                    $scope.comment = '';
+                    $scope.showAllCom = true;
+
+                },
+                function(){
+                    console.log('failed to save ');
+                });
+            }
 
         }
     ]);
