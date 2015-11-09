@@ -38,7 +38,7 @@ table.table.trialTableStyle tr:nth-child(even) {
 }
 
 .trialAddType{
-    display:block;
+    display:inline;
 }
 .content_right_head {
     display:inline-block;

@@ -44,7 +44,7 @@ var	Trial = require('../../app/models/trial.server.model.js');
 
 
 var predictedMutations = [];
-
+var genesMatch = [];
 
 function connectDB(callback123){
 
@@ -55,34 +55,67 @@ function connectDB(callback123){
 	});
 }
 
-function insertDocuments(collection, documents, callback) {
-	// Drop collection before inserting
-	collection.drop();
-
-	// Insert some documents
-	collection.insert(documents, function(err, result) {
-		console.log('Inserted.');
-		callback(result);
-	});
-}
 function saveToMapping() {
 	console.log('\n****************************************************************\n');
 	console.log('saving to mapping collection ...');
-	/*
+/*
 	 predictedMutations = [{nctId: 'NCT01708954', gene: 'ATK', alteration: 'unspecified'},
 	 {nctId: 'NCT00681798', gene: 'BRAF', alteration: 'unspecified'},
 	 {nctId: 'NCT01226316', gene: 'MEK', alteration: 'unspecified'},
 	 {nctId: 'NCT00002763', alterationID: '56390a58443bc8c2b0ae77f4'},
 	 {nctId: 'NCT01682772', alterationID: '56390a58443bc8c2b0ae77f5'},
-	 {nctId: 'NCT01708954', alterationID: '56390a58443bc8c2b0ae7123'}
+	 {nctId: 'NCT01708954', alterationID: '56390a58443bc8c2b0ae7123'},
+		 {nctId: 'NCT01708954', alterationID: '56390a58443bc8c2b0ae77f4'},
+		 {nctId: 'NCT01708954', gene: 'KRAS', alteration: 'unspecified'}
 
 	 ];
-	 */
-	var flag3 = 0;
-	//predictedMutations = predictedMutations.slice(2000,3000);
-	_.each(predictedMutations, function(item){
+*/
+	var uniquePredictions = [];
 
-		if(item.alteration === 'unspecified'){
+	_.each(predictedMutations, function(item){
+		var index = uniquePredictions.map(function (e) {
+			return e.nctId;
+		}).indexOf(item.nctId);
+
+		if(index === -1)
+		{
+			if(item.alteration === 'unspecified'){
+				uniquePredictions.push({nctId: item.nctId, gene: [item.gene]});
+			}
+			else{
+				uniquePredictions.push({nctId: item.nctId, alterationID: [item.alterationID]});
+			}
+		}
+		else
+		{
+			if(item.alteration === 'unspecified'){
+				if(uniquePredictions[index].gene === undefined)
+				{
+					uniquePredictions[index].gene = [item.gene];
+				}
+				else
+				{
+					uniquePredictions[index].gene.push(item.gene);
+				}
+			}
+			else{
+				if(uniquePredictions[index].alterationID === undefined)
+				{
+					uniquePredictions[index].alterationID = [item.alterationID];
+				}
+				else
+				{
+					uniquePredictions[index].alterationID.push(item.alterationID);
+				}
+			}
+		}
+
+	});
+console.log( ' uniquePredictions length is ', uniquePredictions);
+	var flag3 = 0;
+	_.each(uniquePredictions, function(item){
+
+		if(item.gene !== undefined && item.alterationID === undefined){
 			Mapping.find({nctId: item.nctId}, function(err, mapping){
 
 				if(mapping.length > 0)
@@ -93,26 +126,27 @@ function saveToMapping() {
 					{
 						preGenes = [];
 					}
-					preGenes.push(item.gene);
+					preGenes = _.uniq(preGenes.concat(item.gene));
+
 					Mapping.update({nctId: item.nctId},{$set: {predictedGenes: preGenes}}, function(err, map){
 						flag3++;
-						console.log('update mapping table ', (flag3/predictedMutations.length*100).toFixed(2), '% finished');
+						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
 					});
 				}
 				else
 				{
 
-					var newMappingRecord = new Mapping({nctId: item.nctId, predictedGenes: [item.gene], completeStatus: '1'});
+					var newMappingRecord = new Mapping({nctId: item.nctId, predictedGenes: item.gene, completeStatus: '1'});
 
 					newMappingRecord.save(function(err, map){
 						flag3++;
-						console.log('save to mapping table ', (flag3/predictedMutations.length*100).toFixed(2), '% finished');
+						console.log('save to mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
 					});
 				}
 			})
 
 		}
-		else
+		else if(item.alterationID !== undefined && item.gene === undefined)
 		{
 			Mapping.find({nctId: item.nctId}, function(err, mapping){
 				if(mapping.length > 0)
@@ -123,25 +157,102 @@ function saveToMapping() {
 					{
 						alteration = [];
 					}
-					alteration.push({alteration_Id: item.alterationID, status: 'predicted'});
+					_.each(item.alterationID, function(newItem){
+						alteration.push({alteration_Id: newItem, status: 'predicted'});
+					});
+					console.log(item.nctId, 'update ', alteration);
 					Mapping.update({nctId: item.nctId},{$set: {alteration: alteration}}, function(err, map){
 						flag3++;
-						console.log('update mapping table ', (flag3/predictedMutations.length*100).toFixed(2), '% finished');
+						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
 					});
 				}
 				else
 				{
-
-					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: [{alteration_Id: item.alterationID, status: 'predicted'}], completeStatus: '1'});
+					var tempArr = [];
+					_.each(item.alterationID, function(newItem){
+						tempArr.push({alteration_Id: newItem, status: 'predicted'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, completeStatus: '1'});
 
 					newMappingRecord.save(function(err, map){
 						flag3++;
-						console.log('save to mapping table', (flag3/predictedMutations.length*100).toFixed(2), '% finished');
+						console.log('save to mapping table', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+			})
+		}
+		else if(item.alterationID !== undefined && item.gene !== undefined)
+		{
+			Mapping.find({nctId: item.nctId}, function(err, mapping){
+				if(mapping.length > 0)
+				{
+					mapping = mapping[0];
+					var alteration = mapping.alteration;
+					if(alteration === undefined)
+					{
+						alteration = [];
+					}
+					_.each(item.alterationID, function(newItem){
+						alteration.push({alteration_Id: newItem, status: 'predicted'});
+					});
+
+					var preGenes = mapping.predictedGenes;
+					if(preGenes === undefined)
+					{
+						preGenes = [];
+					}
+					preGenes = _.uniq(preGenes.concat(item.gene));
+
+					console.log(item.nctId, 'update ', alteration);
+					Mapping.update({nctId: item.nctId},{$set: {alteration: alteration, predictedGenes: preGenes}}, function(err, map){
+						flag3++;
+						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+				else
+				{
+					var tempArr = [];
+					_.each(item.alterationID, function(newItem){
+						tempArr.push({alteration_Id: newItem, status: 'predicted'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, predictedGenes: item.gene, completeStatus: '1'});
+
+					newMappingRecord.save(function(err, map){
+						flag3++;
+						console.log('save to mapping table', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
 					});
 				}
 			})
 		}
 	});
+
+}
+
+function searchGeneMatch(){
+	console.log('\n****************************************************************\n');
+	console.log('There are ' + genesMatch.length + ' mutations did not match any trials. Now begin to search for only gene match ');
+	genesMatch = _.uniq(genesMatch);
+	var flag = 0;
+	_.each(genesMatch, function(item){
+		Trial.find({$text: {$search: '\"' + item + '\"' }}, function(err, trials) {
+			flag++;
+			console.log((flag/genesMatch.length*100).toFixed(2), '% finished');
+
+			if(trials.length > 0){
+				_.each(trials, function(trial){
+					predictedMutations.push({nctId: trial.nctId, gene: item, alteration: 'unspecified'});
+				});
+			}
+
+			if(flag === genesMatch.length)
+			{
+				saveToMapping();
+			}
+
+		})
+
+	});
+
 
 }
 
@@ -155,18 +266,25 @@ function searchTrial(result){
 		Trial.find({$text: {$search: '\"' + mutationItem.gene + '\"' + ' \"' + mutationItem.alteration + '\"' }}, function(err, trials){
 			flag2++;
 			console.log('Searching for ', mutationItem.gene, '   ' ,mutationItem.alteration, ' and ', trials.length, ' trials found ', '\n', (flag2/result.length*100).toFixed(2), '% finished');
-			_.each(trials, function(trial){
-				predictedMutations.push({nctId: trial.nctId, alterationID: mutationItem._id.toString()});
-			});
+			if(trials.length > 0){
+				_.each(trials, function(trial){
+					predictedMutations.push({nctId: trial.nctId, alterationID: mutationItem._id.toString()});
+				});
+			}
+			else{
+				genesMatch.push(mutationItem.gene);
+			}
+
 			if(flag2 === result.length)
 			{
-				saveToMapping();
+				searchGeneMatch();
 			}
 
 		})
 	});
 }
 function workers() {
+
 
 	var hugoGenes = [], genes = [], genesNoMutations = [];
 

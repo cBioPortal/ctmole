@@ -204,7 +204,9 @@ angular.module('trials').controller('TrialsController',
                             Alterations.alterationByIds.query({Ids: alteration_id},
                                 function(res){
                                     _.each(res, function(item){
-                                        $scope.trialAlterations.push({gene: item.gene, alteration: item.alteration});
+                                        var index = _.map(a.alteration, function(e){return e.alteration_Id}).indexOf(item._id);
+
+                                        $scope.trialAlterations.push({gene: item.gene, alteration: item.alteration, status: a.alteration[index].status});
                                     });
                                     // console.log('here is the alteration infor1 ', tempArr1);
 
@@ -218,7 +220,7 @@ angular.module('trials').controller('TrialsController',
                         if (a.predictedGenes.length > 0) {
 
                             _.each(a.predictedGenes, function(item){
-                                $scope.trialAlterations.push({gene: item, alteration: 'unspecified'});
+                                $scope.trialAlterations.push({gene: item, alteration: 'unspecified', status: 'predicted'});
                             });
                         }
                         //console.log('here is the alteration infor2 ', $scope.trialAlterations, $scope.trialAlterations.length);
@@ -311,7 +313,7 @@ angular.module('trials').controller('TrialsController',
 
             $scope.getEligibility = function () {
                 var eligibility = $scope.trial.eligibilityCriteria;
-               // var eleArr = eligibility.split(/\n\n | \n | \r\n/);
+                //var eleArr = eligibility.split("\n\n");
                 //var eleArr = eligibility.split("\r\n");
                 var eleArr = eligibility.split(/\r?\n | \n\n | \n/);
                 var tempArr = [];
@@ -399,7 +401,8 @@ angular.module('trials').controller('TrialsController',
                                             //$scope.trialAlterations = findAlterations($scope.trial.nctId);
                                             $scope.trialAlterations.push({
                                                 alteration: $scope.newAlteration.toUpperCase(),
-                                                gene: $scope.newGene.toUpperCase()
+                                                gene: $scope.newGene.toUpperCase(),
+                                                status: 'manually'
                                             });
                                         },
                                         function (error) {
@@ -437,7 +440,8 @@ angular.module('trials').controller('TrialsController',
                                                                 //$scope.trialAlterations = findAlterations($scope.trial.nctId);
                                                                 $scope.trialAlterations.push({
                                                                     alteration: $scope.newAlteration.toUpperCase(),
-                                                                    gene: $scope.newGene.toUpperCase()
+                                                                    gene: $scope.newGene.toUpperCase(),
+                                                                    status: 'manually'
                                                                 });
                                                             },
                                                             function () {
@@ -460,7 +464,8 @@ angular.module('trials').controller('TrialsController',
                                                    // $scope.trialAlterations = findAlterations($scope.trial.nctId);
                                                     $scope.trialAlterations.push({
                                                         alteration: $scope.newAlteration.toUpperCase(),
-                                                        gene: $scope.newGene.toUpperCase()
+                                                        gene: $scope.newGene.toUpperCase(),
+                                                        status: 'manually'
                                                     });
                                                 },
                                                 function (error) {

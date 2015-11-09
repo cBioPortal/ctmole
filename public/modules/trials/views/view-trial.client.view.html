@@ -74,10 +74,11 @@
 				</div>
 
 				<a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
-
-				<a href="" target="_blank"><h2><small>View Curation History</small></h2></a>
-
+				
 				<label class="headerStyle">ALTERATIONS</label>
+				<span style="margin-left:10px">
+								<button data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus"></i></button>
+				</span>
 <!--
 				<ul>
 					<li data-ng-repeat="x in HUGOgenes">
@@ -123,14 +124,26 @@ Gene: <input ng-model="newGene">
 
 				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
 
-				<div ng-if="trialAlterations.length > 0">
-					<span class="trialAddType" ng-repeat="x in trialAlterations">
-							<h2 class="fixMargin"><small>{{x.gene + "     " + x.alteration}}
-								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
-					</span>
+				<div ng-if="trialAlterations.length > 0" ng-repeat="x in trialAlterations" >
+					<div style="display:block" >
+					<h1 class="fixMargin"><small>
+						<span ng-if="x.status == 'predicted'" class="label label-warning">{{x.gene + "     " + x.alteration}}</span>
+						<span ng-if="x.status == 'predicted'">
+							<i class="fa fa-times "  ng-click="deleteAlteration(x.alteration, x.gene)"></i>
+							<i class="fa fa-check" ></i>
+						</span>
+
+						<span ng-if="x.status == 'manually'" class="label label-success">{{x.gene + "     " + x.alteration}}</span>
+						<span ng-if="x.status == 'manually'">
+							<i class="fa fa-times "  ng-click="deleteAlteration(x.alteration, x.gene)"></i>
+						</span>
+
+					</small></h1>
+					</div>
+
 				</div>
-				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
-				<br/><br/>
+				<br/>
+				<br/>
 
 
 <!--
@@ -148,6 +161,39 @@ Gene: <input ng-model="newGene">
 
 				</select>
 				<br/><br/>
+				<label class="headerStyle">Curation History</label>
+				<table class="table">
+					<thead>
+					<tr>
+						<th>Name</th>
+						<th>Date</th>
+						<th>Operation</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td>John</td>
+						<td>3/5/2015</td>
+						<td>added BRAF V600E</td>
+					</tr>
+					<tr>
+						<td>Mary</td>
+						<td>3/5/2015</td>
+						<td>delete KRAS V600K</td>
+					</tr>
+					<tr>
+						<td>July</td>
+						<td>6/5/2015</td>
+						<td>marked trial curated</td>
+					</tr>
+					<tr>
+						<td>Tony</td>
+						<td>10/5/2015</td>
+						<td>confirmed prerun mutation KIT E17K</td>
+					</tr>
+					</tbody>
+				</table>
+				<!--
 				<div class="form-group">
 					<label for="comment" class="headerStyle">Comment </label>
 					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="saveComments()">Save</button>
@@ -164,7 +210,7 @@ Gene: <input ng-model="newGene">
 
 
 					<textarea class="form-control" rows="5" id="comment" ng-model="comment"></textarea>
-				</div>
+				</div>-->
 			</div>
 		</div>
 		<div class="col-sm-8">
