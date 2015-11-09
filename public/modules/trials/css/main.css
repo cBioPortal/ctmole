@@ -107,3 +107,14 @@ table.table.trialTableStyle tr:nth-child(even) {
 {
     margin-left:10px;
 }
+
+.chosen-container-single {
+    width: 200px !important; /* or any value that fits your needs */
+}
+.criteria{
+    list-style-type:none;
+    padding-left:0px;
+}
+.highlight{
+    background-color:yellow;
+}

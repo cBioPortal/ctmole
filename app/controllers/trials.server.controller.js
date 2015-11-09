@@ -235,6 +235,9 @@ exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).
 			var updateRequiredTrial;
 			request(url, function(error, response, body){
 				parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+
+					console.log('here is the result ', result);
+
 					if(typeof result != 'undefined' && result.hasOwnProperty('clinical_study'))
 					{
 						updateRequiredTrial = result.clinical_study;

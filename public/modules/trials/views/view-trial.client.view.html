@@ -10,8 +10,22 @@
 
 				<hr>
 
+
 				<h2><small><p>{{trial.nctId}}</p></small></h2>
-				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
+
+				<div ng-show="showAllDisease" class="addBGColor">
+					<h2><small>
+						<p>{{trial.diseaseCondition[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
+						<p ng-if="$index > 0" ng-repeat="m in trial.diseaseCondition">{{m}}</p>
+					</small></h2>
+				</div>
+
+				<div ng-show="!showAllDisease">
+					<h2><small>
+						<p>{{trial.diseaseCondition[0]}}<a  ng-if="trial.diseaseCondition.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.diseaseCondition.length-1}} more </a></p>
+					</small></h2>
+				</div>
+
 				<h2><small><p>{{trial.phase}}</p></small></h2>
 
 				 <h2><small><p class="test">{{trial.recruitingStatus}}
@@ -60,11 +74,18 @@
 				</div>
 
 				<a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
-				<br/>
+
+				<a href="" target="_blank"><h2><small>View Curation History</small></h2></a>
 
 				<label class="headerStyle">ALTERATIONS</label>
+<!--
+				<ul>
+					<li data-ng-repeat="x in HUGOgenes">
+						{{ x }}
+					</li>
+				</ul>
 
-
+-->
 				<div class="modal fade" id="myModal" role="dialog">
 					<div class="modal-dialog">
 
@@ -75,8 +96,20 @@
 								<h4 class="modal-title">Add a new alteration</h4>
 							</div>
 							<div class="modal-body">
-								Gene: <input ng-model="newGene">
+
+								Gene:
+								<select chosen
+										option="HUGOgenes"
+										ng-model="newGene"
+										ng-options="m as m for m in HUGOgenes"
+										class="chosen-select"
+										data-placeholder="Enter A Gene">
+								</select>
 								Alteration: <input ng-model="newAlteration">
+								<!--
+
+Gene: <input ng-model="newGene">
+								-->
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId()">Submit</button>
@@ -88,10 +121,10 @@
 				</div>
 
 
-				<p ng-show="trial.alterationsFetched.length == 0 && true || false">No information available</p>
+				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
 
-				<div ng-if="trial.alterationsFetched.length > 0">
-					<span class="trialAddType" ng-repeat="x in trial.alterationsFetched">
+				<div ng-if="trialAlterations.length > 0">
+					<span class="trialAddType" ng-repeat="x in trialAlterations">
 							<h2 class="fixMargin"><small>{{x.gene + "     " + x.alteration}}
 								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
 					</span>
@@ -175,8 +208,26 @@
 				</div>
 
 
+				<div class="panel panel-default" ng-if="criteria.length > 0">
+					<div class="panel-heading" role="tab" id="headingOne">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								 Criteria
+							</a>
+						</h4>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+						<div class="panel-body" >
+							<ul ng-repeat="x in criteria track by $index" class="criteria">
+								<li>{{x}}</li>
+							</ul>
+
+						</div>
+					</div>
+				</div>
 
 
+<!--
 
 				<div class="panel panel-default" ng-if="inclusionCriteria.length > 0">
 					<div class="panel-heading" role="tab" id="headingOne">
@@ -208,6 +259,8 @@
 						</div>
 					</div>
 				</div>
+
+-->
 
 			</div>
 		</div>

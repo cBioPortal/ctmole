@@ -32,6 +32,9 @@
 
 'use strict';
 
+
+
+
 // Trials controller
 angular.module('trials').controller('TrialsController',
     ['$scope',
@@ -58,12 +61,14 @@ angular.module('trials').controller('TrialsController',
             $scope.showVar = false;
             $scope.alertShow = false;
             $scope.showAll = false;
+            $scope.showAllDisease = false;
             $scope.showAllDrugs = false;
             $scope.showAllCom = false;
 
             $scope.showAllComments = function(){
                 $scope.showAllCom = !$scope.showAllCom;
             }
+
 
             $scope.switchStatus = function (status) {
                 Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function (u, getResponseHeaders) {
@@ -108,6 +113,9 @@ angular.module('trials').controller('TrialsController',
 
             $scope.displayStyle = function () {
                 $scope.showAll = !$scope.showAll;
+            };
+            $scope.displayDiseaseStyle = function () {
+                $scope.showAllDisease = !$scope.showAllDisease;
             };
 
             // Create new Trial
@@ -161,37 +169,6 @@ angular.module('trials').controller('TrialsController',
                 $scope.trials = Trials.nctId.query();
             };
 
-            function findAlterations(nctId) {
-
-                var alteration_id = [];
-                Mappings.mappingSearch.get({
-                        Idvalue: nctId,
-                    },
-                    function (a) {
-                        if (a.alteration) {
-                            for (var i = 0; i < a.alteration.length; i++) {
-                                alteration_id.push(a.alteration[i].alteration_Id);
-                            }
-                            if (alteration_id.length > 0) {
-                                $scope.trialAlterations = Alterations.alterationByIds.query({
-                                        Ids: alteration_id
-                                    }
-                                );
-                            }
-                            else {
-                                $scope.trialAlterations = [];
-                            }
-                        } else {
-                            $scope.trialAlterations = [];
-                            console.log('no alteration information for this trial ID')
-                        }
-                    },
-                    function (b) {
-                        $scope.trialAlterations = [];
-                        console.log('no alteration information for this trial ID')
-                    });
-
-            }
 
             // Find existing Trial
             $scope.findOne = function () {
@@ -201,7 +178,58 @@ angular.module('trials').controller('TrialsController',
                 {
                     $scope.getEligibility();
 
+                    Genes.geneList.query({}, function(a)
+                    {
+                        var tempGenes = [];
+
+                         _.each(a, function(gene){
+                         tempGenes.push(gene.hugo_symbol);
+                         });
+                         $scope.HUGOgenes = tempGenes;
+
+                    });
+
                 });
+                var alteration_id = [];
+                $scope.trialAlterations = [];
+                Mappings.mappingSearch.get({
+                        Idvalue: $stateParams.nctId,
+                    },
+                    function (a) {
+                        var tempArr1 = [];
+                        if (a.alteration.length > 0) {
+                            for (var i = 0; i < a.alteration.length; i++) {
+                                alteration_id.push(a.alteration[i].alteration_Id);
+                            }
+                            Alterations.alterationByIds.query({Ids: alteration_id},
+                                function(res){
+                                    _.each(res, function(item){
+                                        $scope.trialAlterations.push({gene: item.gene, alteration: item.alteration});
+                                    });
+                                    // console.log('here is the alteration infor1 ', tempArr1);
+
+                                }
+                            );
+                        }
+                        else {
+                            $scope.trialAlterations = [];
+                            console.log('no alteration information for this trial ID')
+                        }
+                        if (a.predictedGenes.length > 0) {
+
+                            _.each(a.predictedGenes, function(item){
+                                $scope.trialAlterations.push({gene: item, alteration: 'unspecified'});
+                            });
+                        }
+                        //console.log('here is the alteration infor2 ', $scope.trialAlterations, $scope.trialAlterations.length);
+
+                    },
+                    function (b) {
+                        $scope.trialAlterations = [];
+                        console.log('no alteration information for this trial ID')
+                    });
+
+
                 $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId}, function()
                     {
                         if($scope.trialMappings.completeStatus === undefined)
@@ -220,6 +248,7 @@ angular.module('trials').controller('TrialsController',
                         {
                             $scope.trialComments = $scope.trialMappings.comments;
                         }
+
                     },
                     function()
                     {
@@ -282,6 +311,15 @@ angular.module('trials').controller('TrialsController',
 
             $scope.getEligibility = function () {
                 var eligibility = $scope.trial.eligibilityCriteria;
+               // var eleArr = eligibility.split(/\n\n | \n | \r\n/);
+                //var eleArr = eligibility.split("\r\n");
+                var eleArr = eligibility.split(/\r?\n | \n\n | \n/);
+                var tempArr = [];
+                _.each(eleArr, function(item){
+                    tempArr.push(item.trim());
+                });
+                $scope.criteria = tempArr;
+/*
                 var m = eligibility.indexOf('Inclusion Criteria');
                 var n = eligibility.indexOf('Exclusion Criteria');
                 if(m !== -1 && n !== -1)
@@ -308,7 +346,7 @@ angular.module('trials').controller('TrialsController',
                     output += '</ol>';
                     $scope.exclusionCriteria = output;
                 }
-
+*/
              //   console.log('here  ', $scope.inclusionCriteria.length);
 
 
@@ -336,8 +374,7 @@ angular.module('trials').controller('TrialsController',
                                                 a.$update({Idvalue: u._id},
                                                     function () {
                                                         console.log('successfully update alteration array');
-                                                        //$scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                                        $scope.trial.alterationsFetched.push({
+                                                        $scope.trialAlterations.push({
                                                             alteration: $scope.newAlteration.toUpperCase(),
                                                             gene: $scope.newGene.toUpperCase()
                                                         });
@@ -360,7 +397,7 @@ angular.module('trials').controller('TrialsController',
                                         function () {
                                             console.log('success insert record in mapping table');
                                             //$scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                            $scope.trial.alterationsFetched.push({
+                                            $scope.trialAlterations.push({
                                                 alteration: $scope.newAlteration.toUpperCase(),
                                                 gene: $scope.newGene.toUpperCase()
                                             });
@@ -398,7 +435,7 @@ angular.module('trials').controller('TrialsController',
                                                             function () {
                                                                 console.log('successfully update alteration array');
                                                                 //$scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                                                $scope.trial.alterationsFetched.push({
+                                                                $scope.trialAlterations.push({
                                                                     alteration: $scope.newAlteration.toUpperCase(),
                                                                     gene: $scope.newGene.toUpperCase()
                                                                 });
@@ -420,8 +457,8 @@ angular.module('trials').controller('TrialsController',
                                             Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
                                                 function () {
                                                     console.log('success insert record in mapping table');
-                                                    //$scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                                    $scope.trial.alterationsFetched.push({
+                                                   // $scope.trialAlterations = findAlterations($scope.trial.nctId);
+                                                    $scope.trialAlterations.push({
                                                         alteration: $scope.newAlteration.toUpperCase(),
                                                         gene: $scope.newGene.toUpperCase()
                                                     });
@@ -466,10 +503,10 @@ angular.module('trials').controller('TrialsController',
                                 c.$deleteAlt({Idvalue: a._id},
                                     function (e) {
                                         console.log('delete successfully');
-                                        for (var i = 0; i < $scope.trial.alterationsFetched.length; i++) {
-                                            var alterationItem = $scope.trial.alterationsFetched[i];
+                                        for (var i = 0; i < $scope.trialAlterations.length; i++) {
+                                            var alterationItem = $scope.trialAlterations[i];
                                             if (alterationItem.alteration == alteration.toUpperCase() && alterationItem.gene == gene.toUpperCase()) {
-                                                $scope.trial.alterationsFetched.splice(i, 1);
+                                                $scope.trialAlterations.splice(i, 1);
                                             }
                                         }
 

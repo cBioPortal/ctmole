@@ -46,4 +46,4 @@ var AlterationSchema = new Schema({
 	gene: String
 });
 
-mongoose.model('Alteration', AlterationSchema);
+module.exports = mongoose.model('Alteration', AlterationSchema);

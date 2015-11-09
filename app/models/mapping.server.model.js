@@ -59,6 +59,9 @@ var MappingSchema = new Schema({
 	},
 	comments: {
 		type: Array
+	},
+	predictedGenes: {
+		type: Array
 	}
 	/*
 	created: {
@@ -73,4 +76,4 @@ var MappingSchema = new Schema({
 
 });
 
-mongoose.model('Mapping', MappingSchema);
+module.exports = mongoose.model('Mapping', MappingSchema);
