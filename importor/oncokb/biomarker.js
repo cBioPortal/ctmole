@@ -111,7 +111,6 @@ function saveToMapping() {
 		}
 
 	});
-console.log( ' uniquePredictions length is ', uniquePredictions);
 	var flag3 = 0;
 	_.each(uniquePredictions, function(item){
 
@@ -126,7 +125,10 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 					{
 						preGenes = [];
 					}
-					preGenes = _.uniq(preGenes.concat(item.gene));
+
+					_.each(item.gene, function(newItem){
+						preGenes.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
 
 					Mapping.update({nctId: item.nctId},{$set: {predictedGenes: preGenes}}, function(err, map){
 						flag3++;
@@ -135,8 +137,11 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 				}
 				else
 				{
-
-					var newMappingRecord = new Mapping({nctId: item.nctId, predictedGenes: item.gene, completeStatus: '1'});
+					var tempArr = [];
+					_.each(item.gene, function(newItem){
+						tempArr.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, predictedGenes: tempArr, completeStatus: '1'});
 
 					newMappingRecord.save(function(err, map){
 						flag3++;
@@ -158,9 +163,8 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 						alteration = [];
 					}
 					_.each(item.alterationID, function(newItem){
-						alteration.push({alteration_Id: newItem, status: 'predicted'});
+						alteration.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
 					});
-					console.log(item.nctId, 'update ', alteration);
 					Mapping.update({nctId: item.nctId},{$set: {alteration: alteration}}, function(err, map){
 						flag3++;
 						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
@@ -170,7 +174,7 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 				{
 					var tempArr = [];
 					_.each(item.alterationID, function(newItem){
-						tempArr.push({alteration_Id: newItem, status: 'predicted'});
+						tempArr.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
 					});
 					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, completeStatus: '1'});
 
@@ -193,7 +197,7 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 						alteration = [];
 					}
 					_.each(item.alterationID, function(newItem){
-						alteration.push({alteration_Id: newItem, status: 'predicted'});
+						alteration.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
 					});
 
 					var preGenes = mapping.predictedGenes;
@@ -201,9 +205,10 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 					{
 						preGenes = [];
 					}
-					preGenes = _.uniq(preGenes.concat(item.gene));
+					_.each(item.gene, function(newItem){
+						preGenes.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
 
-					console.log(item.nctId, 'update ', alteration);
 					Mapping.update({nctId: item.nctId},{$set: {alteration: alteration, predictedGenes: preGenes}}, function(err, map){
 						flag3++;
 						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
@@ -211,11 +216,14 @@ console.log( ' uniquePredictions length is ', uniquePredictions);
 				}
 				else
 				{
-					var tempArr = [];
+					var tempArr = [], tempArr1 = [];
 					_.each(item.alterationID, function(newItem){
-						tempArr.push({alteration_Id: newItem, status: 'predicted'});
+						tempArr.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
 					});
-					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, predictedGenes: item.gene, completeStatus: '1'});
+					_.each(item.gene, function(newItem){
+						tempArr1.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, predictedGenes: tempArr1, completeStatus: '1'});
 
 					newMappingRecord.save(function(err, map){
 						flag3++;
