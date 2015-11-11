@@ -52,9 +52,6 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					update: {
 						method: 'PUT'
 					},
-					deleteAlt: {
-						method: 'PATCH'
-					},
 					completeStatus: {
 						method: 'POST',
 						isArray: false
@@ -77,6 +74,26 @@ angular.module('mappings').factory('Mappings', ['$resource',
 				}),
 			commentsSave: $resource('commentsSave/:trialID/:comment', {trialID: '@nctId'}, {
 				commentsSave: {
+					method: 'GET'
+				}
+			}),
+			confirmGene: $resource('confirmGene/:trialID/:gene', {trialID: '@nctId'}, {
+				confirmGene: {
+					method: 'GET'
+				}
+			}),
+			confirmAlteration: $resource('confirmAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
+				confirmAlteration: {
+					method: 'GET'
+				}
+			}),
+			deleteAlteration: $resource('deleteAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
+				deleteAlteration: {
+					method: 'GET'
+				}
+			}),
+			deleteGene: $resource('deleteGene/:trialID/:gene', {trialID: '@nctId'}, {
+				deleteGene: {
 					method: 'GET'
 				}
 			})

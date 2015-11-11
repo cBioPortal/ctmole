@@ -74,7 +74,7 @@
 				</div>
 
 				<a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
-				
+
 				<label class="headerStyle">ALTERATIONS</label>
 				<span style="margin-left:10px">
 								<button data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus"></i></button>
@@ -126,18 +126,20 @@ Gene: <input ng-model="newGene">
 
 				<div ng-if="trialAlterations.length > 0" ng-repeat="x in trialAlterations" >
 					<div style="display:block" >
-					<h1 class="fixMargin"><small>
-						<span ng-if="x.status == 'predicted'" class="label label-warning">{{x.gene + "     " + x.alteration}}</span>
-						<span ng-if="x.status == 'predicted'">
-							<i class="fa fa-times "  ng-click="deleteAlteration(x.alteration, x.gene)"></i>
-							<i class="fa fa-check" ></i>
-						</span>
-
-						<span ng-if="x.status == 'manually'" class="label label-success">{{x.gene + "     " + x.alteration}}</span>
-						<span ng-if="x.status == 'manually'">
-							<i class="fa fa-times "  ng-click="deleteAlteration(x.alteration, x.gene)"></i>
-						</span>
-
+					<h1><small>
+						<div class="fixMargin" ng-if="x.confirmStatus == 'unconfirmed'">
+							<span class="label label-warning">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-check" ng-click="confirmAlteration(x)"></i>
+							</span>
+						</div>
+						<div class="fixMargin" ng-if="x.status == 'manually' || x.confirmStatus == 'confirmed'">
+							<span  class="label label-success">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+							</span>
+						</div>
 					</small></h1>
 					</div>
 
@@ -265,48 +267,16 @@ Gene: <input ng-model="newGene">
 					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 						<div class="panel-body" >
 							<ul ng-repeat="x in criteria track by $index" class="criteria">
-								<li>{{x}}</li>
+								<li ng-if="criteriaTitles.indexOf(x) !== -1">
+									<strong>{{x}}</strong>
+								</li>
+								<li ng-if="criteriaTitles.indexOf(x) === -1">{{x}}</li>
 							</ul>
 
 						</div>
 					</div>
 				</div>
 
-
-<!--
-
-				<div class="panel panel-default" ng-if="inclusionCriteria.length > 0">
-					<div class="panel-heading" role="tab" id="headingOne">
-						<h4 class="panel-title">
-							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-								Inclusion Criteria
-							</a>
-						</h4>
-					</div>
-					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body">
-							<p ng-bind-html='inclusionCriteria'></p>
-
-						</div>
-					</div>
-				</div>
-				<div class="panel panel-default" ng-if="exclusionCriteria.length > 0">
-					<div class="panel-heading" role="tab" id="headingTwo">
-						<h4 class="panel-title">
-							<a class="collapsed" role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-								Exclusion Criteria
-							</a>
-						</h4>
-					</div>
-					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-						<div class="panel-body">
-							<p ng-bind-html='exclusionCriteria'></p>
-
-						</div>
-					</div>
-				</div>
-
--->
 
 			</div>
 		</div>

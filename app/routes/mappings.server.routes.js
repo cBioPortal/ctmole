@@ -42,10 +42,8 @@ module.exports = function(app) {
 		.post(users.requiresLogin, mappings.create);
 
 	app.route('/mappings/:Idvalue')
-		//.get(mappings.read)
 		.get(mappings.mappingBynctId)
 		.put(users.requiresLogin, mappings.update)
-		.patch(users.requiresLogin, mappings.deleteAlt)
 		.post(users.requiresLogin, mappings.completeTrial);
 
 	app.route('/mappings/:alteration/:nctId')
@@ -65,6 +63,17 @@ module.exports = function(app) {
 	app.route('/commentsSave/:trialID/:comment')
 		.get(users.requiresLogin, mappings.saveComments);
 
+	app.route('/confirmGene/:trialID/:gene')
+		.get(users.requiresLogin, mappings.confirmGene);
+
+	app.route('/confirmAlteration/:trialID/:alteration_Id')
+		.get(users.requiresLogin, mappings.confirmAlteration);
+
+	app.route('/deleteAlteration/:trialID/:alteration_Id')
+		.get(users.requiresLogin, mappings.deleteAlteration);
+
+	app.route('/deleteGene/:trialID/:gene')
+		.get(users.requiresLogin, mappings.deleteGene);
 
 	// Finish by binding the Mapping middleware
 	//app.param('Idvalue', mappings.mappingBynctId);

@@ -45,7 +45,10 @@ var	Trial = require('../../app/models/trial.server.model.js');
 
 var predictedMutations = [];
 var genesMatch = [];
-
+var flag = 0;
+var index = 0;
+var hugo_symbols = [];
+var hugo_symbol = '';
 function connectDB(callback123){
 
 	mongoose.connect('mongodb://localhost/firstDB');
@@ -55,7 +58,7 @@ function connectDB(callback123){
 	});
 }
 
-function saveToMapping() {
+function worker3() {
 	console.log('\n****************************************************************\n');
 	console.log('saving to mapping collection ...');
 /*
@@ -236,103 +239,116 @@ function saveToMapping() {
 
 }
 
-function searchGeneMatch(){
-	console.log('\n****************************************************************\n');
-	console.log('There are ' + genesMatch.length + ' mutations did not match any trials. Now begin to search for only gene match ');
-	genesMatch = _.uniq(genesMatch);
-	var flag = 0;
-	_.each(genesMatch, function(item){
-		Trial.find({$text: {$search: '\"' + item + '\"' }}, function(err, trials) {
-			flag++;
-			console.log((flag/genesMatch.length*100).toFixed(2), '% finished');
 
-			if(trials.length > 0){
-				_.each(trials, function(trial){
-					predictedMutations.push({nctId: trial.nctId, gene: item, alteration: 'unspecified'});
-				});
-			}
+function worker1(trialIds){
+	var firstSearch = true, geneSaved = true;
+	var flagCount = 0;
+	hugo_symbol = hugo_symbols[index];
 
-			if(flag === genesMatch.length)
-			{
-				saveToMapping();
-			}
+	Alteration.find({gene: hugo_symbol}, function(err1, alterations){
+		if(alterations.length > 0)
+		{
+			_.each(alterations, function(item){
+				Trial.find({$and: [{nctId: {$in: trialIds}}, {$text: {$search: '\"' + item.alteration + '\"'}}]} , function(err1, trials1){
 
-		})
-
-	});
-
-
-}
-
-function searchTrial(result){
-	console.log('\n****************************************************************\n');
-	console.log('There are ', result.length, ' mutation records.');
-	console.log('Start to search for those mutation records in all clinical trials...');
-	var flag2 = 0;
-	_.each(result, function(mutationItem){
-
-		Trial.find({$text: {$search: '\"' + mutationItem.gene + '\"' + ' \"' + mutationItem.alteration + '\"' }}, function(err, trials){
-			flag2++;
-			console.log('Searching for ', mutationItem.gene, '   ' ,mutationItem.alteration, ' and ', trials.length, ' trials found ', '\n', (flag2/result.length*100).toFixed(2), '% finished');
-			if(trials.length > 0){
-				_.each(trials, function(trial){
-					predictedMutations.push({nctId: trial.nctId, alterationID: mutationItem._id.toString()});
-				});
-			}
-			else{
-				genesMatch.push(mutationItem.gene);
-			}
-
-			if(flag2 === result.length)
-			{
-				searchGeneMatch();
-			}
-
-		})
-	});
-}
-function workers() {
-
-
-	var hugoGenes = [], genes = [], genesNoMutations = [];
-
-	Gene.find({}, function(err1, geneResult){
-
-		_.each(geneResult, function(item){
-			hugoGenes.push(item.hugo_symbol);
-		});
-
-		Alteration.find({}, function(err2, result){
-
-			_.each(result, function(resultItem){
-				genes.push(resultItem.gene);
-
-			});
-
-			genesNoMutations = _.difference(hugoGenes, genes);
-			console.log('\n****************************************************************\n');
-			console.log('There are ', genesNoMutations.length, 'genes not having mutation records.');
-			console.log('Start to search for those genes in all clinical trials...');
-			var flag1 = 0;
-			_.each(genesNoMutations, function(gene){
-
-				Trial.find({ $text: { $search: '\"' + gene + '\"' } }, function(err, trials){
-					flag1++;
-					console.log('Searching for ', gene, ' and ', trials.length, ' trials found ', '\n', (flag1/genesNoMutations.length*100).toFixed(2), '% finished');
-					_.each(trials, function(trial){
-						predictedMutations.push({nctId: trial.nctId, gene: gene, alteration: 'unspecified'});
-					});
-					if(flag1 === genesNoMutations.length)
+					if(firstSearch)
 					{
-						searchTrial(result);
+						console.log('There are ' + alterations.length + ' mutation records associated with ' + hugo_symbol);
+						firstSearch = false;
 					}
-				});
+					if(trials1.length > 0)
+					{
+						console.log(trials1.length + ' trials found matching the mutation ' + hugo_symbol + ' ' + item.alteration);
+						_.each(trials1, function(trialItem){
+							predictedMutations.push({nctId: trialItem.nctId, alterationID: item._id.toString()});
+						});
+					}
+					else
+					{
+						console.log('No trial found matching the mutation ' + hugo_symbol + ' ' + item.alteration);
+						if(geneSaved)
+						{
+							geneSaved = false;
+							_.each(trialIds, function(item){
+								predictedMutations.push({nctId: item, gene: hugo_symbol, alteration: 'unspecified'});
+							});
+						}
 
+					}
+
+					flagCount++;
+					if(flagCount == alterations.length)
+					{
+						index = index + 1;
+						if(index === hugo_symbols.length)
+						{
+							worker3();
+						}
+						else
+						{
+							worker2(index);
+						}					}
+				})
 			});
+		}
+		else
+		{
+
+			console.log('There are 0 mutation records associated with this gene');
+			_.each(trialIds, function(item){
+				predictedMutations.push({nctId: item, gene: hugo_symbol, alteration: 'unspecified'});
+			});
+			index = index + 1;
+			if(index === hugo_symbols.length)
+			{
+				worker3();
+			}
+			else
+			{
+				worker2(index);
+			}
+		}
 
 
-		});
+	});
+}
 
+function worker2(index) {
+
+	Trial.find({$text: {$search: '\"' + hugo_symbols[index] + '\"'}}, function(err, trials){
+		hugo_symbol = hugo_symbols[index];
+		console.log('\n******************************************************************************');
+		console.log('Searching for ' + hugo_symbol + ' and there are '+ trials.length + ' trials matching this gene ',((index+1)/hugo_symbols.length*100).toFixed(2), '% finished\n');
+		if(trials.length > 0){
+			var trialIds = [];
+			_.each(trials, function(item){
+				trialIds.push(item.nctId);
+			});
+			worker1(trialIds);
+		}
+		else
+		{
+			index = index + 1;
+			if(index === hugo_symbols.length)
+			{
+				worker3();
+			}
+			else
+			{
+				worker2(index);
+			}
+		}
+
+	})
+}
+
+function workers() {
+	Gene.find({}, function(err1, genes){
+
+		_.each(genes, function(gene){
+			hugo_symbols.push(gene.hugo_symbol);
+			});
+		worker2(index);
 	});
 
 }

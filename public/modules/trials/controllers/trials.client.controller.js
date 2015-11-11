@@ -54,8 +54,7 @@ angular.module('trials').controller('TrialsController',
             $scope.tumorHeader = ['Name', 'Tissue', 'Clinical TrialKeywords'];
             $scope.tumorItems = ['name', 'tissue', 'clinicalTrialKeywords'];
 
-            $scope.inclusionCriteria = '';
-            $scope.exclusionCriteria = '';
+            $scope.criteriaTitles = ['Inclusion Criteria:', 'Exclusion Criteria:', 'DISEASE CHARACTERISTICS:', 'PATIENT CHARACTERISTICS:', 'PRIOR CONCURRENT THERAPY:'];
 
 
             $scope.showVar = false;
@@ -196,34 +195,42 @@ angular.module('trials').controller('TrialsController',
                         Idvalue: $stateParams.nctId,
                     },
                     function (a) {
-                        var tempArr1 = [];
-                        if (a.alteration.length > 0) {
-                            for (var i = 0; i < a.alteration.length; i++) {
-                                alteration_id.push(a.alteration[i].alteration_Id);
-                            }
-                            Alterations.alterationByIds.query({Ids: alteration_id},
-                                function(res){
-                                    _.each(res, function(item){
-                                        var index = _.map(a.alteration, function(e){return e.alteration_Id}).indexOf(item._id);
 
-                                        $scope.trialAlterations.push({gene: item.gene, alteration: item.alteration, status: a.alteration[index].status});
-                                    });
-                                    // console.log('here is the alteration infor1 ', tempArr1);
+                        if(a.nctId !== undefined)
+                        {
+                            if (a.alteration.length > 0) {
 
+
+                                for (var i = 0; i < a.alteration.length; i++) {
+                                    alteration_id.push(a.alteration[i].alteration_Id);
                                 }
-                            );
-                        }
-                        else {
-                            $scope.trialAlterations = [];
-                            console.log('no alteration information for this trial ID')
-                        }
-                        if (a.predictedGenes.length > 0) {
+                                Alterations.alterationByIds.query({Ids: alteration_id},
+                                    function(res){
+                                        _.each(res, function(item){
+                                            var index = _.map(a.alteration, function(e){return e.alteration_Id}).indexOf(item._id);
+                                            $scope.trialAlterations.push({alteration_Id: a.alteration[index].alteration_Id, gene: item.gene, alteration: item.alteration, status: a.alteration[index].status, confirmStatus: a.alteration[index].confirmStatus});
+                                        });
 
-                            _.each(a.predictedGenes, function(item){
-                                $scope.trialAlterations.push({gene: item, alteration: 'unspecified', status: 'predicted'});
-                            });
+                                    }
+                                );
+                            }
+                            else {
+                                $scope.trialAlterations = [];
+                                console.log('no alteration information for this trial ID')
+                            }
+                            if (a.predictedGenes.length > 0) {
+
+                                _.each(a.predictedGenes, function(item){
+                                    $scope.trialAlterations.push({gene: item.gene, alteration: 'unspecified', status: 'predicted', confirmStatus: item.confirmStatus});
+                                });
+                            }
                         }
-                        //console.log('here is the alteration infor2 ', $scope.trialAlterations, $scope.trialAlterations.length);
+                        else
+                        {
+                            $scope.trialAlterations = [];
+                            console.log('There is no mapping record existed for this trial.');
+                        }
+
 
                     },
                     function (b) {
@@ -284,32 +291,6 @@ angular.module('trials').controller('TrialsController',
                 }).join(', ');
             };
 
-            var getLists = function (str) {
-                var slicedResult = [];
-
-                if ((str.indexOf('1. ') !== -1 && (str.indexOf('1. ') < str.indexOf(' - ') || str.indexOf(' - ') === -1))) {
-                    slicedResult = str.replace(/(\d)[.]\s/g, '\u000B').split('\u000B');
-                    slicedResult = _.map(slicedResult, function (value) {
-                        return value.slice(0, -1).trim();
-                    });
-                    slicedResult = _.compact(slicedResult);
-
-                }
-                else {
-                    slicedResult = str.split(' - ');
-                    slicedResult = _.map(slicedResult, function (value) {
-                        return value.trim();
-                    });
-                    slicedResult = _.compact(slicedResult);
-                    //slicedResult = ["pear","watermelon","orange"];
-                }
-
-                slicedResult = _.map(slicedResult, function (element) {
-                    return element.split('. ');
-                });
-                slicedResult = _.flatten(slicedResult);
-                return slicedResult;
-            };
 
             $scope.getEligibility = function () {
                 var eligibility = $scope.trial.eligibilityCriteria;
@@ -321,215 +302,122 @@ angular.module('trials').controller('TrialsController',
                     tempArr.push(item.trim());
                 });
                 $scope.criteria = tempArr;
-/*
-                var m = eligibility.indexOf('Inclusion Criteria');
-                var n = eligibility.indexOf('Exclusion Criteria');
-                if(m !== -1 && n !== -1)
-                {
-                    m += 20;
-                    n += 20;
-
-                    var output = '<ol>';
-
-                    var inEligi = eligibility.substr(m, n - m - 20);
-                    var inEligiArray = getLists(inEligi);
-
-                    _.each(inEligiArray, function (element) {
-                        output = output + '<li>' + element + '</li>';
-                    });
-                    output += '</ol>';
-                    $scope.inclusionCriteria = output;
-
-                    var exEligi = eligibility.substr(n);
-                    var exEligiArray = getLists(exEligi);
-                    _.each(exEligiArray, function (element) {
-                        output = output + '<li>' + element + '</li>';
-                    });
-                    output += '</ol>';
-                    $scope.exclusionCriteria = output;
-                }
-*/
-             //   console.log('here  ', $scope.inclusionCriteria.length);
-
 
             };
             //Add new connection between alterations and current trial
             $scope.addAlterationBynctId = function () {
-                Alterations.alteration.get({
-                    alteration: $scope.newAlteration.toUpperCase(),
-                    gene: $scope.newGene.toUpperCase()
-                }, function (u, getResponseHeaders) {
-
-                    if (u._id) {
-
-                        console.log('alteration existed...');
-                        Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-                            function (a) {
-                                if (a._id) {
-                                    console.log('nctId record exist in mapping table...', a);
-                                    Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
-                                        function (mapRecord) {
-                                            if (mapRecord._id) {
-                                                console.log('nothing else need to do', mapRecord);
-                                            } else {
-                                                console.log('update alteration array');
-                                                a.$update({Idvalue: u._id},
-                                                    function () {
-                                                        console.log('successfully update alteration array');
-                                                        $scope.trialAlterations.push({
-                                                            alteration: $scope.newAlteration.toUpperCase(),
-                                                            gene: $scope.newGene.toUpperCase()
-                                                        });
-                                                    },
-                                                    function () {
-                                                        console.log('update alteration array failed');
-                                                    }
-                                                );
-                                            }
-                                        },
-                                        function () {
-
-                                        }
-                                    );
-                                } else {
-                                    //insert new mapping record
-                                    console.log('nctId record not exist in mapping table...');
-
-                                    Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
-                                        function () {
-                                            console.log('success insert record in mapping table');
-                                            //$scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                            $scope.trialAlterations.push({
-                                                alteration: $scope.newAlteration.toUpperCase(),
-                                                gene: $scope.newGene.toUpperCase(),
-                                                status: 'manually'
-                                            });
-                                        },
-                                        function (error) {
-                                            console.log('did not insert successfully because of ', error);
-                                        }
-                                    );
-                                }
-
-                            },
-                            function (b) {
-
-
-                            }
-                        );
-
-                    } else {
-                        Alterations.alteration.save({alteration: $scope.newAlteration, gene: $scope.newGene},
-                            function (u, getResponseHeaders) {
-                                console.log('save alteration successfully');
-                                //search mapping record by nctId
-                                //also need to check if nctId record already exist or not like the above block
-                                Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-                                    function (a) {
-                                        if (a._id) {
-                                            console.log('nctId record exist in mapping table...', a);
-                                            Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
-                                                function (mapRecord) {
-                                                    if (mapRecord._id) {
-                                                        console.log('nothing else need to do', mapRecord);
-                                                    } else {
-                                                        console.log('update alteration array');
-                                                        a.$update({Idvalue: u._id},
-                                                            function () {
-                                                                console.log('successfully update alteration array');
-                                                                //$scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                                                $scope.trialAlterations.push({
-                                                                    alteration: $scope.newAlteration.toUpperCase(),
-                                                                    gene: $scope.newGene.toUpperCase(),
-                                                                    status: 'manually'
-                                                                });
-                                                            },
-                                                            function () {
-                                                                console.log('update alteration array failed');
-                                                            }
-                                                        );
-                                                    }
-                                                },
-                                                function () {
-
-                                                }
-                                            );
-                                        } else {
-                                            //insert new mapping record
-                                            console.log('nctId record not exist in mapping table...');
-
-                                            Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
-                                                function () {
-                                                    console.log('success insert record in mapping table');
-                                                   // $scope.trialAlterations = findAlterations($scope.trial.nctId);
-                                                    $scope.trialAlterations.push({
-                                                        alteration: $scope.newAlteration.toUpperCase(),
-                                                        gene: $scope.newGene.toUpperCase(),
-                                                        status: 'manually'
-                                                    });
-                                                },
-                                                function (error) {
-                                                    console.log('did not insert successfully because of ', error);
-                                                }
-                                            );
-                                        }
-                                    },
-                                    function (b) {
-
-
-                                    }
-                                );
-
-
-                            }, function () {
-                                console.log('failed to save alteration ');
-                            }
-                        );
+                var addFalg = true;
+                _.each($scope.trialAlterations, function(item){
+                    if($scope.newAlteration.toUpperCase() === item.alteration && $scope.newGene.toUpperCase() === item.gene)
+                    {
+                        bootbox.alert('Sorry but entered alteration already added for this trial!');
+                        addFalg = false;
                     }
-
-                }, function (getError) {
-                    // the alteration didn't exist, so insert to both alteration and mapping, and update trial alteration information
-
-                    console.log('alteration did not exist');
-
-
                 });
+                if(addFalg)
+                {
+                    Alterations.addAlteration.get({
+                        alteration: $scope.newAlteration.toUpperCase(),
+                        gene: $scope.newGene.toUpperCase(),
+                        nctId: $scope.trial.nctId
+                    }, function (u) {
+                        if(u[1] === 'e'){
+                            bootbox.alert('Sorry but error happened when inserting the record. Please try again');
+                            console.log('Internal error happened');
+                        }
+                        else if(u[1] === 'a'){
+                            console.log('Entered the alteration record already existed. Mapping record does not exist. ');
+                            console.log('Inserted new mapping record');
+                        }
+                        else if(u[1] === 'b'){
+                            console.log('Entered the alteration record already existed. Mapping record also already existed.');
+                            console.log('Updated the mapping table');
+                        }
+                        else if(u[1] === 'c'){
+                            console.log('Entered the alteration record does not exist. Mapping record does not exist either. ');
+                            console.log('Inserted new alteration record and mapping record');
+                        }
+                        else if(u[1] === 'd'){
+                            console.log('Entered the alteration record does not exist. Mapping record already existed. ');
+                            console.log('Inserted new alteration record and updated the mapping table');
+                        }
+
+                        if(u[1] !== 'e'){
+                            $scope.trialAlterations.push({ alteration: $scope.newAlteration.toUpperCase(),
+                                gene: $scope.newGene.toUpperCase(),
+                                status : "manually"
+                            });
+                        }
+
+
+                    });
+                }
 
 
             };
 
-            $scope.deleteAlteration = function (alteration, gene) {
-                Alterations.alteration.get({alteration: alteration, gene: gene},
-                    function (a) {
-                        console.log('find this alteration');
-                        Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-                            function (c) {
-
-                                c.$deleteAlt({Idvalue: a._id},
-                                    function (e) {
-                                        console.log('delete successfully');
-                                        for (var i = 0; i < $scope.trialAlterations.length; i++) {
-                                            var alterationItem = $scope.trialAlterations[i];
-                                            if (alterationItem.alteration == alteration.toUpperCase() && alterationItem.gene == gene.toUpperCase()) {
-                                                $scope.trialAlterations.splice(i, 1);
-                                            }
-                                        }
-
-                                    },
-                                    function (f) {
-                                        console.log('delete failed', f);
-                                    }
-                                );
-                            },
-                            function (d) {
-                                console.log('not find mapping record');
+            $scope.deleteAlteration = function (x) {
+                if(x.alteration_Id === undefined)
+                {
+                    Mappings.deleteGene.get({trialID: $scope.trial.nctId, gene: x.gene},function(a){
+                        var tempArr = $scope.trialAlterations;
+                        for (var i = 0; i < tempArr.length; i++) {
+                            if (tempArr[i].gene === x.gene) {
+                                $scope.trialAlterations.splice(i, 1);
+                                break;
                             }
-                        )
-                    },
-                    function (b) {
-                        console.log('not find this alteration');
-                    }
-                )
+                        }
+
+                    });
+                }
+                else
+                {   console.log(x.alteration_Id);
+                    Mappings.deleteAlteration.get({trialID: $scope.trial.nctId, alteration_Id: x.alteration_Id},function(a){
+                        var tempArr = $scope.trialAlterations;
+                        for (var i = 0; i < tempArr.length; i++) {
+                            if (tempArr[i].alteration_Id === x.alteration_Id) {
+                                $scope.trialAlterations.splice(i, 1);
+                                break;
+                            }
+                        }
+
+                    });
+
+                }
+
+            };
+
+            $scope.confirmAlteration = function(x){
+                if(x.alteration_Id === undefined)
+                {
+                    var gene = x.gene;
+                    Mappings.confirmGene.get({trialID: $scope.trial.nctId, gene: gene},
+                        function (a) {
+                            _.each($scope.trialAlterations, function(item){
+                                if(item.gene === gene)
+                                {
+                                    item.confirmStatus = 'confirmed';
+                                }
+                            });
+
+                        }
+                    );
+                }
+                else
+                {
+                    Mappings.confirmAlteration.get({trialID: $scope.trial.nctId, alteration_Id: x.alteration_Id},
+                        function (a) {
+                            _.each($scope.trialAlterations, function(item){
+                                if(item.alteration_Id === x.alteration_Id)
+                                {
+                                    item.confirmStatus = 'confirmed';
+                                }
+                            });
+
+                        }
+                    );
+                 }
+
             };
 
             $scope.updateTrial = function () {

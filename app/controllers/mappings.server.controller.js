@@ -91,29 +91,6 @@ exports.update = function (req, res) {
 
 };
 
-exports.deleteAlt = function (req, res) {
-
-    var alterationArray = req.body.alteration;
-    for (var i = 0; i < alterationArray.length; i++) {
-        if (alterationArray[i].alteration_Id == req.params.Idvalue) {
-            alterationArray.splice(i, 1);
-            break;
-        }
-    }
-    req.body.log.push({date: new Date(), user: req.user._id, operationType:'delete', alteration_Id: req.params.Idvalue});
-
-    Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray, log: req.body.log }}).populate('user', 'displayName').exec(function (err, mappings) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(mappings);
-        }
-    });
-
-};
-
 /**
  * Delete an Mapping
  */
@@ -321,4 +298,116 @@ exports.saveComments = function (req, res) {
         }
 
     });
+};
+
+
+exports.confirmGene = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        _.each(mapping.predictedGenes, function(item){
+            if(item.gene === req.params.gene){
+                item.confirmStatus = 'confirmed';
+            }
+        });
+        //mapping.log.push();
+        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes}}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
+};
+
+
+exports.confirmAlteration = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        _.each(mapping.alteration, function(item){
+            if(item.alteration_Id === req.params.alteration_Id){
+                item.confirmStatus = 'confirmed';
+            }
+        });
+        //mapping.log.push();
+        Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration}}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
+};
+
+
+exports.deleteAlteration = function (req, res) {
+
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        for (var i = 0; i < mapping.alteration.length; i++) {
+            if (mapping.alteration[i].alteration_Id == req.params.alteration_Id) {console.log('deleting...');
+                mapping.alteration.splice(i, 1);
+                break;
+            }
+        }
+
+        mapping.log.push({date: new Date(), user: req.user._id, operationType:'delete', alteration_Id: req.params.alteration_Id});
+
+        Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration, log: mapping.log }}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
+
+
+};
+
+
+exports.deleteGene = function (req, res) {
+
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        for (var i = 0; i < mapping.predictedGenes.length; i++) {
+            if (mapping.predictedGenes[i].gene == req.params.gene) {
+                mapping.predictedGenes.splice(i, 1);
+                break;
+            }
+        }
+
+        mapping.log.push({date: new Date(), user: req.user._id, operationType:'delete', gene: req.params.gene});
+
+        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log }}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
+
+
 };
