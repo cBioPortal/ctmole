@@ -28,128 +28,334 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
 
-function rea(filePath, schema, callback) {
-	var documents = [];
-	var fs = require('fs'),
-    parseString = require('xml2js').parseString;
+var mongoose = require('mongoose');
+var _ = require('underscore');
 
-	fs.readFile(filePath, function(err, data) {
-	    parseString(data, {'explicitArray': false, 'attrkey': 'attr', 'charkey': 'text'}, function (err, result) {
-	        result.mysqldump.database.table_data.row.forEach(function(e, i){
-	        	var datum = {},
-	        		data = e.field;
+var	ClinicalTrialMetadata = require('../../app/models/clinical-trial-metadata.server.model.js');
+var	Gene = require('../../app/models/gene.server.model.js');
+var	Alteration = require('../../app/models/alteration.server.model.js');
+var	Mapping = require('../../app/models/mapping.server.model.js');
+var	Trial = require('../../app/models/trial.server.model.js');
 
-        		for(var key in schema) {
-					datum[key] = xmlText(schema[key], data);
-				}
-			    documents.push(datum);
-	        });
-	        callback(documents);
-	    });
+
+var predictedMutations = [];
+var genesMatch = [];
+var flag = 0;
+var index = 0;
+var hugo_symbols = [];
+var hugo_symbol = '';
+function connectDB(callback123){
+
+	mongoose.connect('mongodb://localhost/firstDB');
+	mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+	mongoose.connection.once('open', function callback () {
+		callback123();
 	});
 }
 
-function xmlText(dbKey, fieldData) {
-	if(fieldData instanceof Array) {
-		for (var i = fieldData.length - 1; i >= 0; i--) {
-			if(fieldData[i].attr.name === dbKey) {
-				return fieldData[i].text;
+function worker3() {
+	console.log('\n****************************************************************\n');
+	console.log('saving to mapping collection ...');
+/*
+	 predictedMutations = [{nctId: 'NCT01708954', gene: 'ATK', alteration: 'unspecified'},
+	 {nctId: 'NCT00681798', gene: 'BRAF', alteration: 'unspecified'},
+	 {nctId: 'NCT01226316', gene: 'MEK', alteration: 'unspecified'},
+	 {nctId: 'NCT00002763', alterationID: '56390a58443bc8c2b0ae77f4'},
+	 {nctId: 'NCT01682772', alterationID: '56390a58443bc8c2b0ae77f5'},
+	 {nctId: 'NCT01708954', alterationID: '56390a58443bc8c2b0ae7123'},
+		 {nctId: 'NCT01708954', alterationID: '56390a58443bc8c2b0ae77f4'},
+		 {nctId: 'NCT01708954', gene: 'KRAS', alteration: 'unspecified'}
+
+	 ];
+*/
+	var uniquePredictions = [];
+
+	_.each(predictedMutations, function(item){
+		var index = uniquePredictions.map(function (e) {
+			return e.nctId;
+		}).indexOf(item.nctId);
+
+		if(index === -1)
+		{
+			if(item.alteration === 'unspecified'){
+				uniquePredictions.push({nctId: item.nctId, gene: [item.gene]});
+			}
+			else{
+				uniquePredictions.push({nctId: item.nctId, alterationID: [item.alterationID]});
 			}
 		}
-		return '';
-	}else {
-		return null;
-	}
-}
-function connectDB(callback){
-	var MongoClient = require('mongodb').MongoClient
-  		, assert = require('assert');
-	// Connection URL
-	var url = 'mongodb://localhost:27017/clinicaltrials-dev';
-	// Use connect method to connect to the Server
-	require('mongodb').MongoClient.connect(url, function(err, db) {
-		assert.equal(null, err);
-	  	if(typeof callback === 'function') {
-	  		callback(db);
-	  	}
-	});
-
-}
-
-function update(db) {
-	var collectionName = queue.pop();
-
-	if(typeof collectionName !== 'undefined') {
-		console.log('-------------', collectionName, '------------');
-	  	// Insert some documents
-	  	var collection = db.collection(collectionName);
-
-		collection.find({},{'_id':1,'symbol':1}).toArray(function(err, docs) {
-			searchNct(db, docs, collectionName, searchNct);
-	  	});
-  	}else {
-  		db.close();
-  	}
-}
-
-function saveNct(db, _id, nctIds, collectionName) {
-	var collection = db.collection(collectionName);
-	collection.update({'_id': _id},  { $set: {'nctIds': nctIds} }, function(err,result){
-		console.log('\t\tupdated');
-	});
-}
-
-function searchNct(db, documents, collectionName, callback) {
-	var _document = documents.pop();
-	if(typeof _document !== 'undefined') {
-		var metadata = db.collection('clinicaltrialmetadatas');
-		var symbol = _document.symbol;
-		var regex = new RegExp(symbol, 'i');
-		var regexS = new RegExp(symbol, 'i');
-		var ssRegex = /([a-zA-Z]+\d+)[a-zA-Z]+/;
-		var subGene;
-
-		console.log('\t', symbol);
-		if((subGene = ssRegex.exec(symbol)) !== null && collectionName === 'alterations') {
-			regex = new RegExp(symbol + '|' + subGene[1], 'i');
-			regexS = new RegExp(symbol + '|\\s*' + subGene[1] + '\\s', 'i');
+		else
+		{
+			if(item.alteration === 'unspecified'){
+				if(uniquePredictions[index].gene === undefined)
+				{
+					uniquePredictions[index].gene = [item.gene];
+				}
+				else
+				{
+					uniquePredictions[index].gene.push(item.gene);
+				}
+			}
+			else{
+				if(uniquePredictions[index].alterationID === undefined)
+				{
+					uniquePredictions[index].alterationID = [item.alterationID];
+				}
+				else
+				{
+					uniquePredictions[index].alterationID.push(item.alterationID);
+				}
+			}
 		}
 
-		metadata.find({
-			'overall_status': {$in:['Recruiting', 'Not yet recruiting', 'Enrolling by invitation', 'Active, not recruiting']},
-			'location_countries.country': {$in:['United States', 'US', 'us', 'america']},
-			$or:[
-				{'keyword':{$regex: regex}},
-				{'condition_browse.mesh_term':{$regex: regex}},
-				{'official_title':{$regex: regexS}},
-				{'brief_summary.textblock':{$regex: regexS}},
-				{'intervention.intervention_name':{$regex: regex}},
-				{'intervention_browse.mesh_term':{$regex: regex}},
-				{'eligibility.criteria.textblock': {$regex: regexS}}
-			]
-		},{'_id':0, 'id_info.nct_id':1}).toArray(function(err,result){
-			var nctIds = [];
+	});
+	var flag3 = 0;
+	_.each(uniquePredictions, function(item){
 
-			result.forEach(function(e,i) {
-				nctIds.push(e.id_info[0].nct_id[0]);
+		if(item.gene !== undefined && item.alterationID === undefined){
+			Mapping.find({nctId: item.nctId}, function(err, mapping){
+
+				if(mapping.length > 0)
+				{
+					mapping = mapping[0];
+					var preGenes = mapping.predictedGenes;
+					if(preGenes === undefined)
+					{
+						preGenes = [];
+					}
+
+					_.each(item.gene, function(newItem){
+						preGenes.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
+
+					Mapping.update({nctId: item.nctId},{$set: {predictedGenes: preGenes}}, function(err, map){
+						flag3++;
+						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+				else
+				{
+					var tempArr = [];
+					_.each(item.gene, function(newItem){
+						tempArr.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, predictedGenes: tempArr, completeStatus: '1'});
+
+					newMappingRecord.save(function(err, map){
+						flag3++;
+						console.log('save to mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
 			})
-			console.log('\t\tFind', nctIds.length, 'trials.');
-			saveNct(db, _document._id, nctIds, collectionName);
-			searchNct(db, documents, collectionName, callback);
-		});
-	}else {
-		update(db);
-	}
+
+		}
+		else if(item.alterationID !== undefined && item.gene === undefined)
+		{
+			Mapping.find({nctId: item.nctId}, function(err, mapping){
+				if(mapping.length > 0)
+				{
+					mapping = mapping[0];
+					var alteration = mapping.alteration;
+					if(alteration === undefined)
+					{
+						alteration = [];
+					}
+					_.each(item.alterationID, function(newItem){
+						alteration.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
+					});
+					Mapping.update({nctId: item.nctId},{$set: {alteration: alteration}}, function(err, map){
+						flag3++;
+						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+				else
+				{
+					var tempArr = [];
+					_.each(item.alterationID, function(newItem){
+						tempArr.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, completeStatus: '1'});
+
+					newMappingRecord.save(function(err, map){
+						flag3++;
+						console.log('save to mapping table', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+			})
+		}
+		else if(item.alterationID !== undefined && item.gene !== undefined)
+		{
+			Mapping.find({nctId: item.nctId}, function(err, mapping){
+				if(mapping.length > 0)
+				{
+					mapping = mapping[0];
+					var alteration = mapping.alteration;
+					if(alteration === undefined)
+					{
+						alteration = [];
+					}
+					_.each(item.alterationID, function(newItem){
+						alteration.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
+					});
+
+					var preGenes = mapping.predictedGenes;
+					if(preGenes === undefined)
+					{
+						preGenes = [];
+					}
+					_.each(item.gene, function(newItem){
+						preGenes.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
+
+					Mapping.update({nctId: item.nctId},{$set: {alteration: alteration, predictedGenes: preGenes}}, function(err, map){
+						flag3++;
+						console.log('update mapping table ', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+				else
+				{
+					var tempArr = [], tempArr1 = [];
+					_.each(item.alterationID, function(newItem){
+						tempArr.push({alteration_Id: newItem, status: 'predicted', confirmStatus: 'unconfirmed'});
+					});
+					_.each(item.gene, function(newItem){
+						tempArr1.push({gene: newItem, confirmStatus: 'unconfirmed'});
+					});
+					var newMappingRecord = new Mapping({nctId: item.nctId, alteration: tempArr, predictedGenes: tempArr1, completeStatus: '1'});
+
+					newMappingRecord.save(function(err, map){
+						flag3++;
+						console.log('save to mapping table', (flag3/uniquePredictions.length*100).toFixed(2), '% finished');
+					});
+				}
+			})
+		}
+	});
+
+}
+
+
+function worker1(trialIds){
+	var firstSearch = true, geneSaved = true;
+	var flagCount = 0;
+	hugo_symbol = hugo_symbols[index];
+
+	Alteration.find({gene: hugo_symbol}, function(err1, alterations){
+		if(alterations.length > 0)
+		{
+			_.each(alterations, function(item){
+				Trial.find({$and: [{nctId: {$in: trialIds}}, {$text: {$search: '\"' + item.alteration + '\"'}}]} , function(err1, trials1){
+
+					if(firstSearch)
+					{
+						console.log('There are ' + alterations.length + ' mutation records associated with ' + hugo_symbol);
+						firstSearch = false;
+					}
+					if(trials1.length > 0)
+					{
+						console.log(trials1.length + ' trials found matching the mutation ' + hugo_symbol + ' ' + item.alteration);
+						_.each(trials1, function(trialItem){
+							predictedMutations.push({nctId: trialItem.nctId, alterationID: item._id.toString()});
+						});
+					}
+					else
+					{
+						console.log('No trial found matching the mutation ' + hugo_symbol + ' ' + item.alteration);
+						if(geneSaved)
+						{
+							geneSaved = false;
+							_.each(trialIds, function(item){
+								predictedMutations.push({nctId: item, gene: hugo_symbol, alteration: 'unspecified'});
+							});
+						}
+
+					}
+
+					flagCount++;
+					if(flagCount == alterations.length)
+					{
+						index = index + 1;
+						if(index === hugo_symbols.length)
+						{
+							worker3();
+						}
+						else
+						{
+							worker2(index);
+						}					}
+				})
+			});
+		}
+		else
+		{
+
+			console.log('There are 0 mutation records associated with this gene');
+			_.each(trialIds, function(item){
+				predictedMutations.push({nctId: item, gene: hugo_symbol, alteration: 'unspecified'});
+			});
+			index = index + 1;
+			if(index === hugo_symbols.length)
+			{
+				worker3();
+			}
+			else
+			{
+				worker2(index);
+			}
+		}
+
+
+	});
+}
+
+function worker2(index) {
+
+	Trial.find({$text: {$search: '\"' + hugo_symbols[index] + '\"'}}, function(err, trials){
+		hugo_symbol = hugo_symbols[index];
+		console.log('\n******************************************************************************');
+		console.log('Searching for ' + hugo_symbol + ' and there are '+ trials.length + ' trials matching this gene ',((index+1)/hugo_symbols.length*100).toFixed(2), '% finished\n');
+		if(trials.length > 0){
+			var trialIds = [];
+			_.each(trials, function(item){
+				trialIds.push(item.nctId);
+			});
+			worker1(trialIds);
+		}
+		else
+		{
+			index = index + 1;
+			if(index === hugo_symbols.length)
+			{
+				worker3();
+			}
+			else
+			{
+				worker2(index);
+			}
+		}
+
+	})
+}
+
+function workers() {
+	Gene.find({}, function(err1, genes){
+
+		_.each(genes, function(gene){
+			hugo_symbols.push(gene.hugo_symbol);
+			});
+		worker2(index);
+	});
+
 }
 
 function main() {
-	connectDB(update);
+
+	connectDB(workers);
 }
-// var queue = ['alterations'];
-var queue = [ 'genes','alterations','cancertypes'];
+
 main();

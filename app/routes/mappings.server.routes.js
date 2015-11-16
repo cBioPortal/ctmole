@@ -42,17 +42,13 @@ module.exports = function(app) {
 		.post(users.requiresLogin, mappings.create);
 
 	app.route('/mappings/:Idvalue')
-		.get(mappings.read)
+		.get(mappings.mappingBynctId)
 		.put(users.requiresLogin, mappings.update)
-		.patch(users.requiresLogin, mappings.deleteAlt)
 		.post(users.requiresLogin, mappings.completeTrial);
 
 	app.route('/mappings/:alteration/:nctId')
 		.get(mappings.mappingBynctIdAlt)
 		.post(users.requiresLogin, mappings.create);
-
-	app.route('/mappingGeneral/:searchEngineKeyword')
-		.get(mappings.generalSearch);
 
 	app.route('/mappingStatus/:status')
 		.get(mappings.fetchByStatus);
@@ -60,8 +56,31 @@ module.exports = function(app) {
 	app.route('/mappingGeneral/mappingAltIds/:altId')
 		.get(mappings.fetchByAltId);
 
+	app.route('/mappingSave/:nctId')
+		.post(users.requiresLogin, mappings.saveMapping);
+
+	//need to change Idvalue from middleware or we have to duplicate mappingBynctId function
+	app.route('/commentsSave/:trialID/:comment')
+		.get(users.requiresLogin, mappings.saveComments);
+
+	app.route('/confirmGene/:trialID/:gene')
+		.get(users.requiresLogin, mappings.confirmGene);
+
+	app.route('/confirmAlteration/:trialID/:alteration_Id')
+		.get(users.requiresLogin, mappings.confirmAlteration);
+
+	app.route('/deleteAlteration/:trialID/:alteration_Id')
+		.get(users.requiresLogin, mappings.deleteAlteration);
+
+	app.route('/deleteGene/:trialID/:gene')
+		.get(users.requiresLogin, mappings.deleteGene);
+
+	app.route('/convertLog/:trialID')
+		.get(users.requiresLogin, mappings.convertLog);
+
 	// Finish by binding the Mapping middleware
-	app.param('Idvalue', mappings.mappingBynctId);
+	//app.param('Idvalue', mappings.mappingBynctId);
+
 
 
 };

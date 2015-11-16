@@ -52,9 +52,15 @@ var MappingSchema = new Schema({
 		type: Array
 	},
 	completeStatus: {
-		type: Boolean
+		type: String
 	},
 	log: {
+		type: Array
+	},
+	comments: {
+		type: Array
+	},
+	predictedGenes: {
 		type: Array
 	}
 	/*
@@ -70,4 +76,4 @@ var MappingSchema = new Schema({
 
 });
 
-mongoose.model('Mapping', MappingSchema);
+module.exports = mongoose.model('Mapping', MappingSchema);

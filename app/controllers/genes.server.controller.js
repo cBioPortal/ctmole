@@ -111,7 +111,7 @@ exports.delete = function(req, res) {
 /**
  * List of Genes
  */
-exports.list = function(req, res) { Gene.find().exec(function(err, genes) {
+exports.list = function(req, res) { Gene.find({},{hugo_symbol:1}).exec(function(err, genes) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

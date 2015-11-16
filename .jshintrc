@@ -16,11 +16,15 @@
 	"unused": false, // Warn unused variables.
 	"strict": true, // Require `use strict` pragma in every file.
 	"trailing": true, // Prohibit trailing whitespaces.
-	"smarttabs": false, // Suppresses warnings about mixed tabs and spaces
-	"globals": { // Globals variables.
+	"smarttabs": false, // Suppresses warnings about mixed tabs and spaces,
+    "loopfunc": true, // Suppresses warnings about functions inside of loops,
+    "shadow": true, //suppress warnings that variable is already defined
+  "globals": { // Globals variables.
 		"jasmine": true,
 		"angular": true,
-		"ApplicationConfiguration": true
+		"ApplicationConfiguration": true,
+		"_": true,
+		"bootbox": false
 	},
 	"predef": [ // Extra globals.
 		"define",

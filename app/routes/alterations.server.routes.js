@@ -59,6 +59,10 @@ module.exports = function(app) {
 	app.route('/addAlteration/:alteration/:gene/:nctId')
 		.get(users.requiresLogin, alterations.addNewAlteration);
 
+	app.route('/editAlteration/:id/:gene/:alteration')
+		.get(users.requiresLogin, alterations.editAlteration);
+
+
 	// Finish by binding the Alteration middleware
 	//app.param('Ids', alterations.alterationByID);
 

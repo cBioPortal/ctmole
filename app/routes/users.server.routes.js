@@ -35,7 +35,8 @@
 /**
  * Module dependencies.
  */
-var passport = require('passport');
+var passport = require('passport'),
+	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 module.exports = function(app) {
 	// User Routes
@@ -70,8 +71,8 @@ module.exports = function(app) {
 	// Setting the google oauth routes
 	app.route('/auth/google').get(passport.authenticate('google', {
 		scope: [
-			//'https://www.googleapis.com/auth/userinfo.profile',
-			//'https://www.googleapis.com/auth/userinfo.email',
+			'https://www.googleapis.com/auth/userinfo.profile',
+			'https://www.googleapis.com/auth/userinfo.email',
 			'https://www.googleapis.com/auth/plus.login'
 		]
 	}));
@@ -84,6 +85,7 @@ module.exports = function(app) {
 	// Setting the github oauth routes
 	app.route('/auth/github').get(passport.authenticate('github'));
 	app.route('/auth/github/callback').get(users.oauthCallback('github'));
+
 
 	// Finish by binding the user middleware
 	app.param('userId', users.userByID);

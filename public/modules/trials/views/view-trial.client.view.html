@@ -10,9 +10,27 @@
 
 				<hr>
 
+
 				<h2><small><p>{{trial.nctId}}</p></small></h2>
-				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
+
+				<div ng-show="showAllDisease" class="addBGColor">
+					<h2><small>
+						<p>{{trial.diseaseCondition[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
+						<p ng-if="$index > 0" ng-repeat="m in trial.diseaseCondition">{{m}}</p>
+					</small></h2>
+				</div>
+
+				<div ng-show="!showAllDisease">
+					<h2><small>
+						<p>{{trial.diseaseCondition[0]}}<a  ng-if="trial.diseaseCondition.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.diseaseCondition.length-1}} more </a></p>
+					</small></h2>
+				</div>
+
 				<h2><small><p>{{trial.phase}}</p></small></h2>
+
+				 <h2><small><p class="test">{{trial.recruitingStatus}}
+				 	 </p>
+				</small></h2>
 
 				<!--<h2><small><p class="test" tooltip="Last Updated Time
 				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
@@ -55,12 +73,20 @@
 					</small></h2>
 				</div>
 
-				<a href="https://clinicaltrials.gov/ct2/results?term={{trial.nctId}}&Search=Search" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
-				<br/>
+				<a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
 
 				<label class="headerStyle">ALTERATIONS</label>
+				<span style="margin-left:10px">
+								<button data-toggle="modal" data-target="#myModal" type="button"><i class="fa fa-plus"></i></button>
+				</span>
+<!--
+				<ul>
+					<li data-ng-repeat="x in HUGOgenes">
+						{{ x }}
+					</li>
+				</ul>
 
-
+-->
 				<div class="modal fade" id="myModal" role="dialog">
 					<div class="modal-dialog">
 
@@ -71,8 +97,20 @@
 								<h4 class="modal-title">Add a new alteration</h4>
 							</div>
 							<div class="modal-body">
-								Gene: <input ng-model="newGene">
+
+								Gene:
+								<select chosen
+										option="HUGOgenes"
+										ng-model="newGene"
+										ng-options="m as m for m in HUGOgenes"
+										class="chosen-select"
+										data-placeholder="Enter A Gene">
+								</select>
 								Alteration: <input ng-model="newAlteration">
+								<!--
+
+Gene: <input ng-model="newGene">
+								-->
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId()">Submit</button>
@@ -84,31 +122,83 @@
 				</div>
 
 
-				<p ng-show="trial.alterationsFetched.length == 0 && true || false">No information available</p>
+				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
 
-				<div ng-if="trial.alterationsFetched.length > 0">
-					<span class="trialAddType" ng-repeat="x in trial.alterationsFetched">
-							<h2 class="fixMargin"><small>{{x.gene + "     " + x.alteration}}
-								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
-					</span>
+				<div ng-if="trialAlterations.length > 0" ng-repeat="x in trialAlterations" >
+					<div style="display:block" >
+					<h1><small>
+						<div class="fixMargin" ng-if="x.confirmStatus == 'unconfirmed'">
+							<span class="label label-warning">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-check" ng-click="confirmAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
+							</span>
+						</div>
+						<div class="fixMargin" ng-if="x.status == 'manually' || x.confirmStatus == 'confirmed'">
+							<span  class="label label-success">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
+							</span>
+						</div>
+
+					</small></h1>
+					</div>
+
 				</div>
-				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
-				<br/><br/>
+				<br/>
+				<span ng-if="editing">
+					<input type="text" ng-model="editedGene" placeholder="Gene">
+					<input type="text" ng-model="editedMutation" placeholder="Mutation">
+					<i class="fa fa-floppy-o" ng-click="saveAlteration(editedGene, editedMutation)"></i>
+				</span>
+				<br/>
+				<br/>
 
-				<div class="form-group">
-					<label for="comment" class="headerStyle">Comment </label>
-					<button type="button" class="btn btn-primary btn-xs leftMargin">Save</button>
-					<textarea class="form-control" rows="5" id="comment"></textarea>
-				</div>
 
+<!--
 				<div>
 					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
 					<h4 ng-if="trialMappings.completeStatus">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h4>
 				</div>
+-->
+
+				<label class="headerStyle" for="sel1">Curation Status</label>
+				<select class="form-control" id="sel1" ng-model="trialStatus" ng-change="switchStatus(trialStatus)">
+					<option value="1">Not Curated</option>
+					<option value="2">Curating</option>
+					<option value="3">Curated</option>
+
+				</select>
+				<br/><br/>
+				<label class="headerStyle">Curation History</label>
+				<table class="table">
+					<tbody>
+					<tr ng-repeat="x in logs">
+						<td>{{x}}</td>
+					</tr>
+
+					</tbody>
+				</table>
+
+				<div class="form-group">
+					<label for="comment" class="headerStyle">Comment </label>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="saveComments()">Save</button>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="showAllComments()"> All Comments</button>
+
+					<br/>
+					<ul class="list-group" ng-if="showAllCom">
+						<li class="list-group-item list-group-item-success" data-ng-repeat="x in trialComments">
+							{{ x }}
+						</li>
+					</ul>
 
 
 
 
+					<textarea class="form-control" rows="5" id="comment" ng-model="comment"></textarea>
+				</div>
 			</div>
 		</div>
 		<div class="col-sm-8">
@@ -130,7 +220,7 @@
 					</div>
 				</div>
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="trial.arm_group.length > 0">
 					<div class="panel-heading" role="tab" id="headingNew">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseNew" aria-expanded="true" aria-controls="collapseOne">
@@ -152,39 +242,27 @@
 				</div>
 
 
-
-
-
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="criteria.length > 0">
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-								Inclusion Criteria
+								 Criteria
 							</a>
 						</h4>
 					</div>
 					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body">
-							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"inclusion")'></p>
+						<div class="panel-body" >
+							<ul ng-repeat="x in criteria track by $index" class="criteria">
+								<li ng-if="criteriaTitles.indexOf(x) !== -1">
+									<strong>{{x}}</strong>
+								</li>
+								<li ng-if="criteriaTitles.indexOf(x) === -1">{{x}}</li>
+							</ul>
 
 						</div>
 					</div>
 				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading" role="tab" id="headingTwo">
-						<h4 class="panel-title">
-							<a class="collapsed" role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-								Exclusion Criteria
-							</a>
-						</h4>
-					</div>
-					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-						<div class="panel-body">
-							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"exclusion")'></p>
 
-						</div>
-					</div>
-				</div>
 
 			</div>
 		</div>
