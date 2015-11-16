@@ -36,6 +36,10 @@
  * Module dependencies.
  */
 var _ = require('lodash');
+var mongoose = require('mongoose');
+var id = mongoose.Types.ObjectId('562fd2f53f4f3d2a2c2e863b');
+
+
 
 /**
  * Extend user's controller

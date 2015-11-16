@@ -133,11 +133,10 @@ exports.list = function (req, res) {
  */
 
 exports.alterationByID = function (req, res) {
-    var altArr = req.params.Ids.split(",");
+    var altArr = req.params.Ids.split(',');
     var newArr = [];
-    console.log(altArr);
     for (var i = 0; i < altArr.length; i++) {
-        newArr.push(ObjectId(altArr[i]));
+        newArr.push(new ObjectId(altArr[i]));
     }
 
     console.log(newArr);
@@ -184,7 +183,7 @@ exports.hasAuthorization = function (req, res, next) {
 
 exports.generalSearch = function (req, res) {
     var keywords = req.params.searchEngineKeyword;
-    var keywordsArr = keywords.split(",");
+    var keywordsArr = keywords.split(',');
     var finalStr = '';
     var tempStr = '';
     for (var i = 0; i < keywordsArr.length; i++) {
@@ -204,49 +203,6 @@ exports.generalSearch = function (req, res) {
     });
 };
 
-function updateMapping(nctId, alterationID, userID){
-    alterationID = alterationID.toString();
-    userID = userID.toString();
-
-    Mapping.findOne({nctId: nctId}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) return 'error';
-        if (!mapping) {
-            console.log('Mapping record not exist yet');
-            var mapping = new Mapping({
-                nctId: nctId,
-                alteration: [{alteration_Id: alterationID, status: 'manually'}],
-                completeStatus: 1,
-                log: [{date: new Date(), user: userID, operationType:'add', alteration_Id: alterationID}]
-            });
-            mapping.user = req.user;
-            mapping.save(function (err) {
-                if (err) {
-                    console.log('failed to create mapping record');
-                    return 'error';
-                } else {
-                    console.log('create mapping record successfully');
-                    return 'apple';
-                }
-            });
-        }
-        else {
-            mapping.alteration.push({alteration_Id: alterationID, status: 'manually'});
-            mapping.log.push({date: new Date(), user: userID, operationType:'add', alteration_Id: alterationID});
-
-            Mapping.update({nctId: nctId}, {$set: {alteration: mapping.alteration, log: mapping.log }}).exec(function (err, mapping) {
-                if (err) {
-                    return 'error';
-                } else {console.log('here is the result page ... ');
-                    return 'third';
-                }
-            });
-
-
-        }
-
-    });
-}
-
 exports.addNewAlteration = function (req, res) {
 
     var result = '';
@@ -265,7 +221,12 @@ exports.addNewAlteration = function (req, res) {
                         nctId: req.params.nctId,
                         alteration: [{alteration_Id: alteration._id.toString(), status: 'manually'}],
                         completeStatus: 1,
-                        log: [{date: new Date(), user: req.user._id.toString(), operationType:'add', alteration_Id: alteration._id.toString()}]
+                        log: [{
+                            date: new Date(),
+                            user: req.user._id.toString(),
+                            operationType: 'add',
+                            alteration_Id: alteration._id.toString()
+                        }]
                     });
                     mapping.user = req.user;
                     mapping.save(function (err) {
@@ -279,9 +240,19 @@ exports.addNewAlteration = function (req, res) {
                 }
                 else {
                     mapping.alteration.push({alteration_Id: alteration._id.toString(), status: 'manually'});
-                    mapping.log.push({date: new Date(), user: req.user._id.toString(), operationType:'add', alteration_Id: alteration._id.toString()});
+                    mapping.log.push({
+                        date: new Date(),
+                        user: req.user._id.toString(),
+                        operationType: 'add',
+                        alteration_Id: alteration._id.toString()
+                    });
 
-                    Mapping.update({nctId: req.params.nctId}, {$set: {alteration: mapping.alteration, log: mapping.log }}).exec(function (err, mapping) {
+                    Mapping.update({nctId: req.params.nctId}, {
+                        $set: {
+                            alteration: mapping.alteration,
+                            log: mapping.log
+                        }
+                    }).exec(function (err, mapping) {
                         if (err) {
                             res.jsonp('e');
                         } else {
@@ -299,7 +270,9 @@ exports.addNewAlteration = function (req, res) {
             });
 
             newAltRecord.save(function (err, alt) {
-                if (err) {res.jsonp('e');}
+                if (err) {
+                    res.jsonp('e');
+                }
                 else {
                     console.log('saved to alteration collection');
                     Mapping.findOne({nctId: req.params.nctId}).populate('user', 'displayName').exec(function (err, mapping) {
@@ -310,7 +283,12 @@ exports.addNewAlteration = function (req, res) {
                                 nctId: req.params.nctId,
                                 alteration: [{alteration_Id: alt._id.toString(), status: 'manually'}],
                                 completeStatus: 1,
-                                log: [{date: new Date(), user: req.user._id.toString(), operationType:'add', alteration_Id: alt._id.toString()}]
+                                log: [{
+                                    date: new Date(),
+                                    user: req.user._id.toString(),
+                                    operationType: 'add',
+                                    alteration_Id: alt._id.toString()
+                                }]
                             });
                             mapping.user = req.user;
                             mapping.save(function (err) {
@@ -323,9 +301,19 @@ exports.addNewAlteration = function (req, res) {
                         }
                         else {
                             mapping.alteration.push({alteration_Id: alt._id.toString(), status: 'manually'});
-                            mapping.log.push({date: new Date(), user: req.user._id.toString(), operationType:'add', alteration_Id: alt._id.toString()});
+                            mapping.log.push({
+                                date: new Date(),
+                                user: req.user._id.toString(),
+                                operationType: 'add',
+                                alteration_Id: alt._id.toString()
+                            });
 
-                            Mapping.update({nctId: req.params.nctId}, {$set: {alteration: mapping.alteration, log: mapping.log }}).exec(function (err, mapping) {
+                            Mapping.update({nctId: req.params.nctId}, {
+                                $set: {
+                                    alteration: mapping.alteration,
+                                    log: mapping.log
+                                }
+                            }).exec(function (err, mapping) {
                                 if (err) {
                                     res.jsonp('e');
                                 } else {
@@ -345,3 +333,36 @@ exports.addNewAlteration = function (req, res) {
     });
 };
 
+exports.editAlteration = function (req, res) {
+    if (req.params.id !== undefined) {
+        var tempAltRecord = new Alteration();
+        tempAltRecord.update({_id: new ObjectId(req.params.id)}, {
+            $set: {
+                gene: req.params.gene,
+                alteration: req.params.alteration
+            }
+        }).populate('user', 'displayName').exec(function (err) {
+            if (err) {
+                console.log('error');
+                res.jsonp('e');
+            } else {
+                res.jsonp('s');
+            }
+        });
+    }
+    else {
+        var newAltRecord = new Alteration({
+            gene: req.params.gene,
+            alteration: req.params.alteration
+        });
+
+        newAltRecord.save(function (err, alt) {
+            if (err) {
+                res.jsonp('e');
+            }
+            else {
+                res.jsonp('e');
+            }
+        });
+    }
+};

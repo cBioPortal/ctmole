@@ -28,7 +28,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
@@ -36,11 +36,11 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Trial = mongoose.model('clinicaltrial'),
-	Mapping = mongoose.model('Mapping'),
-	Alteration = mongoose.model('Alteration'),
-	_ = require('lodash');
+    errorHandler = require('./errors'),
+    Trial = mongoose.model('clinicaltrial'),
+    Mapping = mongoose.model('Mapping'),
+    Alteration = mongoose.model('Alteration'),
+    _ = require('lodash');
 
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -51,42 +51,43 @@ var parseString = require('xml2js').parseString;
 /**
  * Create a Trial
  */
-exports.create = function(req, res) {
-	var trial = new Trial(req.body);
-/*console.log('testing here 123...');
+exports.create = function (req, res) {
+    var trial = new Trial(req.body);
+    /*console.log('testing here 123...');
 
-		var trial = new Trial({ 'nctId': 'NCT02270606',
-		'title': 'test',
-		'purpose': 'test',
-		'recruitingStatus': 'test',
-		'eligibilityCriteria': 'test',
-		'phase': 'test',
-		'diseaseCondition': 'test',
-		'lastChangeDate': 'test'});
-*/
-	trial.user = req.user;
-	trial.save(function(err) {
-		if (err) { console.log(err);
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(trial);
-		}
-	});
+     var trial = new Trial({ 'nctId': 'NCT02270606',
+     'title': 'test',
+     'purpose': 'test',
+     'recruitingStatus': 'test',
+     'eligibilityCriteria': 'test',
+     'phase': 'test',
+     'diseaseCondition': 'test',
+     'lastChangeDate': 'test'});
+     */
+    trial.user = req.user;
+    trial.save(function (err) {
+        if (err) {
+            console.log(err);
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(trial);
+        }
+    });
 };
 
 /**
  * Show the current Trial
  */
-exports.read = function(req, res) {
-	res.jsonp(req.trial);
+exports.read = function (req, res) {
+    res.jsonp(req.trial);
 };
 
 /**
  * Update a Trial
 
-exports.update = function(req, res) {
+ exports.update = function(req, res) {
 
 	var trial = req.trial ;
 
@@ -103,231 +104,230 @@ exports.update = function(req, res) {
 	});
 
 };
-*/
+ */
 /**
  * Delete an Trial
  */
-exports.delete = function(req, res) {
-	var trial = req.trial ;
+exports.delete = function (req, res) {
+    var trial = req.trial;
 
-	trial.remove(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(trial);
-		}
-	});
+    trial.remove(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(trial);
+        }
+    });
 };
 
 /**
  * List of Trials
  */
-exports.list = function(req, res) { Trial.find({}, 'nctId title phase drugs recruitingStatus drugs countries').limit(10).exec(function(err, trials) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(trials);
-		}
-	});
+exports.list = function (req, res) {
+    Trial.find({}, 'nctId title phase drugs recruitingStatus drugs countries').limit(10).exec(function (err, trials) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(trials);
+        }
+    });
 };
 
-exports.generalSearch = function(req, res, searchEngineKeyword) {
-	var keywords = req.params.searchEngineKeyword;
+exports.generalSearch = function (req, res, searchEngineKeyword) {
+    var keywords = req.params.searchEngineKeyword;
 
-	var keywordsArr = keywords.split(",");
-	var finalStr = '';
-	var tempStr = '';
-	for(var i = 0;i < keywordsArr.length;i++)
-	{
-		tempStr = '\"' + keywordsArr[i].trim() + '\"';
-		finalStr += tempStr;
-	}
-	var counter = 0;
-	Trial.find( { $text: { $search: finalStr } }).exec(function(err, trials) {
+    var keywordsArr = keywords.split(',');
+    var finalStr = '';
+    var tempStr = '';
+    for (var i = 0; i < keywordsArr.length; i++) {
+        tempStr = '\"' + keywordsArr[i].trim() + '\"';
+        finalStr += tempStr;
+    }
+    var counter = 0;
+    var alterationsFetched = [];
+    Trial.find({$text: {$search: finalStr}}).exec(function (err, trials) {
 
-	if (err) {
-		return res.status(400).send({
-			message: errorHandler.getErrorMessage(err)
-		});
-	} else {
-		if (trials.length === 0) {
-			console.log('no trials found');
-			res.jsonp();
-		}
-		else {
-		_.each(trials, function (trial) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            if (trials.length === 0) {
+                console.log('no trials found');
+                res.jsonp();
+            }
+            else {
+                console.log('here is the trials length found ', trials.length);
+                _.each(trials, function (trial) {
 
-			Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
+                    Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
+                        if (mapErr) {
+                            counter++;
+                            if (counter === trials.length) {
+                                trials.push(alterationsFetched);
+                                res.jsonp(trials);
+                            }
+                            console.log('error happens when searching for mapping record');
+                        }
+                        else if (!mapping) {
+                            console.log('Failed to find Mapping ');
+                            counter++;
+                            if (counter === trials.length) {
+                                trials.push(alterationsFetched);
+                                res.jsonp(trials);
+                            }
 
-				if (mapErr) {
-					console.log('error happens when searching for mapping record');
-				}
-				else if (!mapping) {
-					counter++;
-					console.log('Failed to find Mapping ');
-					if (counter === trials.length) {
-						console.log('return from here mapping');
-						res.jsonp(trials);
-					}
-				}
-				else {
+                        }
+                        else {
 
-					Alteration.find({
-						_id: {
-							$in: mapping.alteration.map(function (e) {
-								return ObjectId(e.alteration_Id);
-							})
-						}
-					}).exec(function (altErr, alteration) {
-						counter++;
-						if (altErr) {
-							console.log('error happens when searching for alteration record');
-						}
-						else if (!alteration) {
-							console.log('Failed to find Alteration ');
-							if (counter === trials.length) {
-								console.log('returned from here, last trial has no alteration');
-								res.jsonp(trials);
-							}
-						}
-						else {
+                            Alteration.find({
+                                _id: {
+                                    $in: mapping.alteration.map(function (e) {
+                                        return new ObjectId(e.alteration_Id);
+                                    })
+                                }
+                            }).exec(function (altErr, alteration) {
 
-							trial.alterationsFetched = alteration;
-							if (counter === trials.length) {
-								console.log('return from here, last trial has alterations');
-								res.jsonp(trials);
-							}
-						}
+                                if (altErr) {
+                                    console.log('error happens when searching for alteration record');
+                                }
+                                else if (!alteration) {
+                                    console.log('Failed to find Alteration ');
+                                }
+                                else {
+                                    alterationsFetched.push({nctId: trial.nctId, alterationsFetched: alteration});
+                                }
+                                counter++;
+                                if (counter === trials.length) {
+                                    trials.push(alterationsFetched);
+                                    res.jsonp(trials);
+                                }
 
-					});
+                            });
 
-				}
+                        }
 
-			});
+                    });
 
-		});
-	}
-	}
-});
+                });
+            }
+        }
+    });
 };
 
 
-
-exports.search = function(req, res) {
-	res.jsonp(req.trials);
+exports.search = function (req, res) {
+    res.jsonp(req.trials);
 };
 /**
  * Trial middleware
  */
-exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).exec(function(err, trial) {
-		if (err) return next(err);
+exports.trialByID = function (req, res, next, id) {
+    Trial.findOne({'nctId': id}).exec(function (err, trial) {
+        if (err) return next(err);
 
-		if (! trial)
-		{
+        if (!trial) {
 
-			var nctId = id;
-			var url = 'http://clinicaltrials.gov/ct2/show/' + nctId + '?displayxml=true';
+            var nctId = id;
+            var url = 'http://clinicaltrials.gov/ct2/show/' + nctId + '?displayxml=true';
 
-			var updateRequiredTrial;
-			request(url, function(error, response, body){
-				parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+            var updateRequiredTrial;
+            request(url, function (error, response, body) {
+                parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
 
-					console.log('here is the result ', result);
+                    console.log('here is the result ', result);
 
-					if(typeof result != 'undefined' && result.hasOwnProperty('clinical_study'))
-					{
-						updateRequiredTrial = result.clinical_study;
-						trial = new Trial({nctId: nctId});
-						trial.recruitingStatus = updateRequiredTrial.overall_status;
-						trial.title = updateRequiredTrial.brief_title;
-						trial.purpose = updateRequiredTrial.brief_summary[0].textblock;
-						trial.phase = updateRequiredTrial.phase;
-						trial.eligibilityCriteria = updateRequiredTrial.eligibility[0].criteria[0].textblock[0];
-						trial.diseaseCondition = updateRequiredTrial.condition_browse[0].mesh_term.toString();
-						trial.arm_group = updateRequiredTrial.arm_group;
-						var d = new Date();
-						trial.lastUpdatedStatusDate = d.toDateString();
+                    if (typeof result !== 'undefined' && result.hasOwnProperty('clinical_study')) {
+                        updateRequiredTrial = result.clinical_study;
+                        trial = new Trial({nctId: nctId});
+                        trial.recruitingStatus = updateRequiredTrial.overall_status;
+                        trial.title = updateRequiredTrial.brief_title;
+                        trial.purpose = updateRequiredTrial.brief_summary[0].textblock;
+                        trial.phase = updateRequiredTrial.phase;
+                        trial.eligibilityCriteria = updateRequiredTrial.eligibility[0].criteria[0].textblock[0];
+                        trial.diseaseCondition = updateRequiredTrial.condition_browse[0].mesh_term.toString();
+                        trial.arm_group = updateRequiredTrial.arm_group;
+                        var d = new Date();
+                        trial.lastUpdatedStatusDate = d.toDateString();
 
-						trial.save(function(err) {
-							if (err) {
-								//return res.status(400).send({
-								//	message: errorHandler.getErrorMessage(err)
-								//});
-								console.log('error happened when inserting new record: ');
-								console.log(err);
-							} else {
-								console.log('success insert record ');
-								//res.jsonp(trial);
-							}
-						});
-					}
-					else
-					{
-						trial = null;
-						console.log(nctId, 'does not have clinical study attribute.');
-					}
+                        trial.save(function (err) {
+                            if (err) {
+                                //return res.status(400).send({
+                                //	message: errorHandler.getErrorMessage(err)
+                                //});
+                                console.log('error happened when inserting new record: ');
+                                console.log(err);
+                            } else {
+                                console.log('success insert record ');
+                                //res.jsonp(trial);
+                            }
+                        });
+                    }
+                    else {
+                        trial = null;
+                        console.log(nctId, 'does not have clinical study attribute.');
+                    }
 
 
-				});
-			});
+                });
+            });
 
-		}
+        }
 
-		else
-		{
-				Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
+        else {
+            Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
 
-					if (mapErr) {
-						console.log('error happens when searching for mapping record');
-					}
-					else if (!mapping) {
+                if (mapErr) {
+                    console.log('error happens when searching for mapping record');
+                }
+                else if (!mapping) {
 
-						console.log('Failed to find Mapping ');
-						req.trial = trial;
-						next();
-					}
-					else {
+                    console.log('Failed to find Mapping ');
+                    req.trial = trial;
+                    next();
+                }
+                else {
 
-						Alteration.find({
-							_id: {
-								$in: mapping.alteration.map(function (e) {
-									return ObjectId(e.alteration_Id);
-								})
-							}
-						}).exec(function (altErr, alteration) {
+                    Alteration.find({
+                        _id: {
+                            $in: mapping.alteration.map(function (e) {
+                                return new ObjectId(e.alteration_Id);
+                            })
+                        }
+                    }).exec(function (altErr, alteration) {
 
-							if (altErr) {
-								console.log('error happens when searching for alteration record');
-							}
-							else if (!alteration) {
-								console.log('Failed to find Alteration ');
-								console.log('returned from here, last trial has no alteration');
-								req.trial = trial;
-								next();
-							}
-							else {
+                        if (altErr) {
+                            console.log('error happens when searching for alteration record');
+                        }
+                        else if (!alteration) {
+                            console.log('Failed to find Alteration ');
+                            console.log('returned from here, last trial has no alteration');
+                            req.trial = trial;
+                            next();
+                        }
+                        else {
 
-								trial.alterationsFetched = alteration;
-								console.log('return from here, last trial has alterations');
-								req.trial = trial;
-								next();
-							}
+                            trial.alterationsFetched = alteration;
+                            console.log('return from here, last trial has alterations');
+                            req.trial = trial;
+                            next();
+                        }
 
-						});
+                    });
 
-					}
+                }
 
-				});
-
-
-		}
+            });
 
 
-	});
+        }
+
+
+    });
 };
 
 /**
@@ -338,92 +338,88 @@ exports.trialByID = function(req, res, next, id) { Trial.findOne({'nctId': id}).
  * @param  {[type]}   list [description]
  * @return {[type]}        [description]
  */
-exports.searchList = function(req, res) {
-	Trial.find({'nctId': {$in: req.body}}).exec(function(err, trials) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(trials);
-		}
-	});
+exports.searchList = function (req, res) {
+    Trial.find({'nctId': {$in: req.body}}).exec(function (err, trials) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(trials);
+        }
+    });
 };
 
 /**
  * Search trial by keywords
  */
-exports.searchByKeyword = function(req, res, next, keyword) {
-	Trial.find({'tumorTypes.clinicalTrialKeywords': keyword}, 'nctId').limit(10).exec(function(err, trials) {
-		if (err) return next(err);
-		if (! trials) return next(new Error('Failed to load Trial ' + keyword));
-		req.trials = trials;
-		next();
-	});
+exports.searchByKeyword = function (req, res, next, keyword) {
+    Trial.find({'tumorTypes.clinicalTrialKeywords': keyword}, 'nctId').limit(10).exec(function (err, trials) {
+        if (err) return next(err);
+        if (!trials) return next(new Error('Failed to load Trial ' + keyword));
+        req.trials = trials;
+        next();
+    });
 };
 
 /**
  * Trial authorization middleware
  */
-exports.hasAuthorization = function(req, res, next) {
-	if (req.trial.user.id !== req.user.id) {
-		return res.status(403).send('User is not authorized');
-	}
-	next();
+exports.hasAuthorization = function (req, res, next) {
+    if (req.trial.user.id !== req.user.id) {
+        return res.status(403).send('User is not authorized');
+    }
+    next();
 };
 
-exports.updateTrial = function(req, res) {
+exports.updateTrial = function (req, res) {
 
-	var trial = req.trial;
-	var nctId = req.body.nctId;
-	var url = 'http://clinicaltrials.gov/ct2/show/' + nctId + '?displayxml=true';
+    var trial = req.trial;
+    var nctId = req.body.nctId;
+    var url = 'http://clinicaltrials.gov/ct2/show/' + nctId + '?displayxml=true';
 
-	var updateRequiredTrial;
-	request(url, function(error, response, body){
-		parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
-			if(result.hasOwnProperty('clinical_study'))
-			{
-				updateRequiredTrial = result.clinical_study;
-				trial.recruitingStatus = updateRequiredTrial.overall_status;
-				var d = new Date();
-				trial.lastUpdatedStatusDate = d.toDateString();
+    var updateRequiredTrial;
+    request(url, function (error, response, body) {
+        parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+            if (result.hasOwnProperty('clinical_study')) {
+                updateRequiredTrial = result.clinical_study;
+                trial.recruitingStatus = updateRequiredTrial.overall_status;
+                var d = new Date();
+                trial.lastUpdatedStatusDate = d.toDateString();
 
-				trial.save(function(err) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-						console.log('error happened when inserting new record: ');
-						console.log(err);
-					} else {
-						console.log('success inserting new record');
-						res.jsonp(trial);
-					}
-				});
-			}
-			else
-			{
-				console.log(nctId, 'does not have clinical study attribute.');
-			}
+                trial.save(function (err) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getErrorMessage(err)
+                        });
+                    } else {
+                        console.log('success inserting new record');
+                        res.jsonp(trial);
+                    }
+                });
+            }
+            else {
+                console.log(nctId, 'does not have clinical study attribute.');
+            }
 
 
-		});
-	});
+        });
+    });
 
 };
 
 
-exports.multiTrials = function(req, res) {
-	var nctIds = req.params.nctIds;
-	nctIds = nctIds.split(',');
+exports.multiTrials = function (req, res) {
+    var nctIds = req.params.nctIds;
+    nctIds = nctIds.split(',');
 
-	Trial.find({'nctId': {$in: nctIds}}).exec(function(err, trials) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(trials);
-		}
-	});
+    Trial.find({'nctId': {$in: nctIds}}).exec(function (err, trials) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(trials);
+        }
+    });
 };

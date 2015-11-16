@@ -132,18 +132,27 @@ Gene: <input ng-model="newGene">
 							<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
 								<i class="fa fa-check" ng-click="confirmAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
 							</span>
 						</div>
 						<div class="fixMargin" ng-if="x.status == 'manually' || x.confirmStatus == 'confirmed'">
 							<span  class="label label-success">{{x.gene + "     " + x.alteration}}</span>
 							<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
 							</span>
 						</div>
+
 					</small></h1>
 					</div>
 
 				</div>
+				<br/>
+				<span ng-if="editing">
+					<input type="text" ng-model="editedGene" placeholder="Gene">
+					<input type="text" ng-model="editedMutation" placeholder="Mutation">
+					<i class="fa fa-floppy-o" ng-click="saveAlteration(editedGene, editedMutation)"></i>
+				</span>
 				<br/>
 				<br/>
 
@@ -165,37 +174,14 @@ Gene: <input ng-model="newGene">
 				<br/><br/>
 				<label class="headerStyle">Curation History</label>
 				<table class="table">
-					<thead>
-					<tr>
-						<th>Name</th>
-						<th>Date</th>
-						<th>Operation</th>
-					</tr>
-					</thead>
 					<tbody>
-					<tr>
-						<td>John</td>
-						<td>3/5/2015</td>
-						<td>added BRAF V600E</td>
+					<tr ng-repeat="x in logs">
+						<td>{{x}}</td>
 					</tr>
-					<tr>
-						<td>Mary</td>
-						<td>3/5/2015</td>
-						<td>delete KRAS V600K</td>
-					</tr>
-					<tr>
-						<td>July</td>
-						<td>6/5/2015</td>
-						<td>marked trial curated</td>
-					</tr>
-					<tr>
-						<td>Tony</td>
-						<td>10/5/2015</td>
-						<td>confirmed prerun mutation KIT E17K</td>
-					</tr>
+
 					</tbody>
 				</table>
-				<!--
+
 				<div class="form-group">
 					<label for="comment" class="headerStyle">Comment </label>
 					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="saveComments()">Save</button>
@@ -212,7 +198,7 @@ Gene: <input ng-model="newGene">
 
 
 					<textarea class="form-control" rows="5" id="comment" ng-model="comment"></textarea>
-				</div>-->
+				</div>
 			</div>
 		</div>
 		<div class="col-sm-8">

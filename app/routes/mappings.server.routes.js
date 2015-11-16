@@ -75,6 +75,9 @@ module.exports = function(app) {
 	app.route('/deleteGene/:trialID/:gene')
 		.get(users.requiresLogin, mappings.deleteGene);
 
+	app.route('/convertLog/:trialID')
+		.get(users.requiresLogin, mappings.convertLog);
+
 	// Finish by binding the Mapping middleware
 	//app.param('Idvalue', mappings.mappingBynctId);
 

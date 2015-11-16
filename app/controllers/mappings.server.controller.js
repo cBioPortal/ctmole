@@ -40,6 +40,12 @@ var mongoose = require('mongoose'),
     Mapping = mongoose.model('Mapping'),
     _ = require('lodash');
 
+
+var Alteration = mongoose.model('Alteration');
+var User = mongoose.model('User');
+
+var ObjectId = mongoose.Types.ObjectId;
+
 /**
  * Create a Mapping
  */
@@ -149,21 +155,97 @@ exports.hasAuthorization = function (req, res, next) {
 
 exports.mappingBynctId = function (req, res) {
     Mapping.findOne({nctId: req.params.Idvalue}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
         if (!mapping) {
             console.log('No Mapping Record Exist');
             res.jsonp();
-           // return next();
         }
         else
         {
-            req.mapping = mapping;
-            res.jsonp(req.mapping);
-            //next();
+            res.jsonp(mapping);
         }
 
     });
 };
+
+exports.convertLog = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
+            res.jsonp();
+        }
+        else
+        {
+
+            var records = [];
+            var count = 0;
+
+            _.each(mapping.log, function(item){
+
+                User.findOne({_id: new ObjectId(item.user)}).populate('user', 'displayName').exec(function (err, user) {
+                    if (err) console.log('error happened when searching ',err);
+                    if (!user) {
+                        console.log('No User Record Exist');
+                    }
+                    else
+                    {
+                        if(item.operationType === 'changeStatus')
+                        {
+                            records.push({user: user.displayName, changetoStatus: item.changetoStatus, date: item.date, operationType: item.operationType});
+
+                            count++;
+                            if(count === mapping.log.length){
+                                res.jsonp(records);
+                            }
+                        }
+                        else if(item.alteration_Id !== undefined)
+                        {
+                            Alteration.findOne({_id: new ObjectId(item.alteration_Id)}).populate('user', 'displayName').exec(function (err1, alteration) {
+
+                                if (err1) console.log('error happened when searching ',err1);
+                                if (!alteration) {
+                                    console.log('No alteration Record Exist');
+                                }
+                                else
+                                {
+                                    records.push({user: user.displayName, alteration: alteration, date: item.date, operationType: item.operationType});
+
+                                }
+                                count++;
+                                if(count === mapping.log.length){
+                                    res.jsonp(records);
+
+                                }
+
+                            });
+                        }
+                        else if(item.gene !== undefined)
+                        {
+                            records.push({user: user.displayName, gene: item.gene, date: item.date, operationType: item.operationType});
+
+                            count++;
+                            if(count === mapping.log.length){
+                                res.jsonp(records);
+                            }
+                        }
+
+                    }
+
+                });
+
+            });
+
+
+        }
+
+    });
+};
+
 
 exports.mappingBynctIdAlt = function (req, res) {
 
@@ -224,7 +306,6 @@ exports.fetchByAltId = function (req, res) {
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            console.log('status testing567...', req.params.altId);
 
             res.jsonp(mappings);
         }
@@ -275,8 +356,7 @@ exports.saveComments = function (req, res) {
                 }
             });
 
-           // res.jsonp();
-            // return next();
+
         }
         else
         {
@@ -293,8 +373,7 @@ exports.saveComments = function (req, res) {
                 }
             });
 
-            //res.jsonp(req.mapping);
-            //next();
+
         }
 
     });
@@ -311,8 +390,8 @@ exports.confirmGene = function (req, res) {
                 item.confirmStatus = 'confirmed';
             }
         });
-        //mapping.log.push();
-        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes}}).exec(function (err, mapping) {
+        mapping.log.push({date: new Date(), user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
+        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -336,8 +415,9 @@ exports.confirmAlteration = function (req, res) {
                 item.confirmStatus = 'confirmed';
             }
         });
-        //mapping.log.push();
-        Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration}}).exec(function (err, mapping) {
+        mapping.log.push({date: new Date(), user: req.user._id, operationType:'confirmAlteration', alteration_Id: req.params.alteration_Id});
+
+        Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration, log: mapping.log}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -358,7 +438,7 @@ exports.deleteAlteration = function (req, res) {
         req.mapping = mapping;
 
         for (var i = 0; i < mapping.alteration.length; i++) {
-            if (mapping.alteration[i].alteration_Id == req.params.alteration_Id) {console.log('deleting...');
+            if (mapping.alteration[i].alteration_Id === req.params.alteration_Id) {console.log('deleting...');
                 mapping.alteration.splice(i, 1);
                 break;
             }
@@ -389,7 +469,7 @@ exports.deleteGene = function (req, res) {
         req.mapping = mapping;
 
         for (var i = 0; i < mapping.predictedGenes.length; i++) {
-            if (mapping.predictedGenes[i].gene == req.params.gene) {
+            if (mapping.predictedGenes[i].gene === req.params.gene) {
                 mapping.predictedGenes.splice(i, 1);
                 break;
             }

@@ -59,6 +59,10 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					get: {
 						method: 'GET',
 						isArray: false
+					},
+					convertLog: {
+						method: 'PATCH',
+						isArray: true
 					}
 				}
 			),
@@ -95,6 +99,12 @@ angular.module('mappings').factory('Mappings', ['$resource',
 			deleteGene: $resource('deleteGene/:trialID/:gene', {trialID: '@nctId'}, {
 				deleteGene: {
 					method: 'GET'
+				}
+			}),
+			convertLog: $resource('convertLog/:trialID', {trialID: '@nctId'}, {
+				get: {
+					method: 'GET',
+					isArray: true
 				}
 			})
 		};
