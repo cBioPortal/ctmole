@@ -50,7 +50,7 @@ module.exports = {
 	google: {
 		clientID: process.env.CTMOLE_CLIENTID ,
 		clientSecret: process.env.CTMOLE_CLIENTSECRET ,
-		callbackURL: 'http://localhost:3000/auth/google/callback'
+		callbackURL: process.env.CTMOLE_GOOGLE_CALLBACK || 'http://localhost:3000/auth/google/callback'
 	},
 	linkedin: {
 		clientID: process.env.LINKEDIN_ID || 'APP_ID',
