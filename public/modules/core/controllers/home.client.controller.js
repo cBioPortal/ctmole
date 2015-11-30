@@ -144,29 +144,30 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             _.each(trials[i].tumorTypes, function (tumorItem) {
                                 $scope.tumorTypes.push(tumorItem.tumorTypeId);
                             });
+                            if (alterationsFetched[i] !== undefined) {
+                                if (alterationsFetched[i].alterationsFetched.length > 0) {
+                                    _.each(alterationsFetched[i].alterationsFetched, function (value) {
+                                        if ($scope.mutationIDs.indexOf(value._id) === -1) {
+                                            $scope.mutationIDs.push(value._id);
+                                            $scope.mutations.push({
+                                                mutationID: value._id,
+                                                gene: value.gene,
+                                                alteration: value.alteration,
+                                                nctIds: [trials[i].nctId]
+                                            });
+                                            $scope.genes.push(value.gene);
+                                        }
+                                        else {
+                                            _.each($scope.mutations, function (mutation) {
+                                                if (mutation.gene === value.gene && mutation.alteration === value.alteration) {
+                                                    mutation.nctIds.push(trials[i].nctId);
+                                                }
+                                            });
+                                        }
+                                    });
 
-                            if (alterationsFetched[i].alterationsFetched.length > 0) {
-                                _.each(alterationsFetched[i].alterationsFetched, function (value) {
-                                    if ($scope.mutationIDs.indexOf(value._id) === -1) {
-                                        $scope.mutationIDs.push(value._id);
-                                        $scope.mutations.push({
-                                            mutationID: value._id,
-                                            gene: value.gene,
-                                            alteration: value.alteration,
-                                            nctIds: [trials[i].nctId]
-                                        });
-                                        $scope.genes.push(value.gene);
-                                    }
-                                    else {
-                                        _.each($scope.mutations, function (mutation) {
-                                            if (mutation.gene === value.gene && mutation.alteration === value.alteration) {
-                                                mutation.nctIds.push(trials[i].nctId);
-                                            }
-                                        });
-                                    }
-                                });
+                                }                            }
 
-                            }
 
                         }
 

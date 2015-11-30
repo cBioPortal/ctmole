@@ -86,6 +86,11 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					method: 'GET'
 				}
 			}),
+			excludeGene: $resource('excludeGene/:trialID/:gene', {trialID: '@nctId'}, {
+				excludeGene: {
+					method: 'GET'
+				}
+			}),
 			confirmAlteration: $resource('confirmAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
 				confirmAlteration: {
 					method: 'GET'

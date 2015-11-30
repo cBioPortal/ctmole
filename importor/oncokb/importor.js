@@ -24,7 +24,8 @@ function connectDB(){
 
 
 function workers() {
-	ClinicalTrialMetadata.find({}).limit(10).exec(function(err, metadatas) {
+	var count = 0;
+	ClinicalTrialMetadata.find({}).exec(function(err, metadatas) {
 		if (err)
 		{
 			console.log('error happened when searching ClinicalTrialMetadata', err);
@@ -32,7 +33,7 @@ function workers() {
 		else
 		{
 			_.each(metadatas, function(metadata){
-				console.log(metadata.phase);
+
 				var trialID = metadata.id_info[0].nct_id[0];
 				Trial.findOne({nctId: trialID}).exec(function(err1, trial){
 					if(err1)
@@ -63,6 +64,10 @@ function workers() {
 						trialRecord.save(function(err, trail){
 							if(err)console.log('Error happened when saving to db', err);
 							else console.log('Insert', trialID, ' into db successfully');
+
+							count++;
+							console.log("**********************************************");
+							console.log(count);
 						});
 
 					}
@@ -81,6 +86,9 @@ function workers() {
 								} else {
 									console.log('Successfully updated trial', trialID);
 								}
+								count++;
+								console.log("**********************************************");
+								console.log(count);
 							});
 						}
 
