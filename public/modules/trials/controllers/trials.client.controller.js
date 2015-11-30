@@ -634,6 +634,10 @@ angular.module('trials').controller('TrialsController',
 
             $scope.highlight = function(gene, alteration){
 
+                var highlightedEles = document.getElementsByClassName("highlight");
+                _.each(highlightedEles, function(ele){
+                    ele.className = '';
+                });
                 var inputText = gene.toLowerCase();
                 var count  = 0;
 
@@ -651,11 +655,11 @@ angular.module('trials').controller('TrialsController',
                     count += hightLightSearch(inputText, 'title');
                     count += hightLightSearch(inputText, 'purpose');
                     count += hightLightSearch(inputText, 'criteria');
-                    bootbox.alert(count + ' match found for ' + gene + ' and ' + alteration);
+                    //bootbox.alert(count + ' match found for ' + gene + ' and ' + alteration);
                 }
                 else
                 {
-                    bootbox.alert(count + ' match found for ' + gene );
+                    //bootbox.alert(count + ' match found for ' + gene );
                 }
 
 
@@ -663,7 +667,9 @@ angular.module('trials').controller('TrialsController',
             }
 
             $scope.excludeAlteration = function(x){
-                console.log(x);
+                $scope.switchStatus('2');
+                $scope.trialStatus = '2';
+
                 Mappings.excludeGene.get({trialID: $scope.trial.nctId, gene: x.gene},
                     function (a) {
                         _.each($scope.trialAlterations, function(item){

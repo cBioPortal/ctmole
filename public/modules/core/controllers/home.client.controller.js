@@ -53,6 +53,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.comTrialIds = [];
         $scope.inComTrialIds = [];
         $scope.status = 4;
+        $scope.recruit = '';
 
 
         function endSearch() {
@@ -410,7 +411,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 return e.type;
             }).indexOf(type);
             console.log($scope.criteria, $scope.types);
-            if (type === 'status' || type === 'tumor' || type === 'country') {
+            if (type === 'status' || type === 'tumor' || type === 'country' || type === 'recruit') {
 
 
                 if (value.length === 0) {

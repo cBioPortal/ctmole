@@ -139,18 +139,40 @@ exports.list = function (req, res) {
 
 exports.generalSearch = function (req, res, searchEngineKeyword) {
     var keywords = req.params.searchEngineKeyword;
+    var bits = keywords.split(/,|;/);
+    var tempIndex = 0, tempStr = '';
+    var finalPattern = '';
+console.log(bits);
+    for(var i = 0; i < bits.length-1;i++)
+    {
+        tempStr = bits[i].trim();
+        finalPattern += '(?=.*' + tempStr + ')';
+        finalPattern = '(' + finalPattern + ')';
+        if(i === 0)
+        {
+            tempIndex += bits[i].length;
+        }
+        else
+        {
+            tempIndex += bits[i].length + 1;
+        }
 
-    var keywordsArr = keywords.split(',');
-    var finalStr = '';
-    var tempStr = '';
-    for (var i = 0; i < keywordsArr.length; i++) {
-        tempStr = '\"' + keywordsArr[i].trim() + '\"';
-        finalStr += tempStr;
+        if (keywords[tempIndex] === ';') {
+            finalPattern +=  '|';
+        }
+        console.log('here are the seperators ', keywords[tempIndex]);
+
     }
+    tempStr = bits[bits.length-1].trim();
+    finalPattern += '(?=.*' + tempStr + ')';
+    console.log('here is the pattern for regular expression ', finalPattern);
+    var finalExp = new RegExp(finalPattern, 'i');
+
     var counter = 0;
     var alterationsFetched = [];
-    Trial.find({$text: {$search: finalStr}}).exec(function (err, trials) {
-
+    Trial.find({$or: [{ purpose: { $regex: finalExp } },
+        { arm_group: { $regex: finalExp } },
+        { eligibilityCriteria: { $regex: finalExp } }] }).exec(function (err, trials) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

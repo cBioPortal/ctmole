@@ -20,6 +20,19 @@
                 <label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(true, status, 'status')">Curating</label><br/>
                 <label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, status, 'status')">Curated</label>
                 </div>
+		<h3>Recruit Status</h3>
+
+
+
+		<div class="radio">
+			<label><input type="radio" ng-model="recruit" value="" ng-change="getCriteria('all', recruit, 'recruit')">All</label><br/>
+			<label><input type="radio" ng-model="recruit" value="Not yet recruiting" ng-change="getCriteria(false, recruit, 'recruit')">Not yet recruiting</label><br/>
+			<label><input type="radio" ng-model="recruit" value="Recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Recruiting</label><br/>
+			<label><input type="radio" ng-model="recruit" value="Enrolling by invitation" ng-change="getCriteria(true, recruit, 'recruit')">Enrolling by invitation</label><br/>
+			<label><input type="radio" ng-model="recruit" value="Active, not recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Active, not recruiting</label><br/>
+			<label><input type="radio" ng-model="recruit" value="Completed" ng-change="getCriteria(true, recruit, 'recruit')">Completed</label>
+
+		</div>
 
 		<h3>Location</h3>
 <!--
