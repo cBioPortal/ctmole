@@ -586,6 +586,11 @@ angular.module('trials').controller('TrialsController',
             };
 
             function highLightSearch(inputText, elementIDs){
+                if(typeof elementIDs === 'string')
+                {
+                    elementIDs = [elementIDs];
+                }
+
                 _.each(elementIDs, function(elementID){
                     var searchEle = document.getElementById(elementID);
                     if(searchEle !== null)
@@ -618,6 +623,11 @@ angular.module('trials').controller('TrialsController',
             }
 
             function cancelHighlight(elementIDs){
+                if(typeof elementIDs === 'string')
+                {
+                    elementIDs = [elementIDs];
+                }
+
                 _.each(elementIDs, function(elementID){
                     var searchEle = document.getElementById(elementID);
                     if(searchEle !== null){
