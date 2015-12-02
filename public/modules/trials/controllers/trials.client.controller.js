@@ -585,87 +585,62 @@ angular.module('trials').controller('TrialsController',
                 });
             };
 
-            function hightLightSearch(inputText, elementID){
-                var searchEle = document.getElementById(elementID);
-                if(searchEle !== null)
-                {
-                    var innerHTML = searchEle.innerHTML.toLowerCase();
-
-                    var regex = new RegExp(inputText, "gi"), result, indices = [], tempStr;
-                    while ( (result = regex.exec(innerHTML)) ) {
-                        indices.push(result.index);
-                    }
-                    if(indices.length > 0)
+            function highLightSearch(inputText, elementIDs){
+                _.each(elementIDs, function(elementID){
+                    var searchEle = document.getElementById(elementID);
+                    if(searchEle !== null)
                     {
-                        tempStr = innerHTML.substring(0,indices[0]);
-                        var tempIndex = indices.length-1;
-                        for(var i = 0; i < tempIndex;i++)
+                        var innerHTML = searchEle.innerHTML.toLowerCase();
+
+                        var regex = new RegExp(inputText, "gi"), result, indices = [], tempStr;
+                        while ( (result = regex.exec(innerHTML)) ) {
+                            indices.push(result.index);
+                        }
+                        if(indices.length > 0)
                         {
-                            tempStr += "<span class='highlight'>" + innerHTML.substring(indices[i],indices[i]+inputText.length) + "</span>"
-                                + innerHTML.substring(indices[i]+inputText.length,indices[i+1]);
+                            tempStr = innerHTML.substring(0,indices[0]);
+                            var tempIndex = indices.length-1;
+                            for(var i = 0; i < tempIndex;i++)
+                            {
+                                tempStr += "<span class='highlight'>" + innerHTML.substring(indices[i],indices[i]+inputText.length) + "</span>"
+                                    + innerHTML.substring(indices[i]+inputText.length,indices[i+1]);
+                            }
+
+                            tempStr += "<span class='highlight'>" + innerHTML.substring(indices[tempIndex],indices[tempIndex]+inputText.length) + "</span>"
+                                + innerHTML.substring(indices[tempIndex]+inputText.length);
+
+                            searchEle.innerHTML = tempStr;
                         }
 
-                        tempStr += "<span class='highlight'>" + innerHTML.substring(indices[tempIndex],indices[tempIndex]+inputText.length) + "</span>"
-                            + innerHTML.substring(indices[tempIndex]+inputText.length);
-
-                        searchEle.innerHTML = tempStr;
                     }
-                    return indices.length;
-                }
+                });
 
             }
 
-            function cancelHighlight(elementID){
-                var searchEle = document.getElementById(elementID);
-                if(searchEle !== null){
-                    var innerHTML = searchEle.innerHTML;
-                    searchEle.innerHTML = innerHTML.replace(/<span class=\"highlight\">|<\/span>/gi, '');
-                }
+            function cancelHighlight(elementIDs){
+                _.each(elementIDs, function(elementID){
+                    var searchEle = document.getElementById(elementID);
+                    if(searchEle !== null){
+                        var innerHTML = searchEle.innerHTML;
+                        searchEle.innerHTML = innerHTML.replace(/<span class=\"highlight\">|<\/span>/gi, '');
+                    }
+                });
+
             }
 
             $scope.highlight = function(gene, alteration){
 
-                cancelHighlight('armTable');
-                cancelHighlight('title');
-                cancelHighlight('purpose');
-                cancelHighlight('criteria');
-
-                //console.log(innerHTML1);
-                //
-                //var highlightedEles = document.getElementsByClassName("highlight");
-                //if(highlightedEles.length > 0)
-                //{
-                //    for(var i = 0;i < highlightedEles.length;i++)
-                //    {
-                //        highlightedEles[i].className = '';
-                //    }
-                //
-                //}
+                cancelHighlight(['armTable', 'title', 'purpose', 'criteria']);
 
                 var inputText = gene.toLowerCase();
-                var count  = 0;
 
-                count += hightLightSearch(inputText, 'armTable');
-                count += hightLightSearch(inputText, 'title');
-                count += hightLightSearch(inputText, 'purpose');
-                count += hightLightSearch(inputText, 'criteria');
-
+                highLightSearch(inputText, ['armTable','title','purpose','criteria']);
 
                 if(alteration !== 'unspecified')
                 {
                     inputText = alteration.toLowerCase();
-
-                    count += hightLightSearch(inputText, 'armTable');
-                    count += hightLightSearch(inputText, 'title');
-                    count += hightLightSearch(inputText, 'purpose');
-                    count += hightLightSearch(inputText, 'criteria');
-                    //bootbox.alert(count + ' match found for ' + gene + ' and ' + alteration);
+                    highLightSearch(inputText, ['armTable','title','purpose','criteria']);
                 }
-                else
-                {
-                    //bootbox.alert(count + ' match found for ' + gene );
-                }
-
 
 
             }
