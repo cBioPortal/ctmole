@@ -1,6 +1,6 @@
 
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
-	<span class="content_right_head" ng-click="showAllTitle()" ng-show="!showVar">{{trial.title}}</span>
+	<span class="content_right_head" ng-click="showAllTitle()" ng-show="!showVar" id="title">{{trial.title}}</span>
 	<span class="content_all" ng-show="showVar">{{trial.title}}</span>
 
 	<div class="row">
@@ -128,20 +128,29 @@ Gene: <input ng-model="newGene">
 					<div style="display:block" >
 					<h1><small>
 						<div class="fixMargin" ng-if="x.confirmStatus == 'unconfirmed'">
-							<span class="label label-warning">{{x.gene + "     " + x.alteration}}</span>
+							<span class="label label-warning" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
 							<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
-								<i class="fa fa-check" ng-click="confirmAlteration(x)"></i>
+								<i class="fa fa-check" ng-if="x.alteration !== 'unspecified' " ng-click="confirmAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
+								<i class="fa fa-exclamation" ng-click="excludeAlteration(x)"></i>
+							</span>
+						</div>
+						<div class="fixMargin" ng-if="x.alteration_Id !== undefined && (x.status == 'manually' || x.confirmStatus == 'confirmed')">
+							<span  class="label label-success" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
 								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
 							</span>
 						</div>
-						<div class="fixMargin" ng-if="x.status == 'manually' || x.confirmStatus == 'confirmed'">
-							<span  class="label label-success">{{x.gene + "     " + x.alteration}}</span>
+
+						<div class="fixMargin" ng-if="x.confirmStatus == 'excluded'">
+							<span  class="label label-danger" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
 							<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
-								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
 							</span>
 						</div>
+
 
 					</small></h1>
 					</div>
@@ -176,7 +185,7 @@ Gene: <input ng-model="newGene">
 				<table class="table">
 					<tbody>
 					<tr ng-repeat="x in logs">
-						<td>{{x}}</td>
+						<td>{{x}}  <i class="fa fa-undo"></i> </td>
 					</tr>
 
 					</tbody>
@@ -214,7 +223,7 @@ Gene: <input ng-model="newGene">
 					</div>
 					<div id="collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading">
 						<div class="panel-body">
-							<p data-ng-bind="trial.purpose"></p>
+							<p data-ng-bind="trial.purpose" id="purpose"></p>
 
 						</div>
 					</div>
@@ -230,7 +239,7 @@ Gene: <input ng-model="newGene">
 					</div>
 					<div id="collapseNew" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNew">
 						<div class="panel-body">
-							<table class="table table-striped">
+							<table id="armTable" class="table table-striped">
 
 								<tr ng-repeat="x in trial.arm_group">
 									<td>{{x.arm_group_type.toString()}}: {{x.arm_group_label.toString()}}</td>
@@ -246,20 +255,19 @@ Gene: <input ng-model="newGene">
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-								 Criteria
+								Criteria
 							</a>
 						</h4>
 					</div>
 					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body" >
-							<ul ng-repeat="x in criteria track by $index" class="criteria">
+						<div class="panel-body"><span  id="criteria">
+							<ul ng-repeat="x in criteria track by $index" class="criteria" >
 								<li ng-if="criteriaTitles.indexOf(x) !== -1">
 									<strong>{{x}}</strong>
 								</li>
 								<li ng-if="criteriaTitles.indexOf(x) === -1">{{x}}</li>
 							</ul>
-
-						</div>
+						</span></div>
 					</div>
 				</div>
 

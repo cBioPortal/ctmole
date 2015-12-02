@@ -50,11 +50,14 @@ var ObjectId = mongoose.Types.ObjectId;
  * Create a Mapping
  */
 exports.create = function (req, res) {
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
+
     var mapping = new Mapping({
         nctId: req.params.nctId,
         alteration: [{alteration_Id: req.params.alteration, status: 'manually'}],
         completeStatus: '1',
-        log: [{date: new Date(), user: req.user._id, operationType:'add', alteration_Id: req.params.alteration}]
+        log: [{date: rightNow, user: req.user._id, operationType:'add', alteration_Id: req.params.alteration}]
     });
     mapping.user = req.user;
     mapping.save(function (err) {
@@ -83,7 +86,10 @@ exports.update = function (req, res) {
     var alterationArray = req.body.alteration;
     alterationArray.push({alteration_Id: req.params.Idvalue, status: 'manually'});
 
-    req.body.log.push({date: new Date(), user: req.user._id, operationType:'add', alteration_Id: req.params.Idvalue});
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
+
+    req.body.log.push({date: rightNow, user: req.user._id, operationType:'add', alteration_Id: req.params.Idvalue});
 
     Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray, log: req.body.log}}).populate('user', 'displayName').exec(function (err, mappings) {
         if (err) {
@@ -172,6 +178,14 @@ exports.mappingBynctId = function (req, res) {
     });
 };
 
+function compare(a, b) {
+    if (a.date < b.date)
+        return -1;
+    if (a.date > b.date)
+        return 1;
+    return 0;
+};
+
 exports.convertLog = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
         if (err) console.log('error happened when searching ',err);
@@ -200,6 +214,7 @@ exports.convertLog = function (req, res) {
 
                             count++;
                             if(count === mapping.log.length){
+                                records.sort(compare);
                                 res.jsonp(records);
                             }
                         }
@@ -218,6 +233,7 @@ exports.convertLog = function (req, res) {
                                 }
                                 count++;
                                 if(count === mapping.log.length){
+                                    records.sort(compare);
                                     res.jsonp(records);
 
                                 }
@@ -230,6 +246,7 @@ exports.convertLog = function (req, res) {
 
                             count++;
                             if(count === mapping.log.length){
+                                records.sort(compare);
                                 res.jsonp(records);
                             }
                         }
@@ -266,8 +283,10 @@ exports.mappingBynctIdAlt = function (req, res) {
 
 
 exports.completeTrial = function (req, res) {
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
 
-    req.body.log.push({date: new Date(), user: req.user._id, operationType:'changeStatus', changetoStatus: req.params.Idvalue});
+    req.body.log.push({date: rightNow, user: req.user._id, operationType:'changeStatus', changetoStatus: req.params.Idvalue});
 
     Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: req.params.Idvalue, log: req.body.log}}).exec(function (err, mapping) {
         if (err) {
@@ -381,6 +400,8 @@ exports.saveComments = function (req, res) {
 
 
 exports.confirmGene = function (req, res) {
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
         if (err) console.log('error happened when searching ',err);
         req.mapping = mapping;
@@ -390,7 +411,8 @@ exports.confirmGene = function (req, res) {
                 item.confirmStatus = 'confirmed';
             }
         });
-        mapping.log.push({date: new Date(), user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
+
         Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
@@ -415,7 +437,10 @@ exports.confirmAlteration = function (req, res) {
                 item.confirmStatus = 'confirmed';
             }
         });
-        mapping.log.push({date: new Date(), user: req.user._id, operationType:'confirmAlteration', alteration_Id: req.params.alteration_Id});
+        var rightNow = new Date();
+        rightNow = rightNow.toString();
+
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmAlteration', alteration_Id: req.params.alteration_Id});
 
         Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration, log: mapping.log}}).exec(function (err, mapping) {
             if (err) {
@@ -443,8 +468,10 @@ exports.deleteAlteration = function (req, res) {
                 break;
             }
         }
+        var rightNow = new Date();
+        rightNow = rightNow.toString();
 
-        mapping.log.push({date: new Date(), user: req.user._id, operationType:'delete', alteration_Id: req.params.alteration_Id});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', alteration_Id: req.params.alteration_Id});
 
         Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration, log: mapping.log }}).exec(function (err, mapping) {
             if (err) {
@@ -474,8 +501,10 @@ exports.deleteGene = function (req, res) {
                 break;
             }
         }
+        var rightNow = new Date();
+        rightNow = rightNow.toString();
 
-        mapping.log.push({date: new Date(), user: req.user._id, operationType:'delete', gene: req.params.gene});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', gene: req.params.gene});
 
         Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log }}).exec(function (err, mapping) {
             if (err) {
@@ -490,4 +519,30 @@ exports.deleteGene = function (req, res) {
     });
 
 
+};
+
+exports.excludeGene = function (req, res) {
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        _.each(mapping.predictedGenes, function(item){
+            if(item.gene === req.params.gene){
+                item.confirmStatus = 'excluded';
+            }
+        });
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
+        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log}}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
 };
