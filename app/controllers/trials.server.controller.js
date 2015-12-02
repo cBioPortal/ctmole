@@ -142,7 +142,7 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
     var bits = keywords.split(/,|;/);
     var tempIndex = 0, tempStr = '';
     var finalPattern = '';
-console.log(bits);
+
     for(var i = 0; i < bits.length-1;i++)
     {
         tempStr = bits[i].trim();
@@ -160,12 +160,11 @@ console.log(bits);
         if (keywords[tempIndex] === ';') {
             finalPattern +=  '|';
         }
-        console.log('here are the seperators ', keywords[tempIndex]);
 
     }
     tempStr = bits[bits.length-1].trim();
     finalPattern += '(?=.*' + tempStr + ')';
-    console.log('here is the pattern for regular expression ', finalPattern);
+
     var finalExp = new RegExp(finalPattern, 'i');
 
     var counter = 0;

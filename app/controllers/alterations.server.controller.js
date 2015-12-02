@@ -204,7 +204,8 @@ exports.generalSearch = function (req, res) {
 };
 
 exports.addNewAlteration = function (req, res) {
-
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
     var result = '';
     Alteration.findOne({
         'alteration': req.params.alteration,
@@ -222,7 +223,7 @@ exports.addNewAlteration = function (req, res) {
                         alteration: [{alteration_Id: alteration._id.toString(), status: 'manually'}],
                         completeStatus: 1,
                         log: [{
-                            date: new Date(),
+                            date: rightNow,
                             user: req.user._id.toString(),
                             operationType: 'add',
                             alteration_Id: alteration._id.toString()
@@ -241,7 +242,7 @@ exports.addNewAlteration = function (req, res) {
                 else {
                     mapping.alteration.push({alteration_Id: alteration._id.toString(), status: 'manually'});
                     mapping.log.push({
-                        date: new Date(),
+                        date: rightNow,
                         user: req.user._id.toString(),
                         operationType: 'add',
                         alteration_Id: alteration._id.toString()
@@ -284,7 +285,7 @@ exports.addNewAlteration = function (req, res) {
                                 alteration: [{alteration_Id: alt._id.toString(), status: 'manually'}],
                                 completeStatus: 1,
                                 log: [{
-                                    date: new Date(),
+                                    date: rightNow,
                                     user: req.user._id.toString(),
                                     operationType: 'add',
                                     alteration_Id: alt._id.toString()
@@ -302,7 +303,7 @@ exports.addNewAlteration = function (req, res) {
                         else {
                             mapping.alteration.push({alteration_Id: alt._id.toString(), status: 'manually'});
                             mapping.log.push({
-                                date: new Date(),
+                                date: rightNow,
                                 user: req.user._id.toString(),
                                 operationType: 'add',
                                 alteration_Id: alt._id.toString()

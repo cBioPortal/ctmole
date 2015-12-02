@@ -136,7 +136,7 @@ Gene: <input ng-model="newGene">
 								<i class="fa fa-exclamation" ng-click="excludeAlteration(x)"></i>
 							</span>
 						</div>
-						<div class="fixMargin" ng-if="x.status == 'manually' || x.confirmStatus == 'confirmed'">
+						<div class="fixMargin" ng-if="x.alteration_Id !== undefined && (x.status == 'manually' || x.confirmStatus == 'confirmed')">
 							<span  class="label label-success" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
 							<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>

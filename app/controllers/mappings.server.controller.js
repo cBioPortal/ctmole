@@ -178,6 +178,14 @@ exports.mappingBynctId = function (req, res) {
     });
 };
 
+function compare(a, b) {
+    if (a.date < b.date)
+        return -1;
+    if (a.date > b.date)
+        return 1;
+    return 0;
+};
+
 exports.convertLog = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
         if (err) console.log('error happened when searching ',err);
@@ -206,6 +214,7 @@ exports.convertLog = function (req, res) {
 
                             count++;
                             if(count === mapping.log.length){
+                                records.sort(compare);
                                 res.jsonp(records);
                             }
                         }
@@ -224,6 +233,7 @@ exports.convertLog = function (req, res) {
                                 }
                                 count++;
                                 if(count === mapping.log.length){
+                                    records.sort(compare);
                                     res.jsonp(records);
 
                                 }
@@ -236,6 +246,7 @@ exports.convertLog = function (req, res) {
 
                             count++;
                             if(count === mapping.log.length){
+                                records.sort(compare);
                                 res.jsonp(records);
                             }
                         }
@@ -401,6 +412,7 @@ exports.confirmGene = function (req, res) {
             }
         });
         mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
+
         Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
