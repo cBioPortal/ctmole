@@ -54,7 +54,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.inComTrialIds = [];
         $scope.status = 4;
         $scope.recruit = '';
-
+        var allGenes = [];
 
         function endSearch() {
             $scope.loading = false;
@@ -128,7 +128,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             $scope.tumorTypes = [];
             $scope.country = ['United States'];
 
-            var allGenes = [];
+
 
             //search in the trial table
             Trials.searchEngine.query({searchEngineKeyword: searchKeyword}, function (data) {
@@ -415,8 +415,12 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
                         var mutationNctIds = [];
                         _.each(criterion.value, function (item) {
-
-                            mutationNctIds = mutationNctIds.concat(item.nctIds);
+                            _.each(allGenes, function(item1){
+                                if(item1.gene === item)
+                                {
+                                    mutationNctIds = mutationNctIds.concat(item1.nctIds);
+                                }
+                            });
                         });
                         if (mutationNctIds.indexOf(trial.nctId) !== -1) {
                             flags[index].value = true;
