@@ -88,6 +88,9 @@ var TrialSchema = new Schema({
 	countries: {
 		type: Array
 	},
+	tumorTypes: {
+		type: Array
+	}
 });
 
 

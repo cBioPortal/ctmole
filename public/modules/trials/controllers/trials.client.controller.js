@@ -115,7 +115,6 @@ angular.module('trials').controller('TrialsController',
             $scope.showDrugs = function () {
                 $scope.showAllDrugs = !$scope.showAllDrugs;
             };
-
             $scope.displayStyle = function () {
                 $scope.showAll = !$scope.showAll;
             };

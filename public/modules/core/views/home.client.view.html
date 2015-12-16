@@ -79,7 +79,6 @@
 			<input type="text" class="form-control" ng-model="searchKeyword" name="keywordInputBox" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
 			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search()"></i></span>
 		</div>
-
 		<br/><br/>
 		<div ng-if="loading">
 			<img style="width:100px; height:100px" src="modules/core/img/loaders/loading.gif">
@@ -92,12 +91,56 @@
 				<div>
 					<h3 data-ng-bind="trial.title"></h3>
 					<h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/> {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
+
+					<div ng-if="trial.fetchedAlterations.length > 0" ng-repeat="x in trial.fetchedAlterations" >
+						<h1><small>
+							<span style="float:left; margin-bottom: 10px" ng-if="x.confirmStatus == 'unconfirmed'" class="label label-warning" >{{x.gene + "     " + x.alteration}}</span>
+
+							<span style="float:left" ng-if="x.alteration_Id !== undefined && (x.status == 'manually' || x.confirmStatus == 'confirmed')" class="label label-success" >{{x.gene + "     " + x.alteration}}</span>
+
+							<span style="float:left" ng-if="x.confirmStatus == 'excluded'" class="label label-danger">{{x.gene + "     " + x.alteration}}</span>
+
+						</small></h1>
+
+					</div>
+					<br/><br/><br/>
+					<div ng-if="trial.fetchedAlterations.length === 0" >
+						<p>No Alteration Info Available at this time</p>
+					</div>
+
+
 				</div>
 			</a>
 
 		</div>
 
 	</div>
+<br/><br/><br/>
 
+
+	<div ng-show="!showRefine">
+	<div class="panel panel-default" style="width: 95%; float:left; margin:10px; ">
+		<div class="panel-heading">Total # of Genomically Defined Clinical Trails: 4, 832</div>
+		<div class="panel-body" style="overflow-x: auto" id="geneTrails">
+			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingGeneData">
+		</div>
+		<br/>
+	</div>
+
+	<div class="panel panel-default" style="width: 95%; float:left;margin:10px">
+		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
+		<div class="panel-body" id="tumorTypeTrials" style="overflow-x: auto">
+			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingTumorData">
+		</div>
+		<br/>
+	</div>
+	<div class="panel panel-default" style="width: 45%; float:left;margin:10px">
+		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
+		<div class="panel-body" id="USTrials" style="width: 480px; height: 400px;">
+			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingStatusData">
+		</div>
+		<br/>
+	</div>
+
+</div>
 </section>
-

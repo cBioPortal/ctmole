@@ -169,9 +169,18 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
 
     var counter = 0;
     var alterationsFetched = [];
-    Trial.find({$or: [{ purpose: { $regex: finalExp } },
-        { arm_group: { $regex: finalExp } },
-        { eligibilityCriteria: { $regex: finalExp } }] }).exec(function (err, trials) {
+    Trial.find({$or: [{ nctId: { $regex: finalExp } },
+        { title: { $regex: finalExp } },
+        { purpose: { $regex: finalExp } },
+        { recruitingStatus: { $regex: finalExp } },
+        { eligibilityCriteria: { $regex: finalExp } },
+        { phase: { $regex: finalExp } },
+        { diseaseCondition: { $regex: finalExp } },
+        { lastChangedDate: { $regex: finalExp } },
+        { countries: { $regex: finalExp } },
+        { drugs: { $regex: finalExp } },
+        { tumorTypes: { $regex: finalExp } },
+        { arm_group: { $regex: finalExp } }] }).exec(function (err, trials) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -444,3 +453,85 @@ exports.multiTrials = function (req, res) {
         }
     });
 };
+
+exports.tumorTypes = function(req, res){
+    var tumorTypes = [];
+    Trial.find({countries: {$in:['United States']}}).stream()
+        .on('data', function(trial){
+            if(trial.tumorTypes !== undefined)
+            {
+                tumorTypes = tumorTypes.concat(trial.tumorTypes);
+            }
+        })
+        .on('error', function(err){
+            // handle error
+            console.log('error happened tumor');
+        })
+        .on('end', function(){
+            // final callback
+            tumorTypes.sort();
+            var finalTumors = [{tumor: tumorTypes[0], count: 1}];
+
+            for(var i = 1;i < tumorTypes.length;i++)
+            {
+                for(var j = 0;j < finalTumors.length;j++)
+                {
+                    if(tumorTypes[i] === finalTumors[j].tumor){
+                        finalTumors[j].count++;
+                        break;
+                    }
+                    else if(j === finalTumors.length-1)
+                    {
+                        finalTumors.push({tumor: tumorTypes[i], count: 1});
+                    }
+
+                }
+
+            }
+            return res.jsonp(finalTumors);
+        });
+
+}
+
+exports.statusCounts = function(req, res){
+    var statusCounts = {'Not_yet_recruiting': 0, 'Recruiting': 0, 'Enrolling_by_invitation': 0,
+        'Active_not_recruiting': 0, 'Completed': 0, 'Others': 0};
+
+    Trial.find({countries: {$in:['United States']}}).stream()
+        .on('data', function(trial){
+            if(trial.recruitingStatus === 'Not yet recruiting')
+            {
+                statusCounts.Not_yet_recruiting++;
+            }
+            else if(trial.recruitingStatus === 'Recruiting')
+            {
+                statusCounts.Recruiting++;
+            }
+            else if(trial.recruitingStatus === 'Enrolling by invitation')
+            {
+                statusCounts.Enrolling_by_invitation++;
+            }
+            else if(trial.recruitingStatus === 'Active, not recruiting')
+            {
+                statusCounts.Active_not_recruiting++;
+            }
+            else if(trial.recruitingStatus === 'Completed')
+            {
+                statusCounts.Completed++;
+            }
+            else
+            {
+                statusCounts.Others++;
+            }
+
+        })
+        .on('error', function(err){
+            // handle error
+            console.log('error happened tumor');
+        })
+        .on('end', function(){
+            // final callback
+            return res.jsonp(statusCounts);
+        });
+
+}

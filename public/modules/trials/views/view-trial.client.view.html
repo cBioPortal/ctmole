@@ -53,8 +53,6 @@
 					</h2>
 				</div>
 
-
-
 				<div ng-show="showAll" class="addBGColor">
 				<h2><small>
 					<p>{{trial.countries[0]}}
@@ -73,7 +71,7 @@
 					</small></h2>
 				</div>
 
-				<a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank"><h2><small>View In ClinicalTrials.gov</small></h2></a>
+				<h2><small><a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank">View In ClinicalTrials.gov</a></small></h2>
 
 				<label class="headerStyle">ALTERATIONS</label>
 				<span style="margin-left:10px">
@@ -176,8 +174,8 @@ Gene: <input ng-model="newGene">
 				<label class="headerStyle" for="sel1">Curation Status</label>
 				<select class="form-control" id="sel1" ng-model="trialStatus" ng-change="switchStatus(trialStatus)">
 					<option value="1">Not Curated</option>
-					<option value="2">Curating</option>
-					<option value="3">Curated</option>
+					<option value="2">In Progress</option>
+					<option value="3">Completed</option>
 
 				</select>
 				<br/><br/>

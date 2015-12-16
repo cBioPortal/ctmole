@@ -111,6 +111,12 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					method: 'GET',
 					isArray: true
 				}
+			}),
+			geneTrialCounts: $resource('geneTrialCounts/', {}, {
+				get: {
+					method: 'GET',
+					isArray: true
+				}
 			})
 		};
 

@@ -250,7 +250,7 @@ function worker1(trialIds){
 			//saved = true;
 			_.each(alterations, function(item){
 
-				Trial.find({$and: [{nctId: {$in: trialIds}}, {$text: {$search: '\" ' + item.alteration + ' \"'}}]} , function(err1, trials1){
+				Trial.find({$and: [{nctId: {$in: trialIds}}, {$text: {$search: '\"' + item.alteration + '\"'}}]} , function(err1, trials1){
 					flagCount++;
 
 					if(firstSearch)
@@ -315,7 +315,7 @@ function worker1(trialIds){
 
 function worker2() {
 	hugo_symbol = hugo_symbols[index];
-	Trial.find({$text: {$search: '\" ' + hugo_symbol + ' \"'}}, function(err, trials){
+	Trial.find({$text: {$search: '\"' + hugo_symbol + '\"'}}, function(err, trials){
 		console.log('\n******************************************************************************');
 		console.log('Searching for ' + hugo_symbol + ' and there are '+ trials.length + ' trials matching this gene ',((index+1)/hugo_symbols.length*100).toFixed(2), '% finished\n');
 		if(trials.length > 0){

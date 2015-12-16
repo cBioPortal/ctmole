@@ -42,6 +42,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.allCountries = true;
         $scope.firstSearch = true;
         $scope.refineFlag = false;
+        $scope.dashBoard = true;
+        $scope.loadingTumorData = true;
+        $scope.loadingGeneData = true;
+        $scope.loadingStatusData = true;
 
         $scope.mutations = [];
         $scope.countryCriteria = ['United States'];
@@ -55,6 +59,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.status = 4;
         $scope.recruit = '';
         var allGenes = [];
+        var continueFlag = true;
 
         function endSearch() {
             $scope.loading = false;
@@ -110,6 +115,81 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             );
         }
 
+        function fetchAltInfo(trials, index){
+
+            var alteration_id = [];
+            var trialAlterations = [];
+
+            Mappings.mappingSearch.get({
+                    Idvalue: trials[index].nctId,
+                },
+                function (a) {
+                    continueFlag = true;
+
+                    if(a.nctId !== undefined)
+                    {
+                        if (a.alteration.length > 0) {
+
+
+                            for (var i = 0; i < a.alteration.length; i++) {
+                                alteration_id.push(a.alteration[i].alteration_Id);
+                            }
+                            Alterations.alterationByIds.query({Ids: alteration_id},
+                                function(res){
+                                    _.each(res, function(item){
+                                        var index = _.map(a.alteration, function(e){return e.alteration_Id;}).indexOf(item._id);
+                                        trialAlterations.push({alteration_Id: a.alteration[index].alteration_Id, gene: item.gene, alteration: item.alteration, status: a.alteration[index].status, confirmStatus: a.alteration[index].confirmStatus});
+                                    });
+
+                                }
+                            );
+                        }
+
+
+                        if (a.predictedGenes.length > 0) {
+
+                            _.each(a.predictedGenes, function(item){
+                                if(item.confirmStatus !== 'confirmed')
+                                {
+                                    trialAlterations.push({gene: item.gene, alteration: 'unspecified', status: 'predicted', confirmStatus: item.confirmStatus});
+                                }
+                            });
+                        }
+
+                        if(trialAlterations.length === 0) {
+                            console.log('no alteration information for this trial ID');
+                        }
+
+                    }
+                    else
+                    {
+                        trialAlterations = [];
+                        console.log('There is no mapping record existed for this trial.');
+                    }
+                    trials[index].fetchedAlterations =  trialAlterations;
+                    if(index < trials.length-1)
+                    {
+                        index++;
+                        fetchAltInfo(trials, index);
+                    }
+
+
+                },
+                function (b) {
+                    trialAlterations = [];
+                    console.log('no alteration information for this trial ID');
+
+                    trials[index].fetchedAlterations =  trialAlterations;
+                    if(index < trials.length-1)
+                    {
+                        index++;
+                        fetchAltInfo(trials, index);
+                    }
+                });
+
+
+        }
+
         $scope.search = function (searchStr) {
             var searchKeyword = $scope.searchKeyword;
             if (searchKeyword === undefined) {
@@ -120,6 +200,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             $scope.loading = true;
             $scope.showResult = false;
             $scope.showRefine = false;
+
 
             $scope.countries = [];
             $scope.genes = [];
@@ -146,11 +227,11 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         for (var i = 0; i < trials.length; i++) {
                             $scope.countries = $scope.countries.concat(trials[i].countries);
                             $scope.trialsNctIds.push(trials[i].nctId);
+                            $scope.tumorTypes = $scope.tumorTypes.concat(trials[i].tumorTypes);
 
-                            _.each(trials[i].tumorTypes, function (tumorItem) {
-                                $scope.tumorTypes.push(tumorItem.tumorTypeId);
-                            });
                         }
+                        fetchAltInfo(trials, 0);
+
 
                         var alterationsFetched = data[data.length - 1];
                         var j = 0;
@@ -531,6 +612,72 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             console.log('here is the criteria1 ', $scope.criteria);
         };
 
+        function plottyChart(){
+            //get the gene and trials infor
+
+            Mappings.geneTrialCounts.get({},function(result){
+            $scope.loadingGeneData = false;
+            var geneTrace1 = {
+                x: _.map(result, function(item){return item.gene;}), //['BRAF', 'KIT', 'KRAS', 'ALK', 'MET', 'EGFR', 'PTEN'],
+                y: _.map(result, function(item){return item.predicted;}),//[20, 14, 23, 34, 12, 23, 98],
+                name: 'Predicted',
+                type: 'bar'
+            };
+
+            var geneTrace2 = {
+                x: _.map(result, function(item){return item.gene;}),//['BRAF', 'KIT', 'KRAS', 'ALK', 'MET', 'EGFR', 'PTEN'],
+                y: _.map(result, function(item){return item.curated;}),//[12, 18, 29, 2, 4, 10, 9],
+                name: 'Curated',
+                type: 'bar'
+            };
+            var geneLayout = {barmode: 'stack',
+            width:3000,
+            height: 400};
+            var geneData = [geneTrace1, geneTrace2];
+
+                Plotly.newPlot('geneTrails', geneData, geneLayout);
+
+
+            });
+
+
+            Trials.tumorTypes.get({},function(result){
+                console.log('here is the result ', result.length);
+                $scope.loadingTumorData = false;
+                var tumorType = {
+                    x: _.map(result, function(item){return item.tumor;}),
+                    y: _.map(result, function(item){return item.count;}),
+                    type: 'bar'
+                };
+
+                var tumorLayout = {barmode: 'stack',
+                    width:10000,
+                    height: 400};
+
+
+                var tumorTypeData = [tumorType];
+                Plotly.newPlot('tumorTypeTrials', tumorTypeData, tumorLayout);
+            });
+
+            Trials.recruitingStatusCount.get({},function(result){
+                $scope.loadingStatusData = false;
+                var layout = {barmode: 'stack'};
+
+                var stateData = {
+                    labels: ['Not yet recruiting', 'Recruiting', 'Enrolling by invitation', 'Active, not recruiting', 'Completed', 'Others' ],
+                    values: [result.Not_yet_recruiting, result.Recruiting, result.Enrolling_by_invitation, result.Active_not_recruiting, result.Completed, result.Others],
+                    type: 'pie'
+                };
+
+                var stateTumorData = [stateData];
+
+                Plotly.newPlot('USTrials', stateTumorData, layout);
+            });
+
+
+
+        };
+        plottyChart();
 
     }
 ]);

@@ -546,3 +546,94 @@ exports.excludeGene = function (req, res) {
 
     });
 };
+
+exports.geneTrialCounts = function(req, res){
+    var geneTrialCountArr = [];
+    Mapping.find({}).stream()
+        .on('data', function(mapping){
+
+            if(mapping.predictedGenes !== undefined && mapping.predictedGenes.length !== 0)
+            {
+
+                _.each(mapping.predictedGenes, function(item){
+                    var index = -1;
+                    for(var i = 0;i < geneTrialCountArr.length;i++)
+                    {
+                        if(geneTrialCountArr[i].gene === item.gene)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                    if(index === -1 && item.confirmStatus === 'unconfirmed')
+                    {
+                        geneTrialCountArr.push({gene: item.gene, predicted: 1, curated: 0});
+                    }
+                    else if(index === -1 && item.confirmStatus === 'confirmed')
+                    {
+                        geneTrialCountArr.push({gene: item.gene, predicted: 0, curated: 1});
+                    }
+                    else if(index !== -1 && item.confirmStatus === 'unconfirmed')
+                    {
+                        geneTrialCountArr[index].predicted++;
+                    }
+                    else if(index !== -1 && item.confirmStatus === 'confirmed')
+                    {
+                        geneTrialCountArr[index].curated++;
+                    }
+
+                });
+            }
+            if(mapping.alteration !== undefined && mapping.alteration.length !== 0)
+            {
+                _.each(mapping.alteration, function(item){
+
+                    Alteration.findOne({_id: new ObjectId(item.alteration_Id)}).exec(function (err1, alteration) {
+
+                        if (err1) console.log('error happened when searching ',err1);
+                        if(alteration)
+                        {
+                            var index = -1;
+                            for(var i = 0;i < geneTrialCountArr.length;i++)
+                            {
+                                if(geneTrialCountArr[i].gene === alteration.gene)
+                                {
+                                    index = i;
+                                    break;
+                                }
+                            }
+
+                            if(index === -1 && item.status === 'predicted')
+                            {
+                                geneTrialCountArr.push({gene: alteration.gene, predicted: 1, curated: 0});
+                            }
+                            else if(index === -1 && item.status === 'manually')
+                            {
+                                geneTrialCountArr.push({gene: alteration.gene, predicted: 0, curated: 1});
+                            }
+                            else if(index !== -1 && item.status === 'predicted')
+                            {
+                                geneTrialCountArr[index].predicted++;
+                            }
+                            else if(index !== -1 && item.status === 'manually')
+                            {
+                                geneTrialCountArr[index].curated++;
+                            }
+                        }
+
+                    });
+
+
+                });
+            }
+        })
+        .on('error', function(err){
+            // handle error
+            console.log('error happened');
+        })
+        .on('end', function(){
+            // final callback
+            return res.jsonp(geneTrialCountArr);
+        });
+
+}
