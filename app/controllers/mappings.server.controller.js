@@ -547,14 +547,26 @@ exports.excludeGene = function (req, res) {
     });
 };
 
+function compare(a, b) {
+    if (a.gene < b.gene)
+        return -1;
+    if (a.gene > b.gene)
+        return 1;
+    return 0;
+}
+
 exports.geneTrialCounts = function(req, res){
     var geneTrialCountArr = [];
+
+    Alteration.find({},{_id:1, gene:1}).exec(function(err, allAlterations){
+        var altIds = _.map(allAlterations, function(altItem){
+            return altItem._id.toString();
+        });
     Mapping.find({}).stream()
         .on('data', function(mapping){
-
+            //var countFlag = true;
             if(mapping.predictedGenes !== undefined && mapping.predictedGenes.length !== 0)
             {
-
                 _.each(mapping.predictedGenes, function(item){
                     var index = -1;
                     for(var i = 0;i < geneTrialCountArr.length;i++)
@@ -583,45 +595,40 @@ exports.geneTrialCounts = function(req, res){
                     }
 
                 });
+
             }
             if(mapping.alteration !== undefined && mapping.alteration.length !== 0)
             {
+
                 _.each(mapping.alteration, function(item){
+                    var alterationIndex = altIds.indexOf(item.alteration_Id);
+                    var currentGene = allAlterations[alterationIndex].gene;
 
-                    Alteration.findOne({_id: new ObjectId(item.alteration_Id)}).exec(function (err1, alteration) {
-
-                        if (err1) console.log('error happened when searching ',err1);
-                        if(alteration)
+                    var index = -1;
+                    for(var i = 0;i < geneTrialCountArr.length;i++)
+                    {
+                        if(geneTrialCountArr[i].gene === currentGene)
                         {
-                            var index = -1;
-                            for(var i = 0;i < geneTrialCountArr.length;i++)
-                            {
-                                if(geneTrialCountArr[i].gene === alteration.gene)
-                                {
-                                    index = i;
-                                    break;
-                                }
-                            }
-
-                            if(index === -1 && item.status === 'predicted')
-                            {
-                                geneTrialCountArr.push({gene: alteration.gene, predicted: 1, curated: 0});
-                            }
-                            else if(index === -1 && item.status === 'manually')
-                            {
-                                geneTrialCountArr.push({gene: alteration.gene, predicted: 0, curated: 1});
-                            }
-                            else if(index !== -1 && item.status === 'predicted')
-                            {
-                                geneTrialCountArr[index].predicted++;
-                            }
-                            else if(index !== -1 && item.status === 'manually')
-                            {
-                                geneTrialCountArr[index].curated++;
-                            }
+                            index = i;
+                            break;
                         }
-
-                    });
+                    }
+                    if(index === -1 && item.status === 'predicted')
+                    {
+                        geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
+                    }
+                    else if(index === -1 && item.status === 'manually')
+                    {
+                        geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
+                    }
+                    else if(index !== -1 && item.status === 'predicted')
+                    {
+                        geneTrialCountArr[index].predicted++;
+                    }
+                    else if(index !== -1 && item.status === 'manually')
+                    {
+                        geneTrialCountArr[index].curated++;
+                    }
 
 
                 });
@@ -633,7 +640,8 @@ exports.geneTrialCounts = function(req, res){
         })
         .on('end', function(){
             // final callback
+            geneTrialCountArr.sort(compare);
             return res.jsonp(geneTrialCountArr);
         });
-
+    });
 }

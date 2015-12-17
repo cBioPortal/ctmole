@@ -31,8 +31,8 @@
  */
 
 'use strict';
-angular.module('core').controller('HomeController', ['$scope', '$location', '$rootScope', 'Authentication', 'Trials', 'Mappings', 'Alterations',
-    function ($scope, $location, $rootScope, Authentication, Trials, Mappings, Alterations) {
+angular.module('core').controller('HomeController', ['$scope', '$location', '$rootScope', 'Authentication', 'Trials', 'Mappings', 'Alterations', 'Cancertypes',
+    function ($scope, $location, $rootScope, Authentication, Trials, Mappings, Alterations, Cancertypes) {
 
         // This provides Authentication context.
         $scope.authentication = Authentication;
@@ -631,7 +631,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 type: 'bar'
             };
             var geneLayout = {barmode: 'stack',
-            width:3000,
+            width:2000,
             height: 400};
             var geneData = [geneTrace1, geneTrace2];
 
@@ -641,17 +641,17 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             });
 
 
-            Trials.tumorTypes.get({},function(result){
+            Cancertypes.tumorTypes.get({},function(result){
                 console.log('here is the result ', result.length);
                 $scope.loadingTumorData = false;
                 var tumorType = {
-                    x: _.map(result, function(item){return item.tumor;}),
-                    y: _.map(result, function(item){return item.count;}),
+                    x: _.map(result, function(item){return item.cancer;}),
+                    y: _.map(result, function(item){return item.counts;}),
                     type: 'bar'
                 };
 
                 var tumorLayout = {barmode: 'stack',
-                    width:10000,
+                    width:2000,
                     height: 400};
 
 

@@ -15,20 +15,20 @@
 
 				<div ng-show="showAllDisease" class="addBGColor">
 					<h2><small>
-						<p>{{trial.diseaseCondition[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
-						<p ng-if="$index > 0" ng-repeat="m in trial.diseaseCondition">{{m}}</p>
+						<p>{{trial.tumorTypes[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
+						<p ng-if="$index > 0" ng-repeat="m in trial.tumorTypes">{{m}}</p>
 					</small></h2>
 				</div>
 
 				<div ng-show="!showAllDisease">
 					<h2><small>
-						<p>{{trial.diseaseCondition[0]}}<a  ng-if="trial.diseaseCondition.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.diseaseCondition.length-1}} more </a></p>
+						<p>{{trial.tumorTypes[0]}}<a  ng-if="trial.tumorTypes.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.tumorTypes.length-1}} more </a></p>
 					</small></h2>
 				</div>
 
 				<h2><small><p>{{trial.phase}}</p></small></h2>
 
-				 <h2><small><p class="test">{{trial.recruitingStatus}}
+				 <h2><small><p class="test">{{trial.recruitingStatus.capitalize()}}
 				 	 </p>
 				</small></h2>
 
@@ -39,15 +39,15 @@
 
 				<div ng-show="showAllDrugs" class="addBGColor">
 				<h2><small>
-					<p>{{trial.drugs[0].drugName}}<i ng-click="showDrugs()" class="fa fa-compress"></i></p>
-					<p ng-if="$index > 0" ng-repeat="x in trial.drugs">{{x.drugName}}</p>
+					<p>{{trial.drugs[0]}}<i ng-click="showDrugs()" class="fa fa-compress"></i></p>
+					<p ng-if="$index > 0" ng-repeat="x in trial.drugs">{{x}}</p>
 				</small>
 				</h2>
 				</div>
 
 				<div ng-show="!showAllDrugs">
 					<h2><small>
-						<p>{{trial.drugs[0].drugName}}<a ng-if="trial.drugs.length > 1" ng-click="showDrugs()">    and {{trial.drugs.length-1}} more</a></p>
+						<p>{{trial.drugs[0]}}<a ng-if="trial.drugs.length > 1" ng-click="showDrugs()">    and {{trial.drugs.length-1}} more</a></p>
 
 					</small>
 					</h2>
@@ -179,8 +179,19 @@ Gene: <input ng-model="newGene">
 
 				</select>
 				<br/><br/>
-				<label class="headerStyle">Curation History</label>
-				<table class="table">
+				<label class="headerStyle">Curation History
+					<a ng-if="logs.length > 3 && showAlllog" ng-click="showAllLogs()"> and {{logs.length-3}} more </a>
+					<i ng-if="logs.length > 3 && !showAlllog" ng-click="showAllLogs()"   class="fa fa-compress"></i>
+				</label>
+				<table class="table" ng-if="showAlllog">
+					<tbody>
+					<tr ng-if="$index < 3" ng-repeat="x in logs">
+						<td>{{x}}  <i class="fa fa-undo"></i> </td>
+					</tr>
+
+					</tbody>
+				</table>
+				<table class="table" ng-if="!showAlllog">
 					<tbody>
 					<tr ng-repeat="x in logs">
 						<td>{{x}}  <i class="fa fa-undo"></i> </td>

@@ -156,3 +156,19 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
+
+exports.cancertypeCount = function(req, res) {
+	var cancertypesCount = [];
+	Cancertype.find({}).stream()
+	.on('data', function(cancerType){
+		cancertypesCount.push({cancer: cancerType.cancer, counts: cancerType.nctIds.length});
+	})
+	.on('error', function(err){
+		// handle error
+		console.log('error happened tumor');
+	})
+	.on('end', function(){
+		// final callback
+		return res.jsonp(cancertypesCount);
+	});
+};

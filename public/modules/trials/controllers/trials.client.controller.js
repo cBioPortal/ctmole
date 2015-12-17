@@ -66,12 +66,21 @@ angular.module('trials').controller('TrialsController',
             $scope.showAllCom = false;
             $scope.editing = false;
 
+
+
+
+            String.prototype.capitalize = function() {
+                return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+            };
+
             var editingAlteration = {};
 
             $scope.showAllComments = function(){
                 $scope.showAllCom = !$scope.showAllCom;
             };
-
+            $scope.showAllLogs = function(){
+                $scope.showAlllog = !$scope.showAlllog;
+            };
 
             $scope.switchStatus = function (status) {
                 Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function (u, getResponseHeaders) {
@@ -100,7 +109,7 @@ angular.module('trials').controller('TrialsController',
                                 });
                         }
 
-                        fetchMapInfo();
+                        //fetchMapInfo();
 
                     }, function (error) {
                         console.log('error: ', error);
@@ -273,6 +282,16 @@ angular.module('trials').controller('TrialsController',
                                         tempArr.push(tempStr);
                                     });
                                     $scope.logs = tempArr;
+
+                                    if($scope.logs.length > 3)
+                                    {
+                                        $scope.showAlllog = true;
+                                    }
+                                    else
+                                    {
+                                        $scope.showAlllog = false;
+                                    }
+
                                 });
                             }
                             else

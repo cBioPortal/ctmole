@@ -43,15 +43,9 @@ function workers() {
 						if(metadata.intervention !== undefined)
 						{
 							_.each(metadata.intervention, function(item){
-								drugsNeeded.push(item.intervention_name);
+								drugsNeeded = drugsNeeded.concat(item.intervention_name);
 							});
 						}
-						var tumorTypes = [];
-						if(metadata.condition !== undefined)
-						{
-							tumorTypes = metadata.condition;
-						}
-
 
 						var trialRecord = new Trial({nctId: trialID,
 							title: (metadata.brief_title !== undefined && metadata.brief_title.length !== 0) ? metadata.brief_title[0] : "",
@@ -59,11 +53,10 @@ function workers() {
 							recruitingStatus: (metadata.overall_status !== undefined && metadata.overall_status.length !== 0) ? metadata.overall_status[0] : "",
 							eligibilityCriteria: (metadata.eligibility !== undefined &&  metadata.eligibility.length !== 0 && metadata.eligibility[0].criteria !== undefined) ? metadata.eligibility[0].criteria[0].textblock[0] : "",
 							phase: (metadata.phase !== undefined && metadata.phase.length !== 0) ? metadata.phase[0] : "",
-							diseaseCondition: (metadata.condition_browse !== undefined && metadata.condition_browse.length !== 0 && metadata.condition_browse[0].mesh_term !== undefined) ? metadata.condition_browse[0].mesh_term : "",
+							tumorTypes: (metadata.condition_browse !== undefined && metadata.condition_browse.length !== 0 && metadata.condition_browse[0].mesh_term !== undefined) ? metadata.condition_browse[0].mesh_term : "",
 							lastChangedDate: (metadata.lastchanged_date !== undefined && metadata.lastchanged_date.length !== 0) ? metadata.lastchanged_date[0] : "",
 							countries: (metadata.location_countries !== undefined && metadata.location_countries.length !== 0 && metadata.location_countries[0].country !== undefined) ? metadata.location_countries[0].country : "",
 							drugs: drugsNeeded,
-							tumorTypes: tumorTypes,
 							arm_group: (metadata.arm_group !== undefined) ? metadata.arm_group : ""});
 
 
