@@ -117,6 +117,12 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					method: 'GET',
 					isArray: true
 				}
+			}),
+			curationStatusCounts: $resource('curationStatusCounts/', {}, {
+				get: {
+					method: 'GET',
+					isArray: true
+				}
 			})
 		};
 

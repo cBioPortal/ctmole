@@ -84,6 +84,8 @@ module.exports = function(app) {
 	app.route('/geneTrialCounts')
 		.get(users.requiresLogin, mappings.geneTrialCounts);
 
+	app.route('/curationStatusCounts')
+		.get(users.requiresLogin, mappings.curationStatusCounts);
 	// Finish by binding the Mapping middleware
 	//app.param('Idvalue', mappings.mappingBynctId);
 

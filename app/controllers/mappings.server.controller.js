@@ -38,6 +38,7 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors'),
     Mapping = mongoose.model('Mapping'),
+    Trial = mongoose.model('clinicaltrial'),
     _ = require('lodash');
 
 
@@ -644,4 +645,38 @@ exports.geneTrialCounts = function(req, res){
             return res.jsonp(geneTrialCountArr);
         });
     });
+}
+
+
+exports.curationStatusCounts = function(req, res){
+    var curationStatusCountArr = [0, 0, 0];
+
+        Mapping.find({}).stream()
+            .on('data', function(mapping){
+                //var countFlag = true;
+                if(mapping.completeStatus !== undefined)
+                {
+                    if(mapping.completeStatus === '2')
+                    {
+                        curationStatusCountArr[1]++;
+                    }
+                    else if(mapping.completeStatus === '3')
+                    {
+                        curationStatusCountArr[2]++;
+                    }
+                }
+            })
+            .on('error', function(err){
+                // handle error
+                console.log('error happened');
+            })
+            .on('end', function(){
+                // final callback
+                Trial.find({countries: {$in: ['United States']}}).count().exec(function(err, countResult){
+                    curationStatusCountArr[0] = countResult - curationStatusCountArr[1] - curationStatusCountArr[2];
+                    return res.jsonp(curationStatusCountArr);
+                });
+
+            });
+
 }

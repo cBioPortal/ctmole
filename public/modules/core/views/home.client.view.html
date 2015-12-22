@@ -22,16 +22,18 @@
                 </div>
 		<h3>Recruit Status</h3>
 
+		<!--<div class="radio">-->
+			<!--<label><input type="radio" ng-model="recruit" value="" ng-change="getCriteria('all', recruit, 'recruit')">All</label><br/>-->
+			<!--<label><input type="radio" ng-model="recruit" value="Not yet recruiting" ng-change="getCriteria(false, recruit, 'recruit')">Not yet recruiting</label><br/>-->
+			<!--<label><input type="radio" ng-model="recruit" value="Recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Recruiting</label><br/>-->
+			<!--<label><input type="radio" ng-model="recruit" value="Enrolling by invitation" ng-change="getCriteria(true, recruit, 'recruit')">Enrolling by invitation</label><br/>-->
+			<!--<label><input type="radio" ng-model="recruit" value="Active, not recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Active, not recruiting</label><br/>-->
+			<!--<label><input type="radio" ng-model="recruit" value="Completed" ng-change="getCriteria(true, recruit, 'recruit')">Completed</label>-->
 
+		<!--</div>-->
 
-		<div class="radio">
-			<label><input type="radio" ng-model="recruit" value="" ng-change="getCriteria('all', recruit, 'recruit')">All</label><br/>
-			<label><input type="radio" ng-model="recruit" value="Not yet recruiting" ng-change="getCriteria(false, recruit, 'recruit')">Not yet recruiting</label><br/>
-			<label><input type="radio" ng-model="recruit" value="Recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Recruiting</label><br/>
-			<label><input type="radio" ng-model="recruit" value="Enrolling by invitation" ng-change="getCriteria(true, recruit, 'recruit')">Enrolling by invitation</label><br/>
-			<label><input type="radio" ng-model="recruit" value="Active, not recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Active, not recruiting</label><br/>
-			<label><input type="radio" ng-model="recruit" value="Completed" ng-change="getCriteria(true, recruit, 'recruit')">Completed</label>
-
+		<div class="checkbox" ng-repeat="a in recruitingStatus">
+			<input id="{{a}}" ng-model="recruit" ng-change="getCriteria(recruit, a, 'recruit')" type="checkbox" ng-checked="chosenRecruits.indexOf(a) !== -1"><label for="{{a}}"> {{a}}</label>
 		</div>
 
 		<h3>Location</h3>
@@ -49,6 +51,12 @@
 			<br/><br/>
 		</div>
 
+		<h3>Tumor Types</h3>
+		<select chosen multiple ng-options="m as m for m in tumorTypes" class="multiSelect" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
+		</select>
+		<br/><br/>
+
+
 		<h3>Gene</h3>
 		<div class="checkbox" ng-repeat="y in genes">
 			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="chosenGenes.indexOf(y) !== -1"><label for="{{y}}"> {{y}}</label>
@@ -59,12 +67,6 @@
 		<div class="checkbox" ng-repeat="z in mutations">
 			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.mutationID) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
-
-		<h3>Tumor Types</h3>
-<br/>
-		<select chosen multiple ng-options="m as m for m in tumorTypes" class="multiSelect" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
-		</select>
-		<br/>
 
 		<br/><br/>
 		<small>
@@ -119,7 +121,7 @@
 
 
 	<div ng-show="!showRefine">
-	<div class="panel panel-default" style="width: 95%; float:left; margin:10px; ">
+	<div class="panel panel-default" style="width: 45%; float:left; margin:10px; ">
 		<div class="panel-heading">Total # of Genomically Defined Clinical Trails: 4, 832</div>
 		<div class="panel-body" style="overflow-x: auto" id="geneTrails">
 			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingGeneData">
@@ -127,7 +129,7 @@
 		<br/>
 	</div>
 
-	<div class="panel panel-default" style="width: 95%; float:left;margin:10px">
+	<div class="panel panel-default" style="width: 45%; float:left;margin:10px">
 		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
 		<div class="panel-body" id="tumorTypeTrials" style="overflow-x: auto">
 			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingTumorData">
@@ -141,6 +143,13 @@
 		</div>
 		<br/>
 	</div>
-
+	<div class="panel panel-default" style="width: 45%; float:left;margin:10px">
+		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
+		<div class="panel-body" id="curationStatus" style="width: 480px; height: 400px;">
+			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingCurationStatusData">
+		</div>
+		<br/>
+	</div>
 </div>
+
 </section>

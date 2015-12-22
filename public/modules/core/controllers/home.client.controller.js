@@ -46,6 +46,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.loadingTumorData = true;
         $scope.loadingGeneData = true;
         $scope.loadingStatusData = true;
+        $scope.loadingCurationStatusData = true;
 
         $scope.mutations = [];
         $scope.countryCriteria = ['United States'];
@@ -58,6 +59,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.inComTrialIds = [];
         $scope.status = 4;
         $scope.recruit = '';
+        $scope.recruitingStatus = ['Not yet recruiting', 'Recruiting', 'Enrolling by invitation', 'Active, not recruiting', 'Completed', 'Others'];
         var allGenes = [];
         var continueFlag = true;
 
@@ -324,6 +326,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
             $scope.chosenGenes = [];
             $scope.chosenMutations = [];
+            $scope.chosenRecruits = [];
             $scope.tumor = [];
             $scope.status = 4;
             for (var property in location) {
@@ -359,6 +362,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         else if (property === 'country') {
                             $scope.country = location[property];
                         }
+                        else if (property === 'recruit') {
+                            $scope.chosenRecruits = location[property];
+                        }
+
                     }
                     else {
                         if (property === 'mutation') {
@@ -385,6 +392,9 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         }
                         else if (property === 'country') {
                             $scope.country = [location[property]];
+                        }
+                        else if (property === 'recruit') {
+                            $scope.chosenRecruits = [location[property]];
                         }
 
                     }
@@ -511,6 +521,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         }
                     }
                     else {
+
                         var searchStr = '';
                         for (var i = 0; i < criterion.value.length - 1; i++) {
                             searchStr += criterion.value[i] + '|';
@@ -534,11 +545,12 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
         $scope.getCriteria = function (checked, value, type) {
 
+
             var index = $scope.criteria.map(function (e) {
                 return e.type;
             }).indexOf(type);
 
-            if (type === 'status' || type === 'tumor' || type === 'country' || type === 'recruit') {
+            if (type === 'status' || type === 'tumor' || type === 'country') {
 
 
                 if (value.length === 0) {
@@ -563,12 +575,30 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             else {
                 if (checked) {
                     if ($scope.types.indexOf(type) === -1) {
-                        $scope.criteria.push({type: type, value: [value]});
-                        $scope.types.push(type);
+                        if (type === 'recruit' && value === 'Others')
+                        {
+                            $scope.criteria.push({type: type, value: ['Suspended', 'Terminated', 'Withdrawn']});
+                            $scope.types.push(type);
+                        }
+                        else
+                        {
+                            $scope.criteria.push({type: type, value: [value]});
+                            $scope.types.push(type);
+                        }
+
                     }
                     else {
+                        if (type === 'recruit' && value === 'Others')
+                        {
+                            $scope.criteria[index].value.push('Suspended');
+                            $scope.criteria[index].value.push('Terminated');
+                            $scope.criteria[index].value.push('Withdrawn');
+                        }
+                        else
+                        {
+                            $scope.criteria[index].value.push(value);
+                        }
 
-                        $scope.criteria[index].value.push(value);
 
                     }
 
@@ -576,7 +606,17 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 }
                 else {
                     if ($scope.criteria[index].value.length > 1) {
-                        $scope.criteria[index].value = _.without($scope.criteria[index].value, value);
+                        if (type === 'recruit' && value === 'Others')
+                        {
+                            $scope.criteria[index].value = _.without($scope.criteria[index].value, 'Suspended');
+                            $scope.criteria[index].value = _.without($scope.criteria[index].value, 'Terminated');
+                            $scope.criteria[index].value = _.without($scope.criteria[index].value, 'Withdrawn');
+
+                        }
+                        else
+                        {
+                            $scope.criteria[index].value = _.without($scope.criteria[index].value, value);
+                        }
                     }
                     else {
                         $scope.criteria.splice(index, 1);
@@ -674,6 +714,21 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 Plotly.newPlot('USTrials', stateTumorData, layout);
             });
 
+            Mappings.curationStatusCounts.get({},function(result){
+
+                $scope.loadingCurationStatusData = false;
+                var layout = {barmode: 'stack'};
+
+                var curationStatusData = {
+                    labels: ['Not Curated', 'In Progress', 'Completed'],
+                    values: result,
+                    type: 'pie'
+                };
+
+                var curationData = [curationStatusData];
+
+                Plotly.newPlot('curationStatus', curationData, layout);
+            });
 
 
         };
