@@ -156,7 +156,13 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
-
+function compare(a, b) {
+	if (a.counts < b.counts)
+		return 1;
+	if (a.counts > b.counts)
+		return -1;
+	return 0;
+}
 exports.cancertypeCount = function(req, res) {
 	var cancertypesCount = [];
 	Cancertype.find({}).stream()
@@ -169,6 +175,7 @@ exports.cancertypeCount = function(req, res) {
 	})
 	.on('end', function(){
 		// final callback
+		cancertypesCount.sort(compare);
 		return res.jsonp(cancertypesCount);
 	});
 };

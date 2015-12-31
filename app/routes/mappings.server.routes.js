@@ -63,23 +63,14 @@ module.exports = function(app) {
 	app.route('/commentsSave/:trialID/:comment')
 		.get(users.requiresLogin, mappings.saveComments);
 
-	app.route('/confirmGene/:trialID/:gene')
-		.get(users.requiresLogin, mappings.confirmGene);
-
-	app.route('/confirmAlteration/:trialID/:alteration_Id')
+	app.route('/confirmAlteration/:trialID/:gene/:alteration/:type')
 		.get(users.requiresLogin, mappings.confirmAlteration);
 
-	app.route('/deleteAlteration/:trialID/:alteration_Id')
+	app.route('/deleteAlteration/:trialID/:gene/:alteration/:type')
 		.get(users.requiresLogin, mappings.deleteAlteration);
-
-	app.route('/deleteGene/:trialID/:gene')
-		.get(users.requiresLogin, mappings.deleteGene);
 
 	app.route('/convertLog/:trialID')
 		.get(users.requiresLogin, mappings.convertLog);
-
-	app.route('/excludeGene/:trialID/:gene')
-		.get(users.requiresLogin, mappings.excludeGene);
 
 	app.route('/geneTrialCounts')
 		.get(users.requiresLogin, mappings.geneTrialCounts);

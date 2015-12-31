@@ -60,7 +60,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.status = 4;
         $scope.recruit = '';
         $scope.recruitingStatus = ['Not yet recruiting', 'Recruiting', 'Enrolling by invitation', 'Active, not recruiting', 'Completed', 'Others'];
-        var allGenes = [];
+        var allGenes = [], allAlts = [];
         var continueFlag = true;
 
         function endSearch() {
@@ -130,10 +130,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
                     if(a.nctId !== undefined)
                     {
-                        if (a.alteration.length > 0) {
+                        if (a.alterations.length > 0) {
 
 
-                            for (var i = 0; i < a.alteration.length; i++) {
+                            for (var i = 0; i < a.alterations.length; i++) {
                                 alteration_id.push(a.alteration[i].alteration_Id);
                             }
                             Alterations.alterationByIds.query({Ids: alteration_id},
@@ -147,16 +147,6 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             );
                         }
 
-
-                        if (a.predictedGenes.length > 0) {
-
-                            _.each(a.predictedGenes, function(item){
-                                if(item.confirmStatus !== 'confirmed')
-                                {
-                                    trialAlterations.push({gene: item.gene, alteration: 'unspecified', status: 'predicted', confirmStatus: item.confirmStatus});
-                                }
-                            });
-                        }
 
                         if(trialAlterations.length === 0) {
                             console.log('no alteration information for this trial ID');
@@ -232,52 +222,40 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             $scope.tumorTypes = $scope.tumorTypes.concat(trials[i].tumorTypes);
 
                         }
-                        fetchAltInfo(trials, 0);
+                        //fetchAltInfo(trials, 0);
 
-
-                        var alterationsFetched = data[data.length - 1];
-                        var j = 0;
-                        while(alterationsFetched[j] !== undefined) {
-                            if (alterationsFetched[j].alterationsFetched.length > 0) {
-                                _.each(alterationsFetched[j].alterationsFetched, function (value) {
-                                    if ($scope.mutationIDs.indexOf(value._id) === -1) {
-                                        $scope.mutationIDs.push(value._id);
-                                        $scope.mutations.push({
-                                            mutationID: value._id,
-                                            gene: value.gene,
-                                            alteration: value.alteration,
-                                            nctIds: [alterationsFetched[j].nctId]
-                                        });
-                                    }
-                                    else {
-                                        _.each($scope.mutations, function (mutation) {
-                                            if (mutation.gene === value.gene && mutation.alteration === value.alteration) {
-                                                mutation.nctIds.push(alterationsFetched[j].nctId);
-                                            }
-                                        });
-                                    }
-
-                                    tempIndex = allGenes.map(function (e) {
-                                        return e.gene;
-                                    }).indexOf(value.gene);
-
-                                    if (tempIndex === -1) {
-                                        allGenes.push({gene: value.gene, nctIds: [alterationsFetched[j].nctId]});
-                                    }
-                                    else {
-                                        _.each(allGenes, function (item) {
-                                            if (item.gene === value.gene) {
-                                                item.nctIds.push(alterationsFetched[j].nctId);
-                                            }
-                                        });
-                                    }
-
-                                });
-
+                        var altRecords = data[data.length-1];
+                        var tempIndex = -1, i = 0, item, tempAltIndex = -1;
+                        while(altRecords[i] !== undefined)
+                        {
+                            item = altRecords[i];
+                            tempIndex = _.map(allGenes, function(e){return e.gene;}).indexOf(altRecords[i].gene);
+                            if(tempIndex === -1){
+                                allGenes.push({gene: item.gene, nctIds: item.nctIds});
                             }
-                            j++;
+                            else
+                            {
+                                allGenes[tempIndex].nctIds.concat(item.nctIds);
+                                allGenes[tempIndex].nctIds = _.uniq(allGenes[tempIndex].nctIds);
+                            }
+                            if(item.alteration !== 'unspecified'){
+                                for(var j = 0;j < allAlts.length;j++){
+                                    if(allAlts[j].gene == item.gene && allAlts[j].alteration === item.alteration){
+                                        tempAltIndex = j;
+                                        break;
+                                    }
+                                }
+                                if(tempAltIndex === -1){
+                                    allAlts.push({gene: item.gene, alteration: item.alteration, nctIds: item.nctIds});
+                                }else{
+                                    allAlts[tempAltIndex].nctIds.concat(item.nctIds);
+                                    allAlts[tempAltIndex].nctIds = _.uniq(allAlts[tempAltIndex].nctIds);
+                                }
+                            }
+                            i++;
                         }
-                        $scope.genes = allGenes.map(function(e){return e.gene;});
+
+                        $scope.genes = _.map(allGenes, function(e){return e.gene;});
                         $scope.genes.sort();
 
 
@@ -287,6 +265,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         $scope.countries = _.uniq($scope.countries);
                         $scope.countries.sort();
 
+                        $scope.mutations = allAlts;
                         $scope.mutations.sort(compare);
                         searchMappingByStatus();
                         $scope.trials = trials;
@@ -444,7 +423,6 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.searchCriteria = function () {
 
             return function (trial) {
-                //console.log('here is the criteria2 ', $scope.criteria);
 
                 var tempStr = JSON.stringify(trial);
                 var finalFlag = true;
@@ -501,6 +479,11 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         else {
                             flags[index].value = false;
                         }
+
+                        if(trial.nctId == 'NCT01243372' || trial.nctId == 'NCT01740648')
+                        {
+                            console.log(trial.nctId, flags[index].value);
+                        }
                     }
                     else if (criterion.type === 'gene') {
 
@@ -544,7 +527,6 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
 
         $scope.getCriteria = function (checked, value, type) {
-
 
             var index = $scope.criteria.map(function (e) {
                 return e.type;
@@ -605,13 +587,19 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
                 }
                 else {
+
                     if ($scope.criteria[index].value.length > 1) {
-                        if (type === 'recruit' && value === 'Others')
+                        if (type === 'recruit' && value === 'Others' && $scope.criteria[index].value.length > 3)
                         {
                             $scope.criteria[index].value = _.without($scope.criteria[index].value, 'Suspended');
                             $scope.criteria[index].value = _.without($scope.criteria[index].value, 'Terminated');
                             $scope.criteria[index].value = _.without($scope.criteria[index].value, 'Withdrawn');
 
+                        }
+                       else if (type === 'recruit' && value === 'Others' && $scope.criteria[index].value.length === 3)
+                        {
+                            $scope.criteria.splice(index, 1);
+                            $scope.types = _.without($scope.types, type);
                         }
                         else
                         {
@@ -619,6 +607,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         }
                     }
                     else {
+
                         $scope.criteria.splice(index, 1);
                         $scope.types = _.without($scope.types, type);
                     }
@@ -636,8 +625,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             _.each($scope.criteria, function (criterion) {
                 if (criterion.type === 'mutation') {
                     var tempArr = criterion.value.map(function (e) {
-                        //return e.gene + '+' + e.alteration;
-                        return e.mutationID;
+                        return e.gene + ',' + e.alteration;
                     });
                     $location.search(criterion.type, tempArr);
 
@@ -649,17 +637,18 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
             });
             //criteria array is fine till here
-            console.log('here is the criteria1 ', $scope.criteria);
+            console.log('here comes the chosen criteria ', $scope.criteria);
         };
 
         function plottyChart(){
             //get the gene and trials infor
 
             Mappings.geneTrialCounts.get({},function(result){
+
             $scope.loadingGeneData = false;
             var geneTrace1 = {
-                x: _.map(result, function(item){return item.gene;}), //['BRAF', 'KIT', 'KRAS', 'ALK', 'MET', 'EGFR', 'PTEN'],
-                y: _.map(result, function(item){return item.predicted;}),//[20, 14, 23, 34, 12, 23, 98],
+                x: _.map(result, function(item){return item.gene;}),
+                y: _.map(result, function(item){return item.predicted;}),
                 name: 'Predicted',
                 type: 'bar'
             };
@@ -682,7 +671,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
 
             Cancertypes.tumorTypes.get({},function(result){
-                console.log('here is the result ', result.length);
+
                 $scope.loadingTumorData = false;
                 var tumorType = {
                     x: _.map(result, function(item){return item.cancer;}),

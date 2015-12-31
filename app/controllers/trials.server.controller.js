@@ -168,7 +168,7 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
     var finalExp = new RegExp(finalPattern, 'i');
 
     var counter = 0;
-    var alterationsFetched = [];
+
     Trial.find({$or: [{ nctId: { $regex: finalExp } },
         { title: { $regex: finalExp } },
         { purpose: { $regex: finalExp } },
@@ -191,59 +191,41 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
                 res.jsonp();
             }
             else {
-                console.log('here is the trials length found ', trials.length);
-                _.each(trials, function (trial) {
-
-                    Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
-                        if (mapErr) {
-                            counter++;
-                            if (counter === trials.length) {
-                                trials.push(alterationsFetched);
-                                res.jsonp(trials);
+                var trialIds = _.map(trials, function(item){return item.nctId;});
+                var altRecords = [], tempIndex = -1;
+                Mapping.find({nctId: {$in: trialIds} }).stream()
+                    .on('data', function(mapping){
+                        tempIndex = -1;
+                        _.each(mapping.alterations, function(item){
+                        for(var i = 0;i < altRecords.length;i++)
+                        {
+                            if(altRecords[i].gene === item.gene && altRecords[i].alteration === item.alteration){
+                                tempIndex = i;
+                                break;
                             }
-                            console.log('error happens when searching for mapping record');
                         }
-                        else if (!mapping) {
-                            console.log('Failed to find Mapping ');
-                            counter++;
-                            if (counter === trials.length) {
-                                trials.push(alterationsFetched);
-                                res.jsonp(trials);
+                        if(tempIndex === -1){
+                            altRecords.push({gene: item.gene, alteration: item.alteration, nctIds: [mapping.nctId]});
+                        }
+                        else{
+                            if(altRecords[tempIndex].nctIds.indexOf(mapping.nctId) === -1)
+                            {
+                                altRecords[tempIndex].nctIds.push(mapping.nctId);
                             }
-
                         }
-                        else {
 
-                            Alteration.find({
-                                _id: {
-                                    $in: mapping.alteration.map(function (e) {
-                                        return new ObjectId(e.alteration_Id);
-                                    })
-                                }
-                            }).exec(function (altErr, alteration) {
+                        });
 
-                                if (altErr) {
-                                    console.log('error happens when searching for alteration record');
-                                }
-                                else if (!alteration) {
-                                    console.log('Failed to find Alteration ');
-                                }
-                                else {
-                                    alterationsFetched.push({nctId: trial.nctId, alterationsFetched: alteration});
-                                }
-                                counter++;
-                                if (counter === trials.length) {
-                                    trials.push(alterationsFetched);
-                                    res.jsonp(trials);
-                                }
+                    })
+                    .on('error', function(){
 
-                            });
-
-                        }
+                    })
+                    .on('end', function(){
+                        trials.push(altRecords);
+                        res.jsonp(trials);
 
                     });
 
-                });
             }
         }
     });
@@ -309,51 +291,8 @@ exports.trialByID = function (req, res, next, id) {
         }
 
         else {
-            Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
-
-                if (mapErr) {
-                    console.log('error happens when searching for mapping record');
-                }
-                else if (!mapping) {
-
-                    console.log('Failed to find Mapping ');
-                    req.trial = trial;
-                    next();
-                }
-                else {
-
-                    Alteration.find({
-                        _id: {
-                            $in: mapping.alteration.map(function (e) {
-                                return new ObjectId(e.alteration_Id);
-                            })
-                        }
-                    }).exec(function (altErr, alteration) {
-
-                        if (altErr) {
-                            console.log('error happens when searching for alteration record');
-                        }
-                        else if (!alteration) {
-                            console.log('Failed to find Alteration ');
-                            console.log('returned from here, last trial has no alteration');
-                            req.trial = trial;
-                            next();
-                        }
-                        else {
-
-                            trial.alterationsFetched = alteration;
-                            console.log('return from here, last trial has alterations');
-                            req.trial = trial;
-                            next();
-                        }
-
-                    });
-
-                }
-
-            });
-
-
+            req.trial = trial;
+            next();
         }
 
 

@@ -81,28 +81,13 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					method: 'GET'
 				}
 			}),
-			confirmGene: $resource('confirmGene/:trialID/:gene', {trialID: '@nctId'}, {
-				confirmGene: {
-					method: 'GET'
-				}
-			}),
-			excludeGene: $resource('excludeGene/:trialID/:gene', {trialID: '@nctId'}, {
-				excludeGene: {
-					method: 'GET'
-				}
-			}),
-			confirmAlteration: $resource('confirmAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
+			confirmAlteration: $resource('confirmAlteration/:trialID/:gene/:alteration/:type', {trialID: '@nctId'}, {
 				confirmAlteration: {
 					method: 'GET'
 				}
 			}),
-			deleteAlteration: $resource('deleteAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
+			deleteAlteration: $resource('deleteAlteration/:trialID/:gene/:alteration/:type', {trialID: '@nctId'}, {
 				deleteAlteration: {
-					method: 'GET'
-				}
-			}),
-			deleteGene: $resource('deleteGene/:trialID/:gene', {trialID: '@nctId'}, {
-				deleteGene: {
 					method: 'GET'
 				}
 			}),
