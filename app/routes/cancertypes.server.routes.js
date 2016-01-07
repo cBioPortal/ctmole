@@ -54,6 +54,9 @@ module.exports = function(app) {
 	app.route('/cancertypes/trials/:nctIds')
 		.get(cancertypes.readCancertypes);
 
+	app.route('/tumorTypes')
+		.get(cancertypes.cancertypeCount);
+
 	// Finish by binding the Cancertype middleware
 	app.param('cancertypeSymbol', cancertypes.cancertypeByID);
 	app.param('nctIds', cancertypes.cancertypeByNctIds);

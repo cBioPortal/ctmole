@@ -28,7 +28,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
@@ -36,235 +36,517 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Mapping = mongoose.model('Mapping'),
-	_ = require('lodash');
+    errorHandler = require('./errors'),
+    Mapping = mongoose.model('Mapping'),
+    Trial = mongoose.model('clinicaltrial'),
+    _ = require('lodash');
+
+
+var Alteration = mongoose.model('Alteration');
+var User = mongoose.model('User');
+
+var ObjectId = mongoose.Types.ObjectId;
 
 /**
  * Create a Mapping
  */
-exports.create = function(req, res) {
-	var mapping = new Mapping({nctId: req.params.nctId, alteration: [{alteration_Id: req.params.alteration, status: 'manually'}], completeStatus: false});
-		mapping.user = req.user;
-	mapping.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mapping);
-		}
-	});
+exports.create = function (req, res) {
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
+
+    var mapping = new Mapping({
+        nctId: req.params.nctId,
+        alteration: [{alteration_Id: req.params.alteration, status: 'manually'}],
+        completeStatus: '1',
+        log: [{date: rightNow, user: req.user._id, operationType:'add', alteration_Id: req.params.alteration}]
+    });
+    mapping.user = req.user;
+    mapping.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mapping);
+        }
+    });
 };
 
 
 /**
  * Show the current Mapping
  */
-exports.read = function(req, res) {
-	res.jsonp(req.mapping);
+exports.read = function (req, res) {
+    res.jsonp(req.mapping);
 };
 
 /**
  * Update a Mapping
  */
-exports.update = function(req, res) {
-	var alterationArray = req.body.alteration;
-	alterationArray.push({alteration_Id: req.params.Idvalue, status: 'manually'});
+exports.update = function (req, res) {
+    var alterationArray = req.body.alteration;
+    alterationArray.push({alteration_Id: req.params.Idvalue, status: 'manually'});
 
-	Mapping.update({nctId: req.body.nctId},{$set: {alteration: alterationArray}}).populate('user', 'displayName').exec(function(err, mappings) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mappings);
-		}
-	});
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
 
-};
+    req.body.log.push({date: rightNow, user: req.user._id, operationType:'add', alteration_Id: req.params.Idvalue});
 
-exports.deleteAlt = function(req, res) {
-
-	var alterationArray = req.body.alteration;
-	for(var i =0;i < alterationArray.length;i++)
-	{
-		if(alterationArray[i].alteration_Id == req.params.Idvalue)
-		{
-			alterationArray.splice(i, 1);
-			break;
-		}
-	}
-	Mapping.update({nctId: req.body.nctId},{$set: {alteration: alterationArray}}).populate('user', 'displayName').exec(function(err, mappings) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mappings);
-		}
-	});
+    Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray, log: req.body.log}}).populate('user', 'displayName').exec(function (err, mappings) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mappings);
+        }
+    });
 
 };
 
 /**
  * Delete an Mapping
  */
-exports.delete = function(req, res) {
-	var mapping = req.mapping ;
+exports.delete = function (req, res) {
+    var mapping = req.mapping;
 
-	mapping.remove(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mapping);
-		}
-	});
+    mapping.remove(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mapping);
+        }
+    });
 };
 
 /**
  * List of Mappings
  */
-exports.list = function(req, res) { Mapping.find().sort('-created').populate('user', 'displayName').exec(function(err, mappings) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mappings);
-		}
-	});
+exports.list = function (req, res) {
+    Mapping.find().sort('-created').populate('user', 'displayName').exec(function (err, mappings) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mappings);
+        }
+    });
 };
 
 /**
  * Mapping middleware
  */
-exports.mappingByID = function(req, res, next, id) { Mapping.findById(id).populate('user', 'displayName').exec(function(err, mapping) {
-		if (err) return next(err);
-		if (! mapping) return next(new Error('Failed to load Mapping ' + id));
-		req.mapping = mapping ;
-		next();
-	});
+exports.mappingByID = function (req, res, next, id) {
+    Mapping.findById(id).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) return next(err);
+        if (!mapping) return next(new Error('Failed to load Mapping ' + id));
+        req.mapping = mapping;
+        next();
+    });
 };
 
 /**
  * Mapping authorization middleware
  */
-exports.hasAuthorization = function(req, res, next) {
-	if (req.mapping.user.id !== req.user.id) {
-		return res.status(403).send('User is not authorized');
-	}
-	next();
+exports.hasAuthorization = function (req, res, next) {
+    if (req.mapping.user.id !== req.user.id) {
+        return res.status(403).send('User is not authorized');
+    }
+    next();
 };
 
 //find mapping record by nctId
 
-exports.mappingBynctId = function(req, res, next, Idvalue) {
-	Mapping.findOne({nctId: Idvalue}).populate('user', 'displayName').exec(function(err, mapping) {
-	if (err) return next(err);
-	if (! mapping)
-	{
-		console.log('Failed to find Mapping ');
-		return next();
-	}
-	req.mapping = mapping ;
-	//res.jsonp(req.mapping);
-	next();
-});
+exports.mappingBynctId = function (req, res) {
+    Mapping.findOne({nctId: req.params.Idvalue}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
+            res.jsonp();
+        }
+        else
+        {
+            res.jsonp(mapping);
+        }
+
+    });
 };
 
-exports.mappingBynctIdAlt = function(req, res) {
-
-	Mapping.findOne({nctId: req.params.nctId, alteration: { $elemMatch: {alteration_Id: req.params.alteration, status: 'manually'}}}).populate('user', 'displayName').exec(function(err, mapping) {
-
-		//if (err) return next(err);
-	if (! mapping) {
-		res.jsonp();
-	}else {
-		res.jsonp(mapping);
-	}
-	//next();
-});
+function compare(a, b) {
+    if (a.date < b.date)
+        return -1;
+    if (a.date > b.date)
+        return 1;
+    return 0;
 };
 
+exports.convertLog = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
+            res.jsonp();
+        }
+        else
+        {
 
-exports.completeTrial = function(req, res) {
+            var records = [];
+            var count = 0;
 
-	Mapping.update({nctId: req.body.nctId},{$set: {completeStatus: !req.body.completeStatus}}).exec(function(err, mapping) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			return res.jsonp(mapping);
-		}
-	});
+            _.each(mapping.log, function(item){
 
-};
+                User.findOne({_id: new ObjectId(item.user)}).populate('user', 'displayName').exec(function (err, user) {
+                    if (err) console.log('error happened when searching ',err);
+                    if (!user) {
+                        console.log('No User Record Exist');
+                    }
+                    else
+                    {
+                        records.push({user: user.displayName, changetoStatus: item.changetoStatus, date: item.date, operationType: item.operationType, alteration: item.alteration, gene: item.gene});
 
+                        count++;
+                        if(count === mapping.log.length){
+                            records.sort(compare);
+                            res.jsonp(records);
+                        }
+                    }
 
-exports.generalSearch = function(req, res) {
-	var keywords = req.params.searchEngineKeyword;
-	var keywordsArr = keywords.split(",");
-	var finalStr = '';
-	var tempStr = '';
-	if(keywordsArr.length > 1)
-	{
-		for(var i = 0;i < keywordsArr.length;i++)
-		{
-			tempStr = '\"' + keywordsArr[i].trim() + '\"';
-			finalStr += tempStr;
-		}
-	}
-	else
-	{
-		finalStr = keywords;
-	}
+                });
+
+            });
 
 
-	Mapping.find( { $text: { $search: finalStr} }).exec(function(err, mappings) {
+        }
 
-	if (err) {
-		return res.status(400).send({
-			message: errorHandler.getErrorMessage(err)
-		});
-	} else {
-		res.jsonp(mappings);
-	}
-});
+    });
 };
 
 
+exports.mappingBynctIdAlt = function (req, res) {
 
-exports.fetchByStatus = function(req, res) {
+    Mapping.findOne({
+        nctId: req.params.nctId,
+        alteration: {$elemMatch: {alteration_Id: req.params.alteration, status: 'manually'}}
+    }).populate('user', 'displayName').exec(function (err, mapping) {
 
-	Mapping.find( {completeStatus: req.params.status}).exec(function(err, mappings) {
+        //if (err) return next(err);
+        if (!mapping) {
+            res.jsonp();
+        } else {
+            res.jsonp(mapping);
+        }
+        //next();
+    });
+};
 
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(mappings);
-		}
-	});
+
+exports.completeTrial = function (req, res) {
+    var rightNow = new Date();
+    rightNow = rightNow.toString();
+
+    req.body.log.push({date: rightNow, user: req.user._id, operationType:'changeStatus', changetoStatus: req.params.Idvalue});
+
+    Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: req.params.Idvalue, log: req.body.log}}).exec(function (err, mapping) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            return res.jsonp(mapping);
+        }
+    });
+
+};
+
+
+exports.fetchByStatus = function (req, res) {
+
+    Mapping.find({completeStatus: req.params.status}).exec(function (err, mappings) {
+
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mappings);
+        }
+    });
+};
+
+
+exports.fetchByAltId = function (req, res) {
+    Mapping.find({completeStatus: true}).exec(function (err, mappings) {
+
+        if (err) {
+
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+
+            res.jsonp(mappings);
+        }
+    });
+};
+
+
+exports.saveMapping = function (req, res) {
+    var mapping = new Mapping({
+        nctId: req.params.nctId,
+        alteration: [],
+        completeStatus: true
+    });
+    mapping.user = req.user;
+    mapping.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(mapping);
+        }
+    });
 };
 
 
 
-exports.fetchByAltId = function(req, res) {
-	Mapping.find( {completeStatus: true}).exec(function(err, mappings) {
+exports.saveComments = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
 
-		if (err) {
+            var mapping = new Mapping({
+                nctId: req.params.trialID,
+                alteration: [],
+                completeStatus: '1',
+                comments: [req.params.comment]
+            });
+            mapping.user = req.user;
+            mapping.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.jsonp(mapping);
+                }
+            });
 
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else { 	console.log('status testing567...', req.params.altId);
 
-			res.jsonp(mappings);
-		}
-	});
+        }
+        else
+        {
+            req.mapping = mapping;
+            mapping.comments.push(req.params.comment);
+            if(mapping.completeStatus === '1')
+            {
+                mapping.completeStatus = '2';
+            }
+            Mapping.update({nctId: req.params.trialID}, {$set: {comments: mapping.comments, completeStatus: mapping.completeStatus}}).exec(function (err, mapping) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    return res.jsonp(mapping);
+                }
+            });
+
+
+        }
+
+    });
 };
+
+exports.confirmAlteration = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        _.each(mapping.alterations, function(item){
+            if(item.alteration === req.params.alteration && item.gene === req.params.gene && item.type === req.params.type){
+                item.status = 'confirmed';
+            }
+        });
+        var rightNow = new Date();
+        rightNow = rightNow.toString();
+
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirm', alteration_Id: req.params.alteration_Id});
+
+        if(mapping.completeStatus === '1')
+        {
+            mapping.completeStatus = '2';
+        }
+
+        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus}}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
+};
+
+
+exports.deleteAlteration = function (req, res) {
+
+    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
+        if (err) console.log('error happened when searching ',err);
+        req.mapping = mapping;
+
+        for (var i = 0; i < mapping.alterations.length; i++) {
+            if ((req.params.alteration === 'unspecified' || mapping.alterations[i].alteration === req.params.alteration) && mapping.alterations[i].type === req.params.type && mapping.alterations[i].gene === req.params.gene)
+            {
+                mapping.alterations.splice(i, 1);
+                break;
+            }
+        }
+        var rightNow = new Date();
+        rightNow = rightNow.toString();
+
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', alteration: req.params.alteration, gene: req.params.gene});
+
+        if(mapping.completeStatus === '1')
+        {
+            mapping.completeStatus = '2';
+        }
+
+        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus }}).exec(function (err, mapping) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                return res.jsonp(mapping);
+            }
+        });
+
+    });
+
+
+};
+
+function compare(a, b) {
+    if (a.predicted + a.curated < b.predicted + b.curated)
+        return 1;
+    if (a.predicted + a.curated > b.predicted + b.curated)
+        return -1;
+    return 0;
+}
+
+exports.geneTrialCounts = function(req, res){
+    var geneTrialCountArr = [];
+    var validStatusTrials = [];
+    Trial.find({$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]}).stream()
+        .on('data', function(trial){
+            validStatusTrials.push(trial.nctId);
+        })
+        .on('error', function(){
+            console.log('error happened when searching valid status trials ');
+        })
+        .on('end', function(){
+            Mapping.find({nctId: {$in: validStatusTrials}}).stream()
+                .on('data', function(mapping){
+
+
+                    if(mapping.alterations !== undefined && mapping.alterations.length !== 0)
+                    {
+                        var countedGenes = [];
+                        _.each(mapping.alterations, function(item){
+                            //use geneIndex to make sure each gene only count once for each trial
+                            var currentGene = item.gene;
+
+                            var index = -1, geneIndex = countedGenes.indexOf(currentGene);
+                            for(var i = 0;i < geneTrialCountArr.length;i++)
+                            {
+                                if(geneTrialCountArr[i].gene === currentGene)
+                                {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            if(index === -1 && item.curationMethod === 'predicted')
+                            {
+                                geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
+                            }
+                            else if(index === -1 && item.curationMethod === 'manually')
+                            {
+                                geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
+                            }
+                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted')
+                            {
+                                geneTrialCountArr[index].predicted++;
+                            }
+                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'manually')
+                            {
+                                geneTrialCountArr[index].curated++;
+                            }
+
+                            countedGenes.push(currentGene);
+
+                        });
+                    }
+                })
+                .on('error', function(err){
+                    // handle error
+                    console.log('error happened');
+                })
+                .on('end', function(){
+                    // final callback
+                    geneTrialCountArr.sort(compare);
+
+                    console.log('here is the gene ', geneTrialCountArr);
+
+                    return res.jsonp(geneTrialCountArr);
+                });
+        })
+
+
+
+}
+
+
+exports.curationStatusCounts = function(req, res){
+    var curationStatusCountArr = [0, 0, 0];
+
+        Mapping.find({}).stream()
+            .on('data', function(mapping){
+                //var countFlag = true;
+                if(mapping.completeStatus !== undefined)
+                {
+                    if(mapping.completeStatus === '2')
+                    {
+                        curationStatusCountArr[1]++;
+                    }
+                    else if(mapping.completeStatus === '3')
+                    {
+                        curationStatusCountArr[2]++;
+                    }
+                }
+            })
+            .on('error', function(err){
+                // handle error
+                console.log('error happened');
+            })
+            .on('end', function(){
+                // final callback
+                Trial.find({countries: {$in: ['United States']}}).count().exec(function(err, countResult){
+                    curationStatusCountArr[0] = countResult - curationStatusCountArr[1] - curationStatusCountArr[2];
+                    return res.jsonp(curationStatusCountArr);
+                });
+
+            });
+
+}

@@ -60,7 +60,13 @@ angular.module('trials').factory('Trials', ['$resource',
 			nctIds: $resource('trialsMultiSearch/:nctIds', {nctIds: []
 			}, {
 				'query':  {method:'GET', isArray:true}
-			})
+			}),
+			tumorTypes: $resource('tumorTypes', {
+			}, {
+				'get':  {method:'GET', isArray:true}
+			}),
+			recruitingStatusCount: $resource('recruitingStatusCount', {
+			}, {})
 		};
 	}
 ]);

@@ -48,16 +48,23 @@ var MappingSchema = new Schema({
 		required: 'Please fill Mapping name',
 		trim: true
 	},
-	alteration: {
+	alterations: {
 		type: Array
 	},
 	completeStatus: {
-		type: Boolean
+		type: String
 	},
 	log: {
 		type: Array
+	},
+	comments: {
+		type: Array
 	}
-	/*
+	/*,
+	predictedGenes: {
+		type: Array
+	}
+
 	created: {
 		type: Date,
 		default: Date.now
@@ -70,4 +77,4 @@ var MappingSchema = new Schema({
 
 });
 
-mongoose.model('Mapping', MappingSchema);
+module.exports = mongoose.model('Mapping', MappingSchema);

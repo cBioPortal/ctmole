@@ -38,7 +38,7 @@ table.table.trialTableStyle tr:nth-child(even) {
 }
 
 .trialAddType{
-    display:block;
+    display:inline;
 }
 .content_right_head {
     display:inline-block;
@@ -76,20 +76,6 @@ table.table.trialTableStyle tr:nth-child(even) {
     background-color:#F9F9F9
 }
 
-.test + .tooltip > .tooltip-inner {
-    background-color: #F9F9F9;
-   // border: 1px solid green;
-    padding: 2px;
-    font-size: 15px;
-    color:#101010;
-    white-space: pre-line;
-}
-
-/* Tooltip on top */
-.test + .tooltip.top > .tooltip-arrow {
-   // border-top: 5px solid green;
-}
-
 .redColor
 {
     color: red;
@@ -97,4 +83,24 @@ table.table.trialTableStyle tr:nth-child(even) {
 .greenColor
 {
     color:green;
+}
+
+.fixMargin
+{
+    margin: 7px;
+}
+.leftMargin
+{
+    margin-left:10px;
+}
+
+.chosen-container-single {
+    width: 200px !important; /* or any value that fits your needs */
+}
+.criteria{
+    list-style-type:none;
+    padding-left:0;
+}
+.highlight{
+    background-color:yellow;
 }

@@ -1,55 +1,27 @@
-/*
- * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
- * FOR A PARTICULAR PURPOSE. The software and documentation provided hereunder
- * is on an "as is" basis, and Memorial Sloan-Kettering Cancer Center has no
- * obligations to provide maintenance, support, updates, enhancements or
- * modifications. In no event shall Memorial Sloan-Kettering Cancer Center be
- * liable to any party for direct, indirect, special, incidental or
- * consequential damages, including lost profits, arising out of the use of this
- * software and its documentation, even if Memorial Sloan-Kettering Cancer
- * Center has been advised of the possibility of such damage.
- */
-
-/*
- * This file is part of CT-MOLE.
- *
- * CT-MOLE is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
 
 var request = require('request');
 var parseString = require('xml2js').parseString;
 var jsdom = require('jsdom');
 var colors = require('colors');
 var mongoose = require('mongoose');
-var	ClinicalTrialMetadata = require('../../app/models/clinical-trial-meta-data.server.model');
+var fs = require('fs');
+var _ = require('underscore');
+
+var	ClinicalTrialMetadata = require('../../app/models/clinical-trial-metadata.server.model');
+var	Trial = require('../../app/models/trial.server.model.js');
+
 var nctIds = [];
 var nctIdLocks = 0;
 var urlIndex = 0;
 var clinicalTrials = [];
 var savingToDB = false;
-var fs = require('fs');
 
 
 main();
 
 function main() {
-	// getUrlsConditions(getListOfCancerTrialsFromClinicalTrialsGov);
+	//getUrlsConditions(getListOfCancerTrialsFromClinicalTrialsGov);
 	readNctIdsFile();
-	// removeDuplicateNctIdFromFiles();
 }
 
 function getListOfCancerTrialsFromClinicalTrialsGov(urls) {
@@ -73,11 +45,8 @@ function checkNctLocks(urls) {
 				});
 			}else {
 				console.log('\n\nFINISHIED. Total number of nctIds is', nctIds.length);
-				var uniqueNctIds = nctIds.filter(function(item, pos) {
-				    return nctIds.indexOf(item) == pos;
-				});
+				var uniqueNctIds = _.uniq(nctIds);
 				console.log(uniqueNctIds.length, ' unique trials have been found.\n');
-				// importTrials(uniqueNctIds);
 				writeNctIdsIntoFile(uniqueNctIds);
 			}
 		}
@@ -86,45 +55,48 @@ function checkNctLocks(urls) {
 
 function writeNctIdsIntoFile(nctIds) {
 	fs.writeFile("./nctIds.txt", JSON.stringify(nctIds), function(err) {
-	    if(err) {
-	        console.log(err);
-	    } else {
-	        console.log("The file was saved!");
-	    }
-	}); 
+		if(err) {
+			console.log(err);
+		} else {
+			console.log("The file was saved!");
+			readNctIdsFile();
+		}
+	});
 }
 
 function readNctIdsFile() {
 	fs.readFile('./nctIds.txt', 'utf8', function (err,data) {
-	  	if (err) {
-		    return console.log(err);
-	  	}
-	  	var nctIds = JSON.parse(data);
-	  	console.log(nctIds.length);
-	  	importTrials(nctIds.slice(32000));
+		if (err) {
+			return console.log(err);
+		}
+		var nctIds = JSON.parse(data);
+		importTrials(nctIds);
 	});
 }
+
+
+
 function getNctIds(url, page, callback) {
 	var _url = 'http://clinicaltrials.gov'+url.url+'&displayxml=true&pg='+page;
 	++nctIdLocks;
 	request(_url, function(error, response, body){
 		parseString(body, {trim: true}, function (err, result) {
 			var searchResults = result.search_results || {};
-		    if(searchResults.hasOwnProperty('clinical_study') && searchResults.clinical_study instanceof Array && searchResults.clinical_study.length > 0) {
-		    	searchResults.clinical_study.forEach(function(e, i) {
-		    		nctIds.push(e.nct_id[0]);
-		    	});
+			if(searchResults.hasOwnProperty('clinical_study') && searchResults.clinical_study instanceof Array && searchResults.clinical_study.length > 0) {
+				searchResults.clinical_study.forEach(function(e, i) {
+					nctIds.push(e.nct_id[0]);
+				});
 
-		    	getNctIds(url, ++page, function(){--nctIdLocks;});
-		    }
-	    	callback();
+				getNctIds(url, ++page, function(){--nctIdLocks;});
+			}
+			callback();
 		});
 	});
 }
 
 function getUrlsConditions(callback) {
 	var urlConditions = [];
- 	jsdom.env(
+	jsdom.env(
 		'http://clinicaltrials.gov/ct2/search/browse?brwse=cond_cat_BC04&brwse-force=true',
 		["http://code.jquery.com/jquery.js"],
 		function (errors, window) {
@@ -136,7 +108,7 @@ function getUrlsConditions(callback) {
 						url: _attr,
 						count: window.$(this).text().trim().match(/\d* study|\d* studies/)[0].replace(/studies|study/, '').trim()
 					}
-				    urlConditions.push(_datum);
+					urlConditions.push(_datum);
 				}else {
 					console.log('There is not any href link in:'.color, window.$(this).html());
 				}
@@ -147,36 +119,14 @@ function getUrlsConditions(callback) {
 	);
 }
 
-function removeDuplicateNctIdFromFiles() {
-	var nctIds = [];
-	fs.readFile('./nctIds.txt', 'utf8', function (err,data) {
-	  	if (err) {
-		    return console.log(err);
-	  	}
-	  	nctIds = JSON.parse(data);
-	  	console.log('Total', nctIds.length , 'nct ids.');
-	  	var uniqueNctIds = nctIds.filter(function(item, pos) {
-		    return nctIds.indexOf(item) == pos;
-		});
-	  	console.log('Total unique', uniqueNctIds.length , 'nct ids.');
-
-	  	fs.writeFile("./nctIdsUnique.txt", JSON.stringify(uniqueNctIds), function(err) {
-		    if(err) {
-		        console.log(err);
-		    } else {
-		        console.log("The file was saved!");
-		    }
-		}); 
-	});
-}
-
 function importTrials(nctIds) {
-	mongoose.connect('mongodb://localhost/clinicaltrials-dev');
+	mongoose.connect('mongodb://localhost/firstDB');
 	mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 	mongoose.connection.once('open', function callback () {
 		if(nctIds instanceof Array) {
 			checkNctIndex(nctIds, 0);
 		}
+
 	});
 }
 
@@ -187,6 +137,7 @@ function failToFindTrialXML(nctId) {
 }
 
 function checkNctIndex(nctIds, nctIdIndex) {
+
 	if(nctIdIndex < nctIds.length) {
 		if(savingToDB) {
 			setTimeout(function(){
@@ -209,13 +160,107 @@ function checkNctIndex(nctIds, nctIdIndex) {
 	}
 }
 
+function saveNextTrial(callback){
+	if(clinicalTrials.length !== 0) {
+		saveClinicalTrialMetadata(clinicalTrials, callback);
+	}else {
+		console.log('Done.');
+		savingToDB = false;
+		if(typeof callback === 'function') {
+			callback();
+		}
+	}
+}
+
+function saveClinicalTrial(metadata, callback){
+	if(metadata.id_info !== undefined)
+	{
+	var trialID = metadata.id_info[0].nct_id[0];
+	Trial.findOne({nctId: trialID}).exec(function(err1, trial){
+		if(err1)
+		{
+			console.log('error happened when searching Trial', err1);
+			saveNextTrial(callback);
+		}
+		else if(_.isNull(trial) )
+		{
+			console.log('Inserting new trial record ',trialID);
+			var drugsNeeded = [];
+			if(metadata.intervention !== undefined)
+			{
+				_.each(metadata.intervention, function(item){
+					drugsNeeded.push(item.intervention_name);
+				});
+			}
+
+
+			var trialRecord = new Trial({nctId: trialID,
+				title: (metadata.brief_title !== undefined) ? metadata.brief_title[0] : "",
+				purpose: (metadata.brief_summary !== undefined) ? metadata.brief_summary[0].textblock[0] : "",
+				recruitingStatus: (metadata.overall_status !== undefined) ? metadata.overall_status[0] : "",
+				eligibilityCriteria: (metadata.eligibility !== undefined && metadata.eligibility[0].criteria !== undefined) ? metadata.eligibility[0].criteria[0].textblock[0] : "",
+				phase: (metadata.phase !== undefined) ? metadata.phase[0] : "",
+				diseaseCondition: (metadata.condition_browse !== undefined) ? metadata.condition_browse[0].mesh_term : "",
+				lastChangedDate: (metadata.lastchanged_date !== undefined) ? metadata.lastchanged_date[0] : "",
+				countries: (metadata.location_countries !== undefined) ? metadata.location_countries[0].country : "",
+				drugs: drugsNeeded,
+				arm_group: (metadata.arm_group !== undefined) ? metadata.arm_group : ""});
+
+
+			trialRecord.save(function(err, trail){
+				if(err)console.log('Error happened when saving to db', err);
+				else console.log('Insert', trialID, ' into trial collection successfully');
+
+
+				console.log("**********************************************");
+
+				saveNextTrial(callback);
+			});
+
+		}
+		else
+		{
+			if(metadata.overall_status !== undefined)
+			{
+				if(metadata.overall_status[0] === trial.recruitingStatus)
+				{
+					console.log('Trial ', trialID, 'is already updated to the most recent version');
+					saveNextTrial(callback);
+
+				}
+				else
+				{
+					Trial.update({nctId: trialID},{$set: {phase: metadata.overall_status[0]}}).exec(function (err, trial) {
+						if (err) {
+							console.log('Error happened when trying to update trial ', trialID);
+						} else {
+							console.log('Successfully updated trial', trialID);
+						}
+
+						console.log("**********************************************");
+
+						saveNextTrial(callback);
+					});
+				}
+			}
+
+
+		}
+	});
+	}
+}
+
 function saveClinicalTrialMetadata(clinicalTrials, callback) {
 	if(clinicalTrials.length > 0) {
 		var clinicalTrial = clinicalTrials.pop();
 		var thing = new ClinicalTrialMetadata(clinicalTrial);
 		thing.save(function(err, news){
-		 	if(err) return console.error("Error while saving data to MongoDB: " + err); // <- this gets executed when there's an error
-	    	// console.error(news); // <- this never gets logged, even if there's no error.
+			if(err) return console.error("Error while saving data to MongoDB: " + err); // <- this gets executed when there's an error
+			//save to trial collection at the same time here
+
+
+			//saveClinicalTrial(clinicalTrial, callback);
+
 			if(clinicalTrials.length !== 0) {
 				saveClinicalTrialMetadata(clinicalTrials);
 			}else {
@@ -232,26 +277,21 @@ function saveClinicalTrialMetadata(clinicalTrials, callback) {
 }
 
 function parseClinicalTrialsGov(nctIds, nctIdIndex, callback) {
-	// ClinicalTrialMetadata.findOne({'id_info.nct_id': nctIds[nctIdIndex]}, 'id_info',function(err, result){
-	// 	if(result === null) {
-			var url = 'http://clinicaltrials.gov/show/' + nctIds[nctIdIndex] + '?displayxml=true';
-			request(url, function(error, response, body){
-				parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
-					if(result.hasOwnProperty('clinical_study')) {
-						clinicalTrials.push(result.clinical_study);
-						if((nctIdIndex+1) % 100 === 0) {
-							console.log('\t', nctIdIndex+1, ' trials have been parsed.');
-						}
-					}else {
-						console.log('\t\t',nctIds[nctIdIndex], 'does not have clinical study attribute.');
-						failToFindTrialXML(nctIds[nctIdIndex]);
-					}
-					callback(nctIds, ++nctIdIndex);
-				});
-			});
-	// 	}else {
-	// 		console.log('\t\t', nctIds[nctIdIndex], ' exists in database, skip...');
-	// 		callback(nctIds, ++nctIdIndex);
-	// 	}
-	// });
+	var url = 'http://clinicaltrials.gov/show/' + nctIds[nctIdIndex] + '?displayxml=true';
+	request(url, function(error, response, body){
+		parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
+			if(result.hasOwnProperty('clinical_study')) {
+				clinicalTrials.push(result.clinical_study);
+				if((nctIdIndex+1) % 100 === 0) {
+					console.log('\t', nctIdIndex+1, ' trials have been parsed.');
+				}
+
+			}else {
+				console.log('\t\t',nctIds[nctIdIndex], 'does not have clinical study attribute.');
+				failToFindTrialXML(nctIds[nctIdIndex]);
+			}
+			callback(nctIds, ++nctIdIndex);
+
+		});
+	});
 }

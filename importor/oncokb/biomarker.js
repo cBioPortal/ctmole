@@ -1,3 +1,6 @@
+/**
+ * Created by jiaojiao on 12/28/15.
+ */
 /*
  * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
  *
@@ -28,128 +31,326 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
 
-function rea(filePath, schema, callback) {
-	var documents = [];
-	var fs = require('fs'),
-    parseString = require('xml2js').parseString;
+var mongoose = require('mongoose');
+var _ = require('underscore');
+var fs = require('fs'), readline = require('readline');;
 
-	fs.readFile(filePath, function(err, data) {
-	    parseString(data, {'explicitArray': false, 'attrkey': 'attr', 'charkey': 'text'}, function (err, result) {
-	        result.mysqldump.database.table_data.row.forEach(function(e, i){
-	        	var datum = {},
-	        		data = e.field;
+var	ClinicalTrialMetadata = require('../../app/models/clinical-trial-metadata.server.model.js');
+var	Gene = require('../../app/models/gene.server.model.js');
+var	Alteration = require('../../app/models/alteration.server.model.js');
+var	Mapping = require('../../app/models/mapping.server.model.js');
+var	Trial = require('../../app/models/trial.server.model.js');
 
-        		for(var key in schema) {
-					datum[key] = xmlText(schema[key], data);
-				}
-			    documents.push(datum);
-	        });
-	        callback(documents);
-	    });
-	});
+
+var predictedMutations = [];
+var index = 0, alterationCollectionIndex = 0, predictedMutationIndex = 0;
+var hugo_symbol = '', alt = '', altId = '';
+var type = '';
+var alterationCollections = [];
+var geneAlias = [];
+var genesWithAlias = [];
+
+var skipScanItems = ['anti egfr', 'anti-egfr'];
+
+
+function connectDB(callback123){
+
+    mongoose.connect('mongodb://localhost/firstDB');
+    mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+    mongoose.connection.once('open', function callback () {
+        callback123();
+    });
 }
 
-function xmlText(dbKey, fieldData) {
-	if(fieldData instanceof Array) {
-		for (var i = fieldData.length - 1; i >= 0; i--) {
-			if(fieldData[i].attr.name === dbKey) {
-				return fieldData[i].text;
-			}
-		}
-		return '';
-	}else {
-		return null;
-	}
-}
-function connectDB(callback){
-	var MongoClient = require('mongodb').MongoClient
-  		, assert = require('assert');
-	// Connection URL
-	var url = 'mongodb://localhost:27017/clinicaltrials-dev';
-	// Use connect method to connect to the Server
-	require('mongodb').MongoClient.connect(url, function(err, db) {
-		assert.equal(null, err);
-	  	if(typeof callback === 'function') {
-	  		callback(db);
-	  	}
-	});
-
+function workers() {
+    Gene.find({}).stream()
+        .on('data', function(gene){
+            alterationCollections.push({gene: gene.hugo_symbol, alterations: ['mutated', 'mutant', 'aberration', 'fusion', 'expression']});
+        })
+        .on('error', function(err){
+            console.log('sorry but error occured ', err);
+        })
+        .on('end', function(){
+            worker1();
+        });
 }
 
-function update(db) {
-	var collectionName = queue.pop();
-
-	if(typeof collectionName !== 'undefined') {
-		console.log('-------------', collectionName, '------------');
-	  	// Insert some documents
-	  	var collection = db.collection(collectionName);
-
-		collection.find({},{'_id':1,'symbol':1}).toArray(function(err, docs) {
-			searchNct(db, docs, collectionName, searchNct);
-	  	});
-  	}else {
-  		db.close();
-  	}
+function worker1(){
+    var searchIndex = -1;
+    var genes = _.map(alterationCollections, function(item){
+        return item.gene;
+    });
+    Alteration.find({}).stream()
+        .on('data', function(alt){
+            searchIndex = genes.indexOf(alt.gene);
+            if(searchIndex !== -1)
+            {
+               alterationCollections[searchIndex].alterations.push(alt.alteration);
+            }
+        })
+        .on('error', function(err){
+            console.log('sorry but error occured ', err);
+        })
+        .on('end', function(){
+            console.log('sdfghjklfghjkl',alterationCollections);
+            //worker3();
+        })
 }
 
-function saveNct(db, _id, nctIds, collectionName) {
-	var collection = db.collection(collectionName);
-	collection.update({'_id': _id},  { $set: {'nctIds': nctIds} }, function(err,result){
-		console.log('\t\tupdated');
-	});
+function worker2(){
+
+    var predictedMutation = predictedMutations[predictedMutationIndex];
+
+    Mapping.findOne({nctId: predictedMutation.nctId}).exec(function(err, mapping){
+
+        if(!_.isNull(mapping)){
+
+            mapping.alterations.push(predictedMutation.alteration);
+            Mapping.update({nctId: predictedMutation.nctId}, {$set: {alterations: mapping.alterations}}, function(err){
+                if(err)
+                {
+                    console.log('Error happened when saving new mapping record ', err);
+                }
+                else
+                {
+                    if(predictedMutationIndex < predictedMutations.length - 1)
+                    {
+                        predictedMutationIndex++;
+                        if(predictedMutationIndex%100 === 0)
+                        {
+                            console.log('updating trial...');
+                            console.log('Saving to database ', (predictedMutationIndex/predictedMutations.length*100).toFixed(2), '% finished');
+                        }
+
+                        worker2();
+                    }
+                    else
+                    {
+                        console.log('Done Saving');
+                        return true;
+                    }
+                }
+            });
+        }
+        else{
+            var newMappingRecord = new Mapping({nctId: predictedMutation.nctId, completeStatus: '1', alterations: [predictedMutation.alteration]});
+
+            newMappingRecord.save(function(err, newMapping){
+                if(err)
+                {
+                    console.log('Error happened when saving new mapping record ', err);
+                }
+                else
+                {
+                    if(predictedMutationIndex < predictedMutations.length - 1)
+                    {
+                        predictedMutationIndex++;
+                        if(predictedMutationIndex%100 === 0)
+                        {
+                            console.log('saving new trial...');
+                            console.log('Saving to database ', (predictedMutationIndex/predictedMutations.length*100).toFixed(2), '% finished');
+                        }
+                        worker2();
+                    }
+                    else
+                    {
+                        console.log('Done Saving');
+                        return true;
+                    }
+                }
+
+            });
+        }
+    });
+
+
+
+
+
+
 }
 
-function searchNct(db, documents, collectionName, callback) {
-	var _document = documents.pop();
-	if(typeof _document !== 'undefined') {
-		var metadata = db.collection('clinicaltrialmetadatas');
-		var symbol = _document.symbol;
-		var regex = new RegExp(symbol, 'i');
-		var regexS = new RegExp(symbol, 'i');
-		var ssRegex = /([a-zA-Z]+\d+)[a-zA-Z]+/;
-		var subGene;
 
-		console.log('\t', symbol);
-		if((subGene = ssRegex.exec(symbol)) !== null && collectionName === 'alterations') {
-			regex = new RegExp(symbol + '|' + subGene[1], 'i');
-			regexS = new RegExp(symbol + '|\\s*' + subGene[1] + '\\s', 'i');
-		}
+function worker3()
+{
+    hugo_symbol = alterationCollections[index].gene;
+    var str1 = '', str2 = '', tempStr = '', tempIndex = -1, inclusionAltIndex = -1, exclusionAltIndex = -1, inclusionGeneIndex = -1, exclusionGeneIndex = -1;
+    var finalExp, tempStrExp = ' ' + hugo_symbol;
+    if(genesWithAlias.indexOf(hugo_symbol) !== -1){
+        _.each(geneAlias, function(item){
+            if(item.gene === hugo_symbol){
+                _.each(item.alias, function(aliasItem){
+                    tempStrExp += '| '+aliasItem;
+                });
 
-		metadata.find({
-			'overall_status': {$in:['Recruiting', 'Not yet recruiting', 'Enrolling by invitation', 'Active, not recruiting']},
-			'location_countries.country': {$in:['United States', 'US', 'us', 'america']},
-			$or:[
-				{'keyword':{$regex: regex}},
-				{'condition_browse.mesh_term':{$regex: regex}},
-				{'official_title':{$regex: regexS}},
-				{'brief_summary.textblock':{$regex: regexS}},
-				{'intervention.intervention_name':{$regex: regex}},
-				{'intervention_browse.mesh_term':{$regex: regex}},
-				{'eligibility.criteria.textblock': {$regex: regexS}}
-			]
-		},{'_id':0, 'id_info.nct_id':1}).toArray(function(err,result){
-			var nctIds = [];
+            }
+        });
+        finalExp = new RegExp(tempStrExp, 'i');
+    }
+    else
+    {
+         finalExp = new RegExp(hugo_symbol, 'i');
+    }
+    if(alterationCollections[index].alterations.length > 0)
+    {
+        type = 'alteration';
+        console.log('Scanning for Alterations... ');
+        _.each(alterationCollections[index].alterations, function(item){
+            console.log(hugo_symbol + ' ' + item);
+        });
+    }
+    else
+    {
+        type = 'gene';
+        console.log('Scanning for Genes...');
+        console.log(hugo_symbol);
+    }
 
-			result.forEach(function(e,i) {
-				nctIds.push(e.id_info[0].nct_id[0]);
-			})
-			console.log('\t\tFind', nctIds.length, 'trials.');
-			saveNct(db, _document._id, nctIds, collectionName);
-			searchNct(db, documents, collectionName, callback);
-		});
-	}else {
-		update(db);
-	}
+
+    Trial.find({$text: {$search: '\"' + hugo_symbol + '\"'}}).stream()
+        .on('data', function(trial){
+
+                tempIndex = trial.eligibilityCriteria.search(/Exclusion Criteria:/i);
+                tempStr = trial.eligibilityCriteria.substr(0, tempIndex);
+
+                str1 = trial.title + trial.purpose + JSON.stringify(trial.arm_group) + tempStr;
+                str2 = trial.eligibilityCriteria.substr(tempIndex);
+                //remove special vocabualry from search
+                _.each(skipScanItems, function(skipScanItem){
+                    var tempRegex = new RegExp(skipScanItem, 'gi');
+                    str1 = str1.replace(tempRegex, '');
+                    str2 = str2.replace(tempRegex, '');
+                });
+                inclusionGeneIndex = str1.search(finalExp);
+                exclusionGeneIndex = str2.search(finalExp);
+
+                if(type === 'alteration') {
+                    var saveGeneInclusionFlag = true, saveGeneExclusionFlag = true;
+
+                    for(var alterationCollectionIndex = 0; alterationCollectionIndex < alterationCollections[index].alterations.length; alterationCollectionIndex++)
+                    {
+                        alt = alterationCollections[index].alterations[alterationCollectionIndex];
+                        var regExp = new RegExp(hugo_symbol + '.*.' + alt + '|' + alt + '.*.' + hugo_symbol, 'i');
+
+                        inclusionAltIndex = str1.search(regExp);
+                        exclusionAltIndex = str2.search(regExp);
+
+                        if (inclusionAltIndex !== -1) {
+                            predictedMutations.push({
+                                nctId: trial.nctId,
+                                alteration: {gene: hugo_symbol, alteration: alt, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
+                            });
+                            saveGeneInclusionFlag = false;
+                        }
+
+                        if (exclusionAltIndex !== -1) {
+                            predictedMutations.push({
+                                nctId: trial.nctId,
+                                alteration: {gene: hugo_symbol, alteration: alt, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
+                            });
+                            saveGeneExclusionFlag = false;
+                        }
+                    }
+
+                    if (inclusionGeneIndex !== -1 && saveGeneInclusionFlag === true) {
+                        predictedMutations.push({
+                            nctId: trial.nctId,
+                            alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
+                        });
+                    }
+
+                    if (exclusionGeneIndex !== -1 && saveGeneExclusionFlag === true) {
+                        predictedMutations.push({
+                            nctId: trial.nctId,
+                            alteration: {gene: hugo_symbol, alteration: 'unspecified',status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
+                        });
+                    }
+
+
+                }
+
+               if(type === 'gene')
+               {
+                   if(inclusionGeneIndex !== -1)
+                   {
+                       predictedMutations.push({nctId: trial.nctId, alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}});
+                   }
+
+                   if(exclusionGeneIndex !== -1)
+                   {
+                       predictedMutations.push({nctId: trial.nctId, alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}});
+                   }
+               }
+
+                //if(trial.nctId === 'NCT02448810' && hugo_symbol === 'NRAS'){
+                //    console.log('NCT0244sadafdfafd8810', type, exclusionGeneIndex, tempStrExp);
+                //}
+
+        })
+        .on('error', function(){
+
+        })
+        .on('end', function(){
+            index++;
+            if(index < alterationCollections.length-1)
+            {
+                console.log('**************************************');
+                console.log('Bio-Marker Predicting ', (index/alterationCollections.length*100).toFixed(2), '% finished');
+                worker3();
+            }
+            else
+            {
+                console.log('**************************************');
+                console.log('Bio-Marker Predicting is done, Saving to database...');
+                console.log('here is the length ', predictedMutations.length);
+
+                worker2();
+
+            }
+        })
+}
+
+function worker4() {
+    var rd = readline.createInterface({
+        input: fs.createReadStream('./geneAlias.txt'),
+        output: process.stdout,
+        terminal: false
+    });
+
+    var tempArr = [], tempIndex = -1;
+    rd.on('line', function(line) {
+        tempArr = line.split('\t');
+        tempIndex = -1;
+        for(var i = 0;i < geneAlias.length;i++){
+            if(geneAlias[i].gene === tempArr[0]){
+                tempIndex = i;
+                break;
+            }
+        }
+        if(tempIndex === -1){
+            geneAlias.push({gene: tempArr[0], alias: [tempArr[1]] });
+        }
+        else{
+            geneAlias[tempIndex].alias.push(tempArr[1]);
+        }
+
+    });
+
+    rd.on('close', function(){
+        genesWithAlias = _.map(geneAlias, function(e){return e.gene;});
+        connectDB(workers);
+
+    });
 }
 
 function main() {
-	connectDB(update);
+    //generate gene alias array with input file
+    worker4();
 }
-// var queue = ['alterations'];
-var queue = [ 'genes','alterations','cancertypes'];
+
 main();

@@ -1,6 +1,6 @@
 
 <section data-ng-controller="TrialsController" data-ng-init="findOne()">
-	<span class="content_right_head" ng-click="showAllTitle()" ng-show="!showVar">{{trial.title}}</span>
+	<span class="content_right_head" ng-click="showAllTitle()" ng-show="!showVar" id="title">{{trial.title}}</span>
 	<span class="content_all" ng-show="showVar">{{trial.title}}</span>
 
 	<div class="row">
@@ -10,32 +10,48 @@
 
 				<hr>
 
+
 				<h2><small><p>{{trial.nctId}}</p></small></h2>
-				<h2><small><p>{{trial.diseaseCondition}}</p></small></h2>
+
+				<div ng-show="showAllDisease" class="addBGColor">
+					<h2><small>
+						<p>{{trial.tumorTypes[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
+						<p ng-if="$index > 0" ng-repeat="m in trial.tumorTypes">{{m}}</p>
+					</small></h2>
+				</div>
+
+				<div ng-show="!showAllDisease">
+					<h2><small>
+						<p>{{trial.tumorTypes[0]}}<a  ng-if="trial.tumorTypes.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.tumorTypes.length-1}} more </a></p>
+					</small></h2>
+				</div>
+
 				<h2><small><p>{{trial.phase}}</p></small></h2>
 
-				<h2><small><p class="test" tooltip="Last Updated Time
-				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
-					<i ng-click="updateTrial()" class="fa fa-refresh"></i></p>
+				 <h2><small><p class="test">{{trial.recruitingStatus.capitalize()}}
+				 	 </p>
 				</small></h2>
+
+				<!--<h2><small><p class="test" tooltip="Last Updated Time
+				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
+				 	<i ng-click="updateTrial()" class="fa fa-refresh"></i> </p>
+				</small></h2>-->
 
 				<div ng-show="showAllDrugs" class="addBGColor">
 				<h2><small>
-					<p>{{trial.drugs[0].drugName}}<i ng-click="showDrugs()" class="fa fa-compress"></i></p>
-					<p ng-if="$index > 0" ng-repeat="x in trial.drugs">{{x.drugName}}</p>
+					<p>{{trial.drugs[0]}}<i ng-click="showDrugs()" class="fa fa-compress"></i></p>
+					<p ng-if="$index > 0" ng-repeat="x in trial.drugs">{{x}}</p>
 				</small>
 				</h2>
 				</div>
 
 				<div ng-show="!showAllDrugs">
 					<h2><small>
-						<p>{{trial.drugs[0].drugName}}<a ng-if="trial.drugs.length > 1" ng-click="showDrugs()">    and {{trial.drugs.length-1}} more</a></p>
+						<p>{{trial.drugs[0]}}<a ng-if="trial.drugs.length > 1" ng-click="showDrugs()">    and {{trial.drugs.length-1}} more</a></p>
 
 					</small>
 					</h2>
 				</div>
-
-
 
 				<div ng-show="showAll" class="addBGColor">
 				<h2><small>
@@ -55,27 +71,40 @@
 					</small></h2>
 				</div>
 
+				<h2><small><a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank">View In ClinicalTrials.gov</a></small></h2>
 
-				<br/>
+				<label class="headerStyle">Inclusion Alterations</label>
+				<span style="margin-left:10px">
+								<button data-toggle="modal" data-target="#inclusion_myModal" type="button"><i class="fa fa-plus"></i></button>
+				</span>
 
-				<label class="headerStyle">ALTERATIONS</label>
-
-
-				<div class="modal fade" id="myModal" role="dialog">
+				<div class="modal fade" id="inclusion_myModal" role="dialog">
 					<div class="modal-dialog">
 
 						<!-- Modal content-->
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Add a new alteration</h4>
+								<h4 class="modal-title">Add new inclusion alteration</h4>
 							</div>
 							<div class="modal-body">
-								Gene: <input ng-model="newGene">
-								Alteration: <input ng-model="newAlteration">
+
+								Gene:
+								<select chosen
+										option="HUGOgenes"
+										ng-model="inclusion_newGene"
+										ng-options="m as m for m in HUGOgenes"
+										class="chosen-select"
+										data-placeholder="Enter A Gene">
+								</select>
+								Alteration: <input ng-model="inclusion_newAlteration">
+								<!--
+
+Gene: <input ng-model="newGene">
+								-->
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId()">Submit</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId('inclusion')">Submit</button>
 								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>
 						</div>
@@ -84,22 +113,163 @@
 				</div>
 
 
-				<p ng-show="trialAlterations.length == 0 && true || false">No information available</p>
+				<p ng-show="inclusionAlterations.length === 0 && true || false">No inclusion information available</p>
 
-				<div ng-if="trialAlterations.length > 0">
-					<span class="trialAddType" ng-repeat="x in trialAlterations">
-							<h2><small>{{x.gene + "     " + x.alteration}}
-								<i class="fa fa-trash-o " ng-click="deleteAlteration(x.alteration, x.gene)"></i></small></h2>
-					</span>
-				</div>
-				<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" type="button">Add New Alteration</button>
-				<br/><br/>
+				<div ng-if="inclusionAlterations.length > 0" ng-repeat="x in inclusionAlterations" >
+					<div style="display:block" >
+					<h1><small>
 
-				<div>
-					<h4 ng-if="!trialMappings.completeStatus">Curation Incomplete <i ng-click="switchStatus()" class="fa fa-toggle-off redColor"></i></h4>
-					<h4 ng-if="trialMappings.completeStatus">Curation Completed  <i ng-click="switchStatus()" class="fa fa-toggle-on greenColor"></i></h4>
+						<div class="fixMargin" ng-if="x.status === 'unconfirmed'">
+						<span class="label label-warning" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene+ "     " + x.alteration}}</span>
+						<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x, 'inclusion')"></i>
+								<i class="fa fa-check" ng-if="x.alteration !== 'unspecified' " ng-click="confirmAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
+						</span>
+						</div>
+						<div class="fixMargin" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">
+							<span  class="label label-success" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
+							</span>
+						</div>
+
+					</small></h1>
+					</div>
+
 				</div>
+				<br/>
+				<span ng-show="inclusion_editing">
+					<input type="text" ng-model="inclusion_editedGene" placeholder="Gene">
+					<input type="text" ng-model="inclusion_editedMutation" placeholder="Mutation">
+					<i class="fa fa-floppy-o" ng-click="saveAlteration(inclusion_editedGene, inclusion_editedMutation, 'inclusion')"></i>
 				<br/><br/>
+				</span>
+
+				<label class="headerStyle">Exclusion Alterations</label>
+				<span style="margin-left:10px">
+								<button data-toggle="modal" data-target="#exclusion_myModal" type="button"><i class="fa fa-plus"></i></button>
+				</span>
+
+				<div class="modal fade" id="exclusion_myModal" role="dialog">
+					<div class="modal-dialog">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Add new exclusion alteration</h4>
+							</div>
+							<div class="modal-body">
+
+								Gene:
+								<select chosen
+										option="HUGOgenes"
+										ng-model="exclusion_newGene"
+										ng-options="m as m for m in HUGOgenes"
+										class="chosen-select"
+										data-placeholder="Enter A Gene">
+								</select>
+								Alteration: <input ng-model="exclusion_newAlteration">
+								<!--
+
+Gene: <input ng-model="newGene">
+								-->
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId('exclusion')">Submit</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<p ng-show="exclusionAlterations.length === 0 && true || false">No exclusion information available</p>
+
+				<div ng-if="exclusionAlterations.length > 0" ng-repeat="x in exclusionAlterations" >
+					<div style="display:block" >
+						<h1><small>
+
+							<div class="fixMargin" ng-if="x.status === 'unconfirmed'">
+								<span class="label label-warning" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene+ "     " + x.alteration}}</span>
+						<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-check" ng-if="x.alteration !== 'unspecified' " ng-click="confirmAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x, 'exclusion')"></i>
+						</span>
+							</div>
+							<div class="fixMargin" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">
+								<span  class="label label-success" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
+							<span>
+								<i class="fa fa-times "  ng-click="deleteAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x, 'exclusion')"></i>
+							</span>
+							</div>
+
+						</small></h1>
+					</div>
+
+				</div>
+				<br/>
+				<span ng-show="exclusion_editing">
+					<input type="text" ng-model="exclusion_editedGene" placeholder="Gene">
+					<input type="text" ng-model="exclusion_editedMutation" placeholder="Mutation">
+					<i class="fa fa-floppy-o" ng-click="saveAlteration(exclusion_editedGene, exclusion_editedMutation, 'exclusion')"></i>
+				<br/>
+				<br/>
+				</span>
+
+
+
+
+				<label class="headerStyle" for="sel1">Curation Status</label>
+				<select class="form-control" id="sel1" ng-model="trialStatus" ng-change="switchStatus(trialStatus)">
+					<option value="1">Not Curated</option>
+					<option value="2">In Progress</option>
+					<option value="3">Completed</option>
+
+				</select>
+				<br/><br/>
+				<label class="headerStyle">Curation History
+					<a ng-if="logs.length > 3 && showAlllog" ng-click="showAllLogs()"> and {{logs.length-3}} more </a>
+					<i ng-if="logs.length > 3 && !showAlllog" ng-click="showAllLogs()"   class="fa fa-compress"></i>
+				</label>
+				<table class="table" ng-if="showAlllog">
+					<tbody>
+					<tr ng-if="$index < 3" ng-repeat="x in logs">
+						<td>{{x}} </td>
+					</tr>
+
+					</tbody>
+				</table>
+				<table class="table" ng-if="!showAlllog">
+					<tbody>
+					<tr ng-repeat="x in logs">
+						<td>{{x}} </td>
+					</tr>
+
+					</tbody>
+				</table>
+
+				<div class="form-group">
+					<label for="comment" class="headerStyle">Comment </label>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="saveComments()">Save</button>
+					<button type="button" class="btn btn-primary btn-xs leftMargin" ng-click="showAllComments()"> All Comments</button>
+
+					<br/>
+					<ul class="list-group" ng-if="showAllCom">
+						<li class="list-group-item list-group-item-success" data-ng-repeat="x in trialComments">
+							{{ x }}
+						</li>
+					</ul>
+
+
+
+
+					<textarea class="form-control" rows="5" id="comment" ng-model="comment"></textarea>
+				</div>
 			</div>
 		</div>
 		<div class="col-sm-8">
@@ -115,13 +285,13 @@
 					</div>
 					<div id="collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading">
 						<div class="panel-body">
-							<p data-ng-bind="trial.purpose"></p>
+							<p data-ng-bind="trial.purpose" id="purpose"></p>
 
 						</div>
 					</div>
 				</div>
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="trial.arm_group.length > 0">
 					<div class="panel-heading" role="tab" id="headingNew">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseNew" aria-expanded="true" aria-controls="collapseOne">
@@ -131,7 +301,7 @@
 					</div>
 					<div id="collapseNew" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNew">
 						<div class="panel-body">
-							<table class="table table-striped">
+							<table id="armTable" class="table table-striped">
 
 								<tr ng-repeat="x in trial.arm_group">
 									<td>{{x.arm_group_type.toString()}}: {{x.arm_group_label.toString()}}</td>
@@ -143,39 +313,26 @@
 				</div>
 
 
-
-
-
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-if="criteria.length > 0">
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-								Inclusion Criteria
+								Criteria
 							</a>
 						</h4>
 					</div>
 					<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-						<div class="panel-body">
-							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"inclusion")'></p>
-
-						</div>
+						<div class="panel-body"><span  id="criteria">
+							<ul ng-repeat="x in criteria track by $index" class="criteria" >
+								<li ng-if="criteriaTitles.indexOf(x) !== -1">
+									<strong>{{x}}</strong>
+								</li>
+								<li ng-if="criteriaTitles.indexOf(x) === -1">{{x}}</li>
+							</ul>
+						</span></div>
 					</div>
 				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading" role="tab" id="headingTwo">
-						<h4 class="panel-title">
-							<a class="collapsed" role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-								Exclusion Criteria
-							</a>
-						</h4>
-					</div>
-					<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-						<div class="panel-body">
-							<p ng-bind-html='getEligibility(trial.eligibilityCriteria,"exclusion")'></p>
 
-						</div>
-					</div>
-				</div>
 
 			</div>
 		</div>

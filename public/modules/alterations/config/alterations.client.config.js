@@ -42,6 +42,6 @@ angular.module('alterations').run(['Menus',
 		Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
         Menus.addSubMenuItem('topbar', '/', 'List Drugs', 'drugs');
         Menus.addSubMenuItem('topbar', '/', 'List Trials', 'trials');
-        Menus.addSubMenuItem('topbar', '/', 'Search Trial', 'trials/search');
+        Menus.addSubMenuItem('topbar', '/', 'Copy Number', 'trials/search');
 	}
 ]);

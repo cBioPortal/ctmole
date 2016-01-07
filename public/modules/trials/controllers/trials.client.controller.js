@@ -32,436 +32,631 @@
 
 'use strict';
 
+
+
+
 // Trials controller
 angular.module('trials').controller('TrialsController',
-	['$scope',
-		'$stateParams',
-		'$location',
-		'Authentication',
-		'Trials',
-		'Genes',
-		'Alterations',
-		'Cancertypes',
-		'Drugs','Mappings',
-		function($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs, Mappings) {
-			$scope.authentication = Authentication;
-			$scope.nctId = '';
-			$scope.drugHeader = ['Drug Name','Synonyms','FDA Approved','ATC Codes','Description'];
-			$scope.drugItems = ['drugName','synonyms','fdaApproved','atcCodes','description'];
-			$scope.tumorHeader = ['Name','Tissue','Clinical TrialKeywords'];
-			$scope.tumorItems = ['name','tissue','clinicalTrialKeywords'];
+    ['$scope',
+        '$stateParams',
+        '$location',
+        'Authentication',
+        'Trials',
+        'Genes',
+        'Alterations',
+        'Cancertypes',
+        'Drugs', 'Mappings', 'Users',
+        function ($scope, $stateParams, $location, Authentication, Trials, Genes, Alterations, Cancertypes, Drugs, Mappings, Users) {
+            $scope.authentication = Authentication;
+            $scope.nctId = '';
+            $scope.drugHeader = ['Drug Name', 'Synonyms', 'FDA Approved', 'ATC Codes', 'Description'];
+            $scope.drugItems = ['drugName', 'synonyms', 'fdaApproved', 'atcCodes', 'description'];
+            $scope.tumorHeader = ['Name', 'Tissue', 'Clinical TrialKeywords'];
+            $scope.tumorItems = ['name', 'tissue', 'clinicalTrialKeywords'];
+
+            $scope.criteriaTitles = ['Inclusion Criteria:', 'Exclusion Criteria:', 'DISEASE CHARACTERISTICS:', 'PATIENT CHARACTERISTICS:', 'PRIOR CONCURRENT THERAPY:',
+                '-  INCLUSION CRITERIA:', 'EXCLUSION CRITERIA:'];
 
 
-			$scope.showVar = false;
-			$scope.alertShow = false;
-			$scope.showAll = false;
-			$scope.showAllDrugs = false;
-
-			$scope.switchStatus = function()
-			{
-
-				Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function(u, getResponseHeaders){
-						console.log('found trial in the mapping table',u);
-						u.$completeStatus({Idvalue: $scope.trial.nctId},
-							function(response) {
-								console.log('success updated');
-								$scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
-							}, function(response)  {
-								console.log('failed');
-							});
-					}, function(error){
-						console.log('error: ', error);
-					}
-				);
-
-			};
-			$scope.showAllTitle = function()
-			{
-				$scope.showVar = true;
-			};
-
-			$scope.showDrugs = function()
-			{
-				$scope.showAllDrugs = !$scope.showAllDrugs;
-			};
-
-			$scope.displayStyle = function()
-			{
-				$scope.showAll = !$scope.showAll;
-			};
-
-			// Create new Trial
-			$scope.create = function() {
-				// Create new Trial object
-				var trial = new Trials ({
-					nctId: this.name
-				});
-
-				// Redirect after save
-				trial.$save(function(response) {
-					$location.path('trials/' + response._id);
-
-					// Clear form fields
-					$scope.name = '';
-				}, function(errorResponse) {
-					$scope.error = errorResponse.data.message;
-				});
-			};
-
-			// Remove existing Trial
-			$scope.remove = function( trial ) {
-				if ( trial ) { trial.$remove();
-
-					for (var i in $scope.trials ) {
-						if ($scope.trials [i] === trial ) {
-							$scope.trials.splice(i, 1);
-						}
-					}
-				} else {
-					$scope.trial.$remove(function() {
-						$location.path('trials');
-					});
-				}
-			};
-
-			// Update existing Trial
-			$scope.update = function() {
-				var trial = $scope.trial ;
-
-				trial.$update(function() {
-					$location.path('trials/' + trial.nctId);
-				}, function(errorResponse) {
-					$scope.error = errorResponse.data.message;
-				});
-			};
-
-			// Find a list of Trials
-			$scope.find = function() {
-				$scope.trials = Trials.nctId.query();
-			};
-
-			function findAlterations(nctId)
-			{
-
-				var alteration_id = [];
-				Mappings.mappingSearch.get({
-						Idvalue: nctId,
-					},
-					function(a)
-					{
-						if(a.alteration) {
-							for(var i = 0;i < a.alteration.length;i++)
-							{
-								alteration_id.push(a.alteration[i].alteration_Id);
-							}
-							if(alteration_id.length > 0)
-							{
-								$scope.trialAlterations = Alterations.alterationByIds.query({
-										Ids: alteration_id
-									}
-								);
-							}
-							else
-							{
-								$scope.trialAlterations = [];
-							}
-						}else{
-							$scope.trialAlterations = [];
-							console.log('no alteration information for this trial ID')
-						}
-					},
-					function(b)
-					{
-						$scope.trialAlterations = [];
-						console.log('no alteration information for this trial ID')
-					});
-
-			}
-			// Find existing Trial
-			$scope.findOne = function() {
-				$scope.trial = Trials.nctId.get({
-					nctId: $stateParams.nctId
-				});
-
-				$scope.trialAlterations = findAlterations($stateParams.nctId);
-
-				//$scope.trialMappings = {completeStatus: false};
-
-				$scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
-			};
-
-			$scope.searchByKeyword = function() {
-				$scope.trials = Trials.keyword.query({
-					keyword: $scope.keyword
-				});
-				console.log($scope.trials);
-			};
-
-			$scope.searchTrailBynctId = function() {
-				$location.path('trials/' + $scope.nctId);
-			};
-
-			$scope.assignTrailBynctId = function() {
-				$scope.trial = Trials.nctId.get({
-					nctId: $scope.nctId
-				});
-				$scope.trialGenes = Genes.nctIds.get({
-					nctIds: [$scope.nctId]
-				});
-				console.log($scope.trialGenes);
-			};
-
-			$scope.getDrugs = function(drugs) {
-				return drugs.map(function(e){return e.drugName;}).join(', ');
-			};
-
-			var getLists = function(str)
-			{
-				var slicedResult = [];
-
-				if((str.indexOf('1. ') !== -1 && (str.indexOf('1. ') < str.indexOf(' - ') ||  str.indexOf(' - ') === -1)))
-				{
-					slicedResult = str.replace(/(\d)[.]\s/g, '\u000B').split('\u000B');
-					slicedResult = _.map(slicedResult, function(value){
-						return value.slice(0,-1).trim();});
-					slicedResult =  _.compact(slicedResult);
-
-				}
-				else
-				{
-					slicedResult = str.split(' - ');
-					slicedResult = _.map(slicedResult, function(value){return value.trim();});
-					slicedResult =  _.compact(slicedResult);
-					//slicedResult = ["pear","watermelon","orange"];
-				}
-
-				slicedResult = _.map(slicedResult, function(element){return element.split('. ');});
-				slicedResult = _.flatten(slicedResult);
-				return slicedResult;
-			};
-
-			$scope.getEligibility = function(eligibility, elgType){
-				if(_.isUndefined(eligibility))
-				{
-					eligibility = '';
-				}
-				var m = eligibility.indexOf('Inclusion Criteria');
-				var n = eligibility.indexOf('Exclusion Criteria');
-				if((m === -1 && elgType === 'inclusion') || (n === -1 && elgType === 'exclusion'))
-				{
-					return '';
-				}
-				else
-				{
-					m += 20;
-					n += 20;
-
-					var output = '<ol>';
-
-					if(elgType === 'inclusion')
-					{
-						var inEligi = eligibility.substr(m,n-m-20);
-						var inEligiArray = getLists(inEligi);
-						_.each(inEligiArray,function(element){output = output + '<li>' + element + '</li>';});
-					}
-					else if(elgType === 'exclusion')
-					{
-						var exEligi = eligibility.substr(n);
-						var exEligiArray = getLists(exEligi);
-						_.each(exEligiArray,function(element){output = output + '<li>' + element + '</li>';});
-					}
-
-					output += '</ol>';
-					return output;
-				}
-
-			};
-
-
-			//Add new connection between alterations and current trial
-			$scope.addAlterationBynctId = function() {
-				Alterations.alteration.get({alteration: $scope.newAlteration, gene: $scope.newGene}, function (u, getResponseHeaders) {
-
-					if(u._id) {
-
-						console.log('alteration existed...');
-						Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-							function(a){
-								if(a._id) {
-									console.log('nctId record exist in mapping table...', a);
-									Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
-										function(mapRecord)
-										{
-											if(mapRecord._id) {
-												console.log('nothing else need to do', mapRecord);
-											}else{
-												console.log('update alteration array');
-												a.$update({Idvalue: u._id},
-													function(){
-														console.log('successfully update alteration array');
-														$scope.trialAlterations = findAlterations($scope.trial.nctId);
-													},
-													function(){
-														console.log('update alteration array failed');
-													}
-												);
-											}
-										},
-										function()
-										{
-
-										}
-									);
-								}else {
-									//insert new mapping record
-									console.log('nctId record not exist in mapping table...');
-
-									Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
-										function()
-										{
-											console.log('success insert record in mapping table');
-											$scope.trialAlterations = findAlterations($scope.trial.nctId);
-										},
-										function(error)
-										{
-											console.log('did not insert successfully because of ', error);
-										}
-									);
-								}
-
-							},
-							function(b){
-
-
-							}
-						);
-
-					}else {
-						Alterations.alteration.save({alteration: $scope.newAlteration ,gene: $scope.newGene},
-							function(u, getResponseHeaders){
-								console.log('save alteration successfully');
-								//search mapping record by nctId
-								//also need to check if nctId record already exist or not like the above block
-								Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-									function(a){
-										if(a._id) {
-											console.log('nctId record exist in mapping table...', a);
-											Mappings.mapping.get({alteration: u._id, nctId: $scope.trial.nctId},
-												function(mapRecord)
-												{
-													if(mapRecord._id) {
-														console.log('nothing else need to do', mapRecord);
-													}else{
-														console.log('update alteration array');
-														a.$update({Idvalue: u._id},
-															function(){
-																console.log('successfully update alteration array');
-																$scope.trialAlterations = findAlterations($scope.trial.nctId);
-															},
-															function(){
-																console.log('update alteration array failed');
-															}
-														);
-													}
-												},
-												function()
-												{
-
-												}
-											);
-										}else {
-											//insert new mapping record
-											console.log('nctId record not exist in mapping table...');
-
-											Mappings.mapping.save({alteration: u._id, nctId: $scope.trial.nctId},
-												function()
-												{
-													console.log('success insert record in mapping table');
-													$scope.trialAlterations = findAlterations($scope.trial.nctId);
-												},
-												function(error)
-												{
-													console.log('did not insert successfully because of ', error);
-												}
-											);
-										}
-									},
-									function(b){
-
-
-									}
-								);
-
-
-							},function(){
-								console.log('failed to save alteration ');
-							}
-						);
-					}
-
-				}, function (getError) {
-					// the alteration didn't exist, so insert to both alteration and mapping, and update trial alteration information
-
-					console.log('alteration did not exist');
+            $scope.showVar = false;
+            $scope.alertShow = false;
+            $scope.showAll = false;
+            $scope.showAllDisease = false;
+            $scope.showAllDrugs = false;
+            $scope.showAllCom = false;
+            $scope.inclusion_editing = false;
+            $scope.exclusion_editing = false;
 
 
 
-				});
-			};
-			$scope.deleteAlteration = function(alteration, gene) {
-				Alterations.alteration.get({alteration: alteration, gene: gene},
-					function(a)
-					{
-						console.log('find this alteration');
-						Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId},
-							function(c)
-							{
-								console.log('find in mapping record', a._id);
-								c.$deleteAlt({Idvalue: a._id},
-									function(e)
-									{
-										console.log('delete successfully');
-										$scope.trialAlterations = findAlterations($scope.trial.nctId);
-									},
-									function(f)
-									{
-										console.log('delete failed',f);
-									}
-								);
-							},
-							function(d)
-							{
-								console.log('not find mapping record');
-							}
-						)
-					},
-					function(b)
-					{
-						console.log('not find this alteration');
-					}
-				)
-			};
+            String.prototype.capitalize = function() {
+                return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+            };
 
-			$scope.updateTrial = function()
-			{
+            var editingAlteration = {};
 
-				Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function(u, getResponseHeaders){
+            $scope.showAllComments = function(){
+                $scope.showAllCom = !$scope.showAllCom;
+            };
+            $scope.showAllLogs = function(){
+                $scope.showAlllog = !$scope.showAlllog;
+            };
 
-						u.$update(function(response) {
-							$scope.trial = Trials.nctId.get({
-								nctId: $stateParams.nctId
-							});
-							console.log('success updated');
-						}, function(response)  {
-							console.log('failed');
-						});
-					}, function(error){
-						console.log('error: ', error);
-					}
-				);
+            $scope.switchStatus = function (status) {
+                Mappings.mappingSearch.get({Idvalue: $scope.trial.nctId}, function (u, getResponseHeaders) {
+                        if(u.nctId === undefined)
+                        {
+
+                            Mappings.mappingSave.save({nctId: $scope.trial.nctId},
+                                function (newMapping) {
+                                    $scope.trialMappings = newMapping;
+
+                                },
+                                function (error) {
+                                    console.log('did not insert successfully because of ', error);
+                                }
+                            );
+
+                        }
+                        else
+                        {
+                            u.$completeStatus({Idvalue: status},
+                                function (response) {
+                                    console.log('success updated');
+                                    $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId});
+                                }, function (response) {
+                                    console.log('failed');
+                                });
+                        }
 
 
-			};
 
-		}
-	]);
+                    }, function (error) {
+                        console.log('error: ', error);
+                    }
+                );
+
+            };
+            $scope.showAllTitle = function () {
+                $scope.showVar = true;
+            };
+
+            $scope.showDrugs = function () {
+                $scope.showAllDrugs = !$scope.showAllDrugs;
+            };
+            $scope.displayStyle = function () {
+                $scope.showAll = !$scope.showAll;
+            };
+            $scope.displayDiseaseStyle = function () {
+                $scope.showAllDisease = !$scope.showAllDisease;
+            };
+
+            // Create new Trial
+            $scope.create = function () {
+                // Create new Trial object
+                var trial = new Trials({
+                    nctId: this.name
+                });
+
+                // Redirect after save
+                trial.$save(function (response) {
+                    $location.path('trials/' + response._id);
+
+                    // Clear form fields
+                    $scope.name = '';
+                }, function (errorResponse) {
+                    $scope.error = errorResponse.data.message;
+                });
+            };
+
+            // Remove existing Trial
+            $scope.remove = function (trial) {
+                if (trial) {
+                    trial.$remove();
+
+                    for (var i in $scope.trials) {
+                        if ($scope.trials [i] === trial) {
+                            $scope.trials.splice(i, 1);
+                        }
+                    }
+                } else {
+                    $scope.trial.$remove(function () {
+                        $location.path('trials');
+                    });
+                }
+            };
+
+            // Update existing Trial
+            $scope.update = function () {
+                var trial = $scope.trial;
+
+                trial.$update(function () {
+                    $location.path('trials/' + trial.nctId);
+                }, function (errorResponse) {
+                    $scope.error = errorResponse.data.message;
+                });
+            };
+
+            // Find a list of Trials
+            $scope.find = function () {
+                $scope.trials = Trials.nctId.query();
+            };
+
+
+
+
+            function fetchMapInfo(){
+
+                $scope.inclusionAlterations = [];
+                $scope.exclusionAlterations = [];
+                $scope.logs = [];
+
+                Mappings.mappingSearch.get({
+                        Idvalue: $stateParams.nctId,
+                    },
+                    function (a) {
+                        if(a.nctId !== undefined)
+                        {
+                            var temArr1 = [], temArr2 = [];
+                            _.each(a.alterations, function(item){
+
+                                if(item.type === 'inclusion')
+                                {
+                                    temArr1.push(item);
+                                }
+                                else if(item.type === 'exclusion')
+                                {
+                                    temArr2.push(item);
+                                }
+                            });
+                            $scope.inclusionAlterations = temArr1;
+                            $scope.exclusionAlterations = temArr2;
+                            $scope.trialStatus = a.completeStatus;
+
+                            if (a.log.length > 0)
+                            {
+
+                                Mappings.convertLog.get({
+                                    trialID: $stateParams.nctId,
+                                }, function(convertedLogs){
+
+                                    var tempArr = [], tempStr = '';
+                                    _.each(convertedLogs, function(item){
+                                        if(item.changetoStatus !== undefined)
+                                        {
+                                            var tempValue = '';
+                                            if(item.changetoStatus === '1')
+                                            {
+                                                tempValue = 'Not Curated';
+                                            }
+                                            else if(item.changetoStatus === '2')
+                                            {
+                                                tempValue = 'Curating';
+                                            }
+                                            else if(item.changetoStatus === '3')
+                                            {
+                                                tempValue = 'Curated';
+                                            }
+                                            tempStr = item.user + ' changed status to ' + tempValue + ' at ' + item.date;
+                                        }
+                                        else if(item.operationType === 'confirm' || item.operationType === 'add')
+                                        {
+                                            tempStr = item.user + ' ' + item.operationType + 'ed ' + item.gene + ' ' + item.alteration + ' at ' + item.date;
+                                        }
+                                        else if(item.operationType === 'delete')
+                                        {
+                                            tempStr = item.user + ' deleted ' + item.gene + ' ' + item.alteration + ' at ' + item.date;
+                                        }
+                                        tempArr.push(tempStr);
+                                    });
+                                    $scope.logs = tempArr;
+
+                                    if($scope.logs.length > 3)
+                                    {
+                                        $scope.showAlllog = true;
+                                    }
+                                    else
+                                    {
+                                        $scope.showAlllog = false;
+                                    }
+
+                                });
+                            }
+                            else
+                            {
+                                $scope.logs = ['No curation history available'];
+                            }
+
+                        }
+                        else
+                        {
+                            $scope.trialAlterations = [];
+                            console.log('There is no mapping record existed for this trial.');
+                        }
+
+
+                    },
+                    function (b) {
+                        $scope.trialAlterations = [];
+                        console.log('no alteration information for this trial ID');
+                    });
+            }
+
+            // Find existing Trial
+            $scope.findOne = function () {
+                $scope.trial = Trials.nctId.get({
+                    nctId: $stateParams.nctId
+                },function()
+                {
+                    $scope.getEligibility();
+
+                    Genes.geneList.query({}, function(a)
+                    {
+                        var tempGenes = [];
+
+                         _.each(a, function(gene){
+                         tempGenes.push(gene.hugo_symbol);
+                         });
+                         $scope.HUGOgenes = tempGenes;
+
+                    });
+
+                    fetchMapInfo();
+                    $scope.trialStatus = '1';
+                    $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId}, function()
+                    {
+                        if($scope.trialMappings.completeStatus === undefined)
+                        {
+                            $scope.trialStatus = '1';
+                        }
+                        else
+                        {
+                            $scope.trialStatus = $scope.trialMappings.completeStatus;
+                        }
+                        if($scope.trialMappings.comments === undefined)
+                        {
+                            $scope.trialComments = [];
+                        }
+                        else
+                        {
+                            $scope.trialComments = $scope.trialMappings.comments;
+                        }
+
+                    },
+                    function()
+                    {
+
+                    });
+                    $scope.trial.drugs = _.uniq($scope.trial.drugs);
+
+                });
+
+
+            };
+
+            $scope.searchByKeyword = function () {
+                $scope.trials = Trials.keyword.query({
+                    keyword: $scope.keyword
+                });
+            };
+
+            $scope.searchTrailBynctId = function () {
+                $location.path('trials/' + $scope.nctId);
+            };
+
+            $scope.assignTrailBynctId = function () {
+                $scope.trial = Trials.nctId.get({
+                    nctId: $scope.nctId
+                });
+                $scope.trialGenes = Genes.nctIds.get({
+                    nctIds: [$scope.nctId]
+                });
+
+            };
+
+            $scope.getDrugs = function (drugs) {
+                return drugs.map(function (e) {
+                    return e.drugName;
+                }).join(', ');
+            };
+
+
+            $scope.getEligibility = function () {
+                var eligibility = $scope.trial.eligibilityCriteria;
+                //var eleArr = eligibility.split("\n\n");
+                //var eleArr = eligibility.split("\r\n");
+                var eleArr = eligibility.split(/\r?\n | \n\n | \n/);
+                var tempArr = [];
+                _.each(eleArr, function(item){
+                    tempArr.push(item.trim());
+                });
+                $scope.criteria = tempArr;
+
+            };
+            //Add new connection between alterations and current trial
+            $scope.addAlterationBynctId = function (type) {
+
+                var addFalg = true;
+                var tempAlteration = '', tempGene = '', tempArr = [];
+                if(type === 'inclusion'){
+                    tempAlteration = $scope.inclusion_newAlteration;
+                    tempGene = $scope.inclusion_newGene;
+                    tempArr = $scope.inclusionAlterations;
+                }
+                else if(type === 'exclusion'){
+                    tempAlteration = $scope.exclusion_newAlteration;
+                    tempGene = $scope.exclusion_newGene;
+                    tempArr = $scope.exclusionAlterations;
+                }
+                _.each(tempArr, function(item){
+                    if(tempAlteration.toUpperCase() === item.alteration && tempGene.toUpperCase() === item.gene)
+                    {
+                        bootbox.alert('Sorry but entered alteration already added for this trial!');
+                        addFalg = false;
+                    }
+                });
+                if(addFalg)
+                {
+                    Alterations.addAlteration.get({
+                        alteration: tempAlteration.toUpperCase(),
+                        gene: tempGene.toUpperCase(),
+                        nctId: $scope.trial.nctId,
+                        type: type
+                    }, function (u) {
+                        if(u[1] === 'e'){
+                            bootbox.alert('Sorry but error happened when inserting the record. Please try again');
+                            console.log('Internal error happened');
+                        }
+                        else if(u[1] === 'a'){
+                            console.log('Entered the alteration record already existed. Mapping record does not exist. ');
+                            console.log('Inserted new mapping record');
+                        }
+                        else if(u[1] === 'b'){
+                            console.log('Entered the alteration record already existed. Mapping record also already existed.');
+                            console.log('Updated the mapping table');
+                        }
+                        else if(u[1] === 'c'){
+                            console.log('Entered the alteration record does not exist. Mapping record does not exist either. ');
+                            console.log('Inserted new alteration record and mapping record');
+                        }
+                        else if(u[1] === 'd'){
+                            console.log('Entered the alteration record does not exist. Mapping record already existed. ');
+                            console.log('Inserted new alteration record and updated the mapping table');
+                        }
+
+                        if(u[1] !== 'e'){
+
+                            fetchMapInfo();
+                        }
+
+
+                    });
+
+                }
+
+
+            };
+
+            $scope.deleteAlteration = function (x) {
+
+                Mappings.deleteAlteration.get({trialID: $scope.trial.nctId, alteration: x.alteration, gene: x.gene, type: x.type},function(a){
+
+                    fetchMapInfo();
+
+                });
+
+            };
+
+            $scope.editAlteration = function (x, type) {
+                editingAlteration = x;
+                if(type === 'inclusion')
+                {
+                    $scope.inclusion_editing = true;
+                    $scope.inclusion_editedGene = x.gene;
+                    $scope.inclusion_editedMutation = x.alteration;
+                }
+                else if(type === 'exclusion')
+                {
+                    $scope.exclusion_editing = true;
+                    $scope.exclusion_editedGene = x.gene;
+                    $scope.exclusion_editedMutation = x.alteration;
+                }
+            };
+            $scope.saveAlteration = function(tempGene, tempAlteration, type){
+
+                if( tempGene === editingAlteration.gene && tempAlteration === editingAlteration.alteration)
+                {
+                    bootbox.alert('Please edit mutation record before save it!');
+                    return false;
+                }
+                else
+                {
+                    Mappings.deleteAlteration.get({trialID: $scope.trial.nctId, alteration: editingAlteration.alteration, gene: editingAlteration.gene, type: editingAlteration.type},function(a){
+
+                    });
+                    //insert new alteration record to the alteration table
+                    if(type === 'inclusion'){
+                        $scope.inclusion_newAlteration = tempAlteration;
+                        $scope.inclusion_newGene =  tempGene;
+
+                        $scope.inclusion_editedGene = '';
+                        $scope.inclusion_editedMutation = '';
+                    }
+                    else if(type === 'exclusion'){
+                        $scope.exclusion_newAlteration = tempAlteration;
+                        $scope.exclusion_newGene = tempGene;
+
+                        $scope.exclusion_editedGene = '';
+                        $scope.exclusion_editedMutation = '';
+
+                    }
+                    $scope.addAlterationBynctId(type);
+
+                }
+
+                $scope.editing = false;
+
+            };
+
+            $scope.confirmAlteration = function(x){
+
+                Mappings.confirmAlteration.get({trialID: $scope.trial.nctId, alteration: x.alteration, gene: x.gene, type: x.type},
+                    function (a) {
+                        fetchMapInfo();
+                    }
+                );
+
+
+
+            };
+
+            $scope.updateTrial = function () {
+
+                Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function (u, getResponseHeaders) {
+
+                        u.$update(function (response) {
+                            $scope.trial = Trials.nctId.get({
+                                nctId: $stateParams.nctId
+                            });
+                            console.log('success updated');
+                        }, function (response) {
+                            console.log('failed');
+                        });
+                    }, function (error) {
+                        console.log('error: ', error);
+                    }
+                );
+
+
+            };
+
+
+            $scope.saveComments = function() {
+                if($scope.trialStatus !== '2')
+                {
+                    $scope.switchStatus('2');
+                    $scope.trialStatus = '2';
+                }
+
+                if($scope.comment === undefined)
+                {
+                    bootbox.alert('write some comments before save it!');
+                    return false;
+                }
+                Mappings.commentsSave.commentsSave({trialID: $scope.trial.nctId,comment: $scope.comment},
+                function(){
+                    $scope.trialComments.push($scope.comment);
+                    console.log('successfully saved');
+                    $scope.comment = '';
+                    $scope.showAllCom = true;
+
+                },
+                function(){
+                    console.log('failed to save ');
+                });
+            };
+
+            function highLightSearch(inputText, elementIDs){
+                inputText = " " + inputText;
+                if(typeof elementIDs === 'string')
+                {
+                    elementIDs = [elementIDs];
+                }
+
+                _.each(elementIDs, function(elementID){
+                    var searchEle = document.getElementById(elementID);
+                    if(searchEle !== null)
+                    {
+                        var innerHTML = searchEle.innerHTML.toLowerCase();
+
+                        var regex = new RegExp(inputText, "gi"), result, indices = [], tempStr;
+                        while ( (result = regex.exec(innerHTML)) ) {
+                            indices.push(result.index);
+                        }
+                        if(indices.length > 0)
+                        {
+                            tempStr = innerHTML.substring(0,indices[0]);
+                            var tempIndex = indices.length-1;
+                            for(var i = 0; i < tempIndex;i++)
+                            {
+                                tempStr += "<span class='highlight'>" + innerHTML.substring(indices[i],indices[i]+inputText.length) + "</span>"
+                                    + innerHTML.substring(indices[i]+inputText.length,indices[i+1]);
+                            }
+
+                            tempStr += "<span class='highlight'>" + innerHTML.substring(indices[tempIndex],indices[tempIndex]+inputText.length) + "</span>"
+                                + innerHTML.substring(indices[tempIndex]+inputText.length);
+
+                            searchEle.innerHTML = tempStr;
+                        }
+
+                    }
+                });
+
+            }
+
+            function cancelHighlight(elementIDs){
+                if(typeof elementIDs === 'string')
+                {
+                    elementIDs = [elementIDs];
+                }
+
+                _.each(elementIDs, function(elementID){
+                    var searchEle = document.getElementById(elementID);
+                    if(searchEle !== null){
+                        var innerHTML = searchEle.innerHTML;
+                        searchEle.innerHTML = innerHTML.replace(/<span class=\"highlight\">|<\/span>/gi, '');
+                    }
+                });
+
+            }
+
+            $scope.highlight = function(gene, alteration){
+
+                cancelHighlight(['armTable', 'title', 'purpose', 'criteria']);
+
+                var inputText = gene.toLowerCase();
+
+                highLightSearch(inputText, ['armTable','title','purpose','criteria']);
+
+                if(alteration !== 'unspecified')
+                {
+                    inputText = alteration.toLowerCase();
+                    highLightSearch(inputText, ['armTable','title','purpose','criteria']);
+                }
+
+
+            }
+
+            //copy number bar chart
+
+            function plottyChart(){
+
+                var tempTrace, data = [];
+                for(var i = 1;i < 100;i++){
+                    tempTrace = {x: [i, i],
+                        y: [80, 0],
+                        mode: 'lines',
+                        line:{
+                            color: 'rgb(0, 255, 0)'
+
+                        }};
+                    data.push(tempTrace);
+                }
+
+                var layout = {
+                    title:'Copy Number Segment Data Visualization',
+                    showlegend: false,
+                    width: 800,
+                    height: 300
+                };
+
+                Plotly.newPlot('copyNumber', data, layout);
+
+                var grad = Gradient('#0071bc', '#662d91', '#e5005d', 10);
+                console.log(grad.toArray('hexString'));
+
+            };
+            //plottyChart();
+
+        }
+    ]);

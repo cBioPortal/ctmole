@@ -42,8 +42,11 @@ var mongoose = require('mongoose'),
  * Gene Schema
  */
 var GeneSchema = new Schema({
-	symbol: String,
-	nctIds: Array
+	hugo_symbol: String,
+	entrez_gene_id: String,
+	name: String,
+	summary: String
+
 });
 
-mongoose.model('Gene', GeneSchema);
+module.exports = mongoose.model('Gene', GeneSchema);

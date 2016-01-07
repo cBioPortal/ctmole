@@ -72,10 +72,6 @@ var TrialSchema = new Schema({
 		type: String,
 		trim: true
 	},
-	diseaseCondition: {
-		type: String,
-		trim: true
-	},
 	lastChangeDate: {
 		type: String,
 		trim: true
@@ -85,9 +81,18 @@ var TrialSchema = new Schema({
 	},
 	lastUpdatedStatusDate:{
 		type: String
+	},
+	countries: {
+		type: Array
+	},
+	tumorTypes: {
+		type: Array
+	},
+	drugs: {
+		type: Array
 	}
 });
 
 
 //TrialSchema.plugin(autoIncrement.plugin, {model: 'clinicaltrial', field: 'trialId'});
-mongoose.model('clinicaltrial', TrialSchema);
+module.exports = mongoose.model('clinicaltrial', TrialSchema);
