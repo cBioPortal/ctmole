@@ -195,24 +195,26 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
                 var altRecords = [], tempIndex = -1;
                 Mapping.find({nctId: {$in: trialIds} }).stream()
                     .on('data', function(mapping){
-                        tempIndex = -1;
+
                         _.each(mapping.alterations, function(item){
-                        for(var i = 0;i < altRecords.length;i++)
-                        {
-                            if(altRecords[i].gene === item.gene && altRecords[i].alteration === item.alteration){
-                                tempIndex = i;
-                                break;
-                            }
-                        }
-                        if(tempIndex === -1){
-                            altRecords.push({gene: item.gene, alteration: item.alteration, nctIds: [mapping.nctId]});
-                        }
-                        else{
-                            if(altRecords[tempIndex].nctIds.indexOf(mapping.nctId) === -1)
+                            tempIndex = -1;
+                            for(var i = 0;i < altRecords.length;i++)
                             {
-                                altRecords[tempIndex].nctIds.push(mapping.nctId);
+                                if(altRecords[i].gene === item.gene && altRecords[i].alteration === item.alteration){
+                                    tempIndex = i;
+                                    break;
+                                }
                             }
-                        }
+
+                            if(tempIndex === -1){
+                                altRecords.push({gene: item.gene, alteration: item.alteration, nctIds: [mapping.nctId]});
+                            }
+                            else{
+                                if(altRecords[tempIndex].nctIds.indexOf(mapping.nctId) === -1)
+                                {
+                                    altRecords[tempIndex].nctIds.push(mapping.nctId);
+                                }
+                            }
 
                         });
 
@@ -250,8 +252,6 @@ exports.trialByID = function (req, res, next, id) {
             var updateRequiredTrial;
             request(url, function (error, response, body) {
                 parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
-
-                    console.log('here is the result ', result);
 
                     if (typeof result !== 'undefined' && result.hasOwnProperty('clinical_study')) {
                         updateRequiredTrial = result.clinical_study;

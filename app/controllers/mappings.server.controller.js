@@ -448,61 +448,73 @@ function compare(a, b) {
 
 exports.geneTrialCounts = function(req, res){
     var geneTrialCountArr = [];
-
-    Mapping.find({}).stream()
-        .on('data', function(mapping){
-
-
-            if(mapping.alterations !== undefined && mapping.alterations.length !== 0)
-            {
-                var countedGenes = [];
-                _.each(mapping.alterations, function(item){
-                    //use geneIndex to make sure each gene only count once for each trial
-                    var currentGene = item.gene;
-
-                    var index = -1, geneIndex = countedGenes.indexOf(currentGene);
-                    for(var i = 0;i < geneTrialCountArr.length;i++)
-                    {
-                        if(geneTrialCountArr[i].gene === currentGene)
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-                    if(index === -1 && item.curationMethod === 'predicted')
-                    {
-                        geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
-                    }
-                    else if(index === -1 && item.curationMethod === 'manually')
-                    {
-                        geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
-                    }
-                    else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted')
-                    {
-                        geneTrialCountArr[index].predicted++;
-                    }
-                    else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'manually')
-                    {
-                        geneTrialCountArr[index].curated++;
-                    }
-
-                    countedGenes.push(currentGene);
-
-                });
-            }
+    var validStatusTrials = [];
+    Trial.find({$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]}).stream()
+        .on('data', function(trial){
+            validStatusTrials.push(trial.nctId);
         })
-        .on('error', function(err){
-            // handle error
-            console.log('error happened');
+        .on('error', function(){
+            console.log('error happened when searching valid status trials ');
         })
         .on('end', function(){
-            // final callback
-            geneTrialCountArr.sort(compare);
+            Mapping.find({nctId: {$in: validStatusTrials}}).stream()
+                .on('data', function(mapping){
 
-            console.log('here is the gene ', geneTrialCountArr);
 
-            return res.jsonp(geneTrialCountArr);
-        });
+                    if(mapping.alterations !== undefined && mapping.alterations.length !== 0)
+                    {
+                        var countedGenes = [];
+                        _.each(mapping.alterations, function(item){
+                            //use geneIndex to make sure each gene only count once for each trial
+                            var currentGene = item.gene;
+
+                            var index = -1, geneIndex = countedGenes.indexOf(currentGene);
+                            for(var i = 0;i < geneTrialCountArr.length;i++)
+                            {
+                                if(geneTrialCountArr[i].gene === currentGene)
+                                {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            if(index === -1 && item.curationMethod === 'predicted')
+                            {
+                                geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
+                            }
+                            else if(index === -1 && item.curationMethod === 'manually')
+                            {
+                                geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
+                            }
+                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted')
+                            {
+                                geneTrialCountArr[index].predicted++;
+                            }
+                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'manually')
+                            {
+                                geneTrialCountArr[index].curated++;
+                            }
+
+                            countedGenes.push(currentGene);
+
+                        });
+                    }
+                })
+                .on('error', function(err){
+                    // handle error
+                    console.log('error happened');
+                })
+                .on('end', function(){
+                    // final callback
+                    geneTrialCountArr.sort(compare);
+
+                    console.log('here is the gene ', geneTrialCountArr);
+
+                    return res.jsonp(geneTrialCountArr);
+                });
+        })
+
+
+
 }
 
 

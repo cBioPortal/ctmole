@@ -124,7 +124,7 @@ Gene: <input ng-model="newGene">
 						<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x, 'inclusion')"></i>
 								<i class="fa fa-check" ng-if="x.alteration !== 'unspecified' " ng-click="confirmAlteration(x)"></i>
-								<i class="fa fa-pencil" ng-click="editAlteration(x)"></i>
+								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
 						</span>
 						</div>
 						<div class="fixMargin" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">
@@ -239,7 +239,7 @@ Gene: <input ng-model="newGene">
 				<table class="table" ng-if="showAlllog">
 					<tbody>
 					<tr ng-if="$index < 3" ng-repeat="x in logs">
-						<td>{{x}}  <i class="fa fa-undo"></i> </td>
+						<td>{{x}} </td>
 					</tr>
 
 					</tbody>
@@ -247,7 +247,7 @@ Gene: <input ng-model="newGene">
 				<table class="table" ng-if="!showAlllog">
 					<tbody>
 					<tr ng-repeat="x in logs">
-						<td>{{x}}  <i class="fa fa-undo"></i> </td>
+						<td>{{x}} </td>
 					</tr>
 
 					</tbody>

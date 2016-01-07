@@ -58,16 +58,18 @@
 
 
 		<h3>Gene</h3>
-		<div class="checkbox" ng-repeat="y in genes">
+		<div style="max-height: 400px;overflow-y: auto">
+		<div class="checkbox"  ng-repeat="y in genes">
 			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="chosenGenes.indexOf(y) !== -1"><label for="{{y}}"> {{y}}</label>
 		</div>
-
-
-		<h3>Mutation</h3>
-		<div class="checkbox" ng-repeat="z in mutations">
-			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.mutationID) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
 
+		<h3>Mutation</h3>
+		<div style="max-height: 400px;overflow-y: auto">
+		<div class="checkbox" ng-repeat="z in mutations">
+			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.gene+','+z.alteration) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
+		</div>
+		</div>
 		<br/><br/>
 		<small>
 			<em class="text-muted">
@@ -91,16 +93,13 @@
 			<h2>MATCHING TRIALS | {{filteredTrials.length}}</h2><br/>
 			<a data-ng-repeat="trial in filteredTrials = (trials | filter: searchCriteria())  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
 				<div>
-					<h3 data-ng-bind="trial.title"></h3>
+					<h3>{{trial.title}}</h3>
 					<h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/> {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
 
 					<div ng-if="trial.fetchedAlterations.length > 0" ng-repeat="x in trial.fetchedAlterations" >
 						<h1><small>
-							<span style="float:left; margin-bottom: 10px" ng-if="x.confirmStatus == 'unconfirmed'" class="label label-warning" >{{x.gene + "     " + x.alteration}}</span>
-
-							<span style="float:left" ng-if="x.alteration_Id !== undefined && (x.status == 'manually' || x.confirmStatus == 'confirmed')" class="label label-success" >{{x.gene + "     " + x.alteration}}</span>
-
-							<span style="float:left" ng-if="x.confirmStatus == 'excluded'" class="label label-danger">{{x.gene + "     " + x.alteration}}</span>
+							<span style="float:left; margin-bottom: 10px" class="label label-warning"  ng-if="x.status === 'unconfirmed'" >{{x.gene+ "     " + x.alteration}}</span>
+							<span style="float:left;" class="label label-success" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">{{x.gene + "     " + x.alteration}}</span>
 
 						</small></h1>
 
@@ -122,10 +121,22 @@
 
 	<div ng-show="!showRefine">
 	<div class="panel panel-default" style="width: 45%; float:left; margin:10px; ">
-		<div class="panel-heading">Total # of Genomically Defined Clinical Trails: 4, 832</div>
-		<div class="panel-body" style="overflow-x: auto" id="geneTrails">
-			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingGeneData">
+		<div class="panel-heading">Total # of Genomically Defined Clinical Trails: {{trialsMappingCount}}</div>
+		<div class="panel-body">
+			<!--<select chosen multiple ng-options="x as x for x in ['Not yet recruiting', 'Recruiting', 'Enrolling by invitation', 'Active, not recruiting', 'Completed', 'Others' ]" class="multiSelect" data-placeholder="Select status" ng-model="sort" ng-change="getCriteria1(country, country, 'country')">-->
+			<!--</select>-->
+
+			<!--<div class="radio" style="float:right">-->
+				<!--<label><input type="radio" ng-model="sort1" value="4" ng-change="getCriteria1('all', status, 'status')">Descending</label><br/>-->
+				<!--<label><input type="radio" ng-model="sort1" value="1" ng-change="getCriteria1(false, status, 'status')">Alphabetical</label><br/>-->
+			<!--</div>-->
+
+
+			<div style="overflow-x: auto" id="geneTrails">
+				<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingGeneData">
+			</div>
 		</div>
+
 		<br/>
 	</div>
 

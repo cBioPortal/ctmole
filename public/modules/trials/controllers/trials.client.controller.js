@@ -199,10 +199,6 @@ angular.module('trials').controller('TrialsController',
                         {
                             var temArr1 = [], temArr2 = [];
                             _.each(a.alterations, function(item){
-                                if(item.alteration === undefined)
-                                {
-                                    item.alteration = 'unspecified';
-                                }
 
                                 if(item.type === 'inclusion')
                                 {
@@ -215,6 +211,7 @@ angular.module('trials').controller('TrialsController',
                             });
                             $scope.inclusionAlterations = temArr1;
                             $scope.exclusionAlterations = temArr2;
+                            $scope.trialStatus = a.completeStatus;
 
                             if (a.log.length > 0)
                             {
@@ -330,6 +327,7 @@ angular.module('trials').controller('TrialsController',
                     {
 
                     });
+                    $scope.trial.drugs = _.uniq($scope.trial.drugs);
 
                 });
 
@@ -428,15 +426,7 @@ angular.module('trials').controller('TrialsController',
 
                         if(u[1] !== 'e'){
 
-                            if($scope.trialStatus !== '2')
-                            {   console.log('here it is ');
-                                $scope.switchStatus('2');
-                                $scope.trialStatus = '2';
-                            }
-                            else
-                            {
-                                fetchMapInfo();
-                            }
+                            fetchMapInfo();
                         }
 
 
@@ -488,10 +478,16 @@ angular.module('trials').controller('TrialsController',
                     if(type === 'inclusion'){
                         $scope.inclusion_newAlteration = tempAlteration;
                         $scope.inclusion_newGene =  tempGene;
+
+                        $scope.inclusion_editedGene = '';
+                        $scope.inclusion_editedMutation = '';
                     }
                     else if(type === 'exclusion'){
                         $scope.exclusion_newAlteration = tempAlteration;
                         $scope.exclusion_newGene = tempGene;
+
+                        $scope.exclusion_editedGene = '';
+                        $scope.exclusion_editedMutation = '';
 
                     }
                     $scope.addAlterationBynctId(type);
@@ -506,16 +502,7 @@ angular.module('trials').controller('TrialsController',
 
                 Mappings.confirmAlteration.get({trialID: $scope.trial.nctId, alteration: x.alteration, gene: x.gene, type: x.type},
                     function (a) {
-                        if($scope.trialStatus !== '2')
-                        {
-                            $scope.switchStatus('2');
-                            $scope.trialStatus = '2';
-                        }
-                        else
-                        {
-                            fetchMapInfo();
-                        }
-
+                        fetchMapInfo();
                     }
                 );
 
@@ -570,6 +557,7 @@ angular.module('trials').controller('TrialsController',
             };
 
             function highLightSearch(inputText, elementIDs){
+                inputText = " " + inputText;
                 if(typeof elementIDs === 'string')
                 {
                     elementIDs = [elementIDs];
@@ -639,6 +627,36 @@ angular.module('trials').controller('TrialsController',
 
             }
 
+            //copy number bar chart
+
+            function plottyChart(){
+
+                var tempTrace, data = [];
+                for(var i = 1;i < 100;i++){
+                    tempTrace = {x: [i, i],
+                        y: [80, 0],
+                        mode: 'lines',
+                        line:{
+                            color: 'rgb(0, 255, 0)'
+
+                        }};
+                    data.push(tempTrace);
+                }
+
+                var layout = {
+                    title:'Copy Number Segment Data Visualization',
+                    showlegend: false,
+                    width: 800,
+                    height: 300
+                };
+
+                Plotly.newPlot('copyNumber', data, layout);
+
+                var grad = Gradient('#0071bc', '#662d91', '#e5005d', 10);
+                console.log(grad.toArray('hexString'));
+
+            };
+            //plottyChart();
 
         }
     ]);
