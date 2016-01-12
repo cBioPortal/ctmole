@@ -10,3 +10,7 @@ app/tests/coverage/
 dumpData
 
 *.zip
+
+config/env/development.js
+
+config/env/production.js
