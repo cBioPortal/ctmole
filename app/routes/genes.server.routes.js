@@ -41,6 +41,9 @@ module.exports = function(app) {
 		.get(genes.list)
 		.post(users.requiresLogin, genes.create);
 
+	app.route('/geneAlias')
+		.get(genes.getAlias);
+
 	app.route('/genes/:symbol')
 		.get(genes.read)
 		.put(users.requiresLogin, genes.update)

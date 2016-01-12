@@ -38,7 +38,7 @@
 
 var mongoose = require('mongoose');
 var _ = require('underscore');
-var fs = require('fs'), readline = require('readline');;
+var fs = require('fs'), readline = require('readline');
 
 var	ClinicalTrialMetadata = require('../../app/models/clinical-trial-metadata.server.model.js');
 var	Gene = require('../../app/models/gene.server.model.js');

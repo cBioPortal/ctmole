@@ -40,6 +40,8 @@ var mongoose = require('mongoose'),
 	Gene = mongoose.model('Gene'),
 	_ = require('lodash');
 
+var fs = require('fs'), readline = require('readline');
+
 /**
  * Create a Gene
  */
@@ -174,3 +176,37 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
+
+
+exports.getAlias = function(){
+	var geneAlias = [];
+	var rd = readline.createInterface({
+		input: fs.createReadStream('../importor/oncokb/geneAlias.txt'),
+		output: process.stdout,
+		terminal: false
+	});
+
+	var tempArr = [], tempIndex = -1;
+	rd.on('line', function(line) {
+		tempArr = line.split('\t');
+		tempIndex = -1;
+		for(var i = 0;i < geneAlias.length;i++){
+			if(geneAlias[i].gene === tempArr[0]){
+				tempIndex = i;
+				break;
+			}
+		}
+		if(tempIndex === -1){
+			geneAlias.push({gene: tempArr[0], alias: [tempArr[1]] });
+		}
+		else{
+			geneAlias[tempIndex].alias.push(tempArr[1]);
+		}
+
+	});
+
+	rd.on('close', function(){
+		console.log('hjkalsdhfaklsd', geneAlias);
+		return geneAlias;
+	});
+}

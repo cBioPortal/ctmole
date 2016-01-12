@@ -1,19 +1,59 @@
-<section data-ng-controller="TrialsController">
-    <div class="row">
-        <div class="input-group col-lg-6 col-md-6" style="margin-top:50px" >
-    	  	<input type="text" class="form-control" ng-model='nctId' placeholder='Please input NCT ID'>
-    	  	<span class="input-group-addon" ng-click='assignTrailBynctId()'>Assign Trial</span>
-    	</div>
-    </div>
-    <div class="row assign">
-        <div ng-if="trialGenes.length > 0" class="col-lg-4 col-md-4">
-            <p>Associate genes</p>
-            <div>
-                <ul class="nav nav-list">
-                    <li ng-repeat="trailGene in trialGenes">
-                    <input id="box{{$index}}" type="checkbox" ng-model="checkboxVal[key]" checked><label for="box{{$index}}">{{trailGene.symbol}}</label></li>
-                </ul>
-            </div>
+<section data-ng-controller="TrialsController" data-ng-init="rulesInitiation()">
+    <br/>
+    <div class="container">
+    <div class="panel panel-default" >
+        <div class="panel-heading">Gene Aliases</div>
+        <div class="panel-body " >
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Gene</th>
+                    <th>Alias</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="x in geneAlias" >
+                    <td>{{x.gene}}</td>
+                    <td>{{x.alias}}</td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    <input type="input" placeholder="Orignal Gene" class="form-control" id="gene">
+                </div>
+                <div class="form-group">
+                    <input type="input" placeholder="Alias" class="form-control" id="alias">
+                </div>
+
+                <button type="submit" class="btn btn-default">Save</button>
+            </form>
         </div>
+
+        <br/>
+    </div>
+        <div class="panel panel-default" >
+            <div class="panel-heading">Skip Scan Items</div>
+            <div class="panel-body " >
+                <ul class="list-group">
+                    <li class="list-group-item">anti egfr</li>
+                    <li class="list-group-item">anti-egfr</li>
+                </ul>
+
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <input type="input" placeholder="New Item" class="form-control" >
+                    </div>
+
+                    <button type="submit" class="btn btn-default">Save</button>
+                </form>
+            </div>
+
+            <br/>
+        </div>
+        <button type="button" class="btn btn-primary">Rerun BioMarker Prediction</button>
     </div>
 </section>

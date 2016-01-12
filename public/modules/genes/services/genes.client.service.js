@@ -48,6 +48,10 @@ angular.module('genes').factory('Genes', ['$resource',
 			}, {
 				query: {isArray: true}
 			}),
+			getAlias: $resource('geneAlias', {
+			}, {
+				query: {isArray: true}
+			})
         };
 	}
 ]);

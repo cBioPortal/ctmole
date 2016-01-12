@@ -284,6 +284,7 @@ angular.module('trials').controller('TrialsController',
 
             // Find existing Trial
             $scope.findOne = function () {
+
                 $scope.trial = Trials.nctId.get({
                     nctId: $stateParams.nctId
                 },function()
@@ -627,36 +628,13 @@ angular.module('trials').controller('TrialsController',
 
             }
 
-            //copy number bar chart
+            $scope.rulesInitiation = function(){
+                Genes.getAlias.get({},function(result){
+                    console.log(result);
+                });
+                $scope.geneAlias = [{gene: 'kras', alias: 'kras1'}, {gene: 'braf', alias: 'braf1'}];
+            }
 
-            function plottyChart(){
-
-                var tempTrace, data = [];
-                for(var i = 1;i < 100;i++){
-                    tempTrace = {x: [i, i],
-                        y: [80, 0],
-                        mode: 'lines',
-                        line:{
-                            color: 'rgb(0, 255, 0)'
-
-                        }};
-                    data.push(tempTrace);
-                }
-
-                var layout = {
-                    title:'Copy Number Segment Data Visualization',
-                    showlegend: false,
-                    width: 800,
-                    height: 300
-                };
-
-                Plotly.newPlot('copyNumber', data, layout);
-
-                var grad = Gradient('#0071bc', '#662d91', '#e5005d', 10);
-                console.log(grad.toArray('hexString'));
-
-            };
-            //plottyChart();
 
         }
     ]);
