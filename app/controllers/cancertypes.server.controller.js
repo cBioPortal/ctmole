@@ -157,11 +157,7 @@ exports.hasAuthorization = function(req, res, next) {
 	next();
 };
 function compare(a, b) {
-	if (a.counts < b.counts)
-		return 1;
-	if (a.counts > b.counts)
-		return -1;
-	return 0;
+	return b.counts - a.counts;
 }
 exports.cancertypeCount = function(req, res) {
 	var cancertypesCount = [];

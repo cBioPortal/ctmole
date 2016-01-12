@@ -70,7 +70,7 @@ function connectDB(callback123){
 function workers() {
     Gene.find({}).stream()
         .on('data', function(gene){
-            alterationCollections.push({gene: gene.hugo_symbol, alterations: ['mutated', 'mutant', 'aberration', 'fusion', 'expression']});
+            alterationCollections.push({gene: gene.hugo_symbol, alterations: ['mutated', 'mutant', 'aberration']});
         })
         .on('error', function(err){
             console.log('sorry but error occured ', err);
@@ -97,8 +97,8 @@ function worker1(){
             console.log('sorry but error occured ', err);
         })
         .on('end', function(){
-            console.log('sdfghjklfghjkl',alterationCollections);
-            //worker3();
+
+            worker3();
         })
 }
 

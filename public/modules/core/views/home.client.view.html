@@ -5,14 +5,6 @@
 	<div class="col-md-2" ng-show="showRefine">
 
 		<h3>Curation Status</h3>
-		<!--
-                <select class="form-control" ng-model="statusVal" ng-change="getCriteria(true, statusVal, 'status')" ng-init="statusVal='all'">
-                    <option value="all">All</option>
-                    <option value="1">Not Curated</option>
-                    <option value="2">Curatioption>
-                    <option value="3">Curated</option>
-
-                </select> -->
 
                 <div class="radio">
                 <label><input type="radio" ng-model="status" value="4" ng-change="getCriteria('all', status, 'status')">All</label><br/>
@@ -22,29 +14,12 @@
                 </div>
 		<h3>Recruit Status</h3>
 
-		<!--<div class="radio">-->
-			<!--<label><input type="radio" ng-model="recruit" value="" ng-change="getCriteria('all', recruit, 'recruit')">All</label><br/>-->
-			<!--<label><input type="radio" ng-model="recruit" value="Not yet recruiting" ng-change="getCriteria(false, recruit, 'recruit')">Not yet recruiting</label><br/>-->
-			<!--<label><input type="radio" ng-model="recruit" value="Recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Recruiting</label><br/>-->
-			<!--<label><input type="radio" ng-model="recruit" value="Enrolling by invitation" ng-change="getCriteria(true, recruit, 'recruit')">Enrolling by invitation</label><br/>-->
-			<!--<label><input type="radio" ng-model="recruit" value="Active, not recruiting" ng-change="getCriteria(true, recruit, 'recruit')">Active, not recruiting</label><br/>-->
-			<!--<label><input type="radio" ng-model="recruit" value="Completed" ng-change="getCriteria(true, recruit, 'recruit')">Completed</label>-->
-
-		<!--</div>-->
-
 		<div class="checkbox" ng-repeat="a in recruitingStatus">
 			<input id="{{a}}" ng-model="recruit" ng-change="getCriteria(recruit, a, 'recruit')" type="checkbox" ng-checked="chosenRecruits.indexOf(a) !== -1"><label for="{{a}}"> {{a}}</label>
 		</div>
 
 		<h3>Location</h3>
-<!--
-		<div class="radio">
-			<label><input type="radio" name="country" id="USRadio" ng-click="hideAllCountries()" checked>United States</label>
-		</div>
-		<div class="radio">
-			<label><input type="radio" id="countriesRadio" ng-click="showAllCountries()"  name="country">All Countries</label>
-		</div>
--->
+
 		<div ng-show="allCountries">
 			<select chosen multiple ng-options="x as x for x in countries" class="multiSelect" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
 			</select>
@@ -58,14 +33,14 @@
 
 
 		<h3>Gene</h3>
-		<div style="max-height: 400px;overflow-y: auto">
+		<div class="filterStyle">
 		<div class="checkbox"  ng-repeat="y in genes">
 			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="chosenGenes.indexOf(y) !== -1"><label for="{{y}}"> {{y}}</label>
 		</div>
 		</div>
 
 		<h3>Mutation</h3>
-		<div style="max-height: 400px;overflow-y: auto">
+		<div class="filterStyle">
 		<div class="checkbox" ng-repeat="z in mutations">
 			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.gene+','+z.alteration) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
@@ -85,7 +60,7 @@
 		</div>
 		<br/><br/>
 		<div ng-if="loading">
-			<img style="width:100px; height:100px" src="modules/core/img/loaders/loading.gif">
+			<img class="loadingLogo" src="modules/core/img/loaders/loading.gif">
 		</div>
 
 
@@ -98,8 +73,8 @@
 
 					<div ng-if="trial.fetchedAlterations.length > 0" ng-repeat="x in trial.fetchedAlterations" >
 						<h1><small>
-							<span style="float:left; margin-bottom: 10px" class="label label-warning"  ng-if="x.status === 'unconfirmed'" >{{x.gene+ "     " + x.alteration}}</span>
-							<span style="float:left;" class="label label-success" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">{{x.gene + "     " + x.alteration}}</span>
+							<span class="label label-warning floatStyle"  ng-if="x.status === 'unconfirmed'" >{{x.gene+ "     " + x.alteration}}</span>
+							<span class="label label-success floatStyle" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">{{x.gene + "     " + x.alteration}}</span>
 
 						</small></h1>
 
@@ -120,44 +95,33 @@
 
 
 	<div ng-show="!showRefine">
-	<div class="panel panel-default" style="width: 45%; float:left; margin:10px; ">
+	<div class="panel panel-default plotlyChart">
 		<div class="panel-heading">Total # of Genomically Defined Clinical Trails: {{trialsMappingCount}}</div>
-		<div class="panel-body">
-			<!--<select chosen multiple ng-options="x as x for x in ['Not yet recruiting', 'Recruiting', 'Enrolling by invitation', 'Active, not recruiting', 'Completed', 'Others' ]" class="multiSelect" data-placeholder="Select status" ng-model="sort" ng-change="getCriteria1(country, country, 'country')">-->
-			<!--</select>-->
-
-			<!--<div class="radio" style="float:right">-->
-				<!--<label><input type="radio" ng-model="sort1" value="4" ng-change="getCriteria1('all', status, 'status')">Descending</label><br/>-->
-				<!--<label><input type="radio" ng-model="sort1" value="1" ng-change="getCriteria1(false, status, 'status')">Alphabetical</label><br/>-->
-			<!--</div>-->
-
-
-			<div style="overflow-x: auto" id="geneTrails">
-				<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingGeneData">
-			</div>
+		<div class="panel-body chartOverflow"  id="geneTrails">
+			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingGeneData">
 		</div>
 
 		<br/>
 	</div>
 
-	<div class="panel panel-default" style="width: 45%; float:left;margin:10px">
+	<div class="panel panel-default plotlyChart">
 		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body" id="tumorTypeTrials" style="overflow-x: auto">
-			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingTumorData">
+		<div class="panel-body chartOverflow" id="tumorTypeTrials">
+			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingTumorData">
 		</div>
 		<br/>
 	</div>
-	<div class="panel panel-default" style="width: 45%; float:left;margin:10px">
+	<div class="panel panel-default plotlyChart">
 		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body" id="USTrials" style="width: 480px; height: 400px;">
-			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingStatusData">
+		<div class="panel-body pieChartStyle" id="USTrials">
+			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingStatusData">
 		</div>
 		<br/>
 	</div>
-	<div class="panel panel-default" style="width: 45%; float:left;margin:10px">
+	<div class="panel panel-default plotlyChart">
 		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body" id="curationStatus" style="width: 480px; height: 400px;">
-			<img src="modules/core/img/loaders/loading.gif" style="width: 100px; height: 100px;" ng-if="loadingCurationStatusData">
+		<div class="panel-body pieChartStyle" id="curationStatus">
+			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingCurationStatusData">
 		</div>
 		<br/>
 	</div>

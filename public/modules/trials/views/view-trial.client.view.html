@@ -10,7 +10,6 @@
 
 				<hr>
 
-
 				<h2><small><p>{{trial.nctId}}</p></small></h2>
 
 				<div ng-show="showAllDisease" class="addBGColor">
@@ -31,11 +30,6 @@
 				 <h2><small><p class="test">{{trial.recruitingStatus.capitalize()}}
 				 	 </p>
 				</small></h2>
-
-				<!--<h2><small><p class="test" tooltip="Last Updated Time
-				&#013; {{trial.hasOwnProperty('lastUpdatedStatusDate') ? trial.lastUpdatedStatusDate : 'Never Updated' }}">{{trial.recruitingStatus}}
-				 	<i ng-click="updateTrial()" class="fa fa-refresh"></i> </p>
-				</small></h2>-->
 
 				<div ng-show="showAllDrugs" class="addBGColor">
 				<h2><small>
@@ -74,7 +68,7 @@
 				<h2><small><a href="https://clinicaltrials.gov/ct2/show/{{trial.nctId}}" target="_blank">View In ClinicalTrials.gov</a></small></h2>
 
 				<label class="headerStyle">Inclusion Alterations</label>
-				<span style="margin-left:10px">
+				<span class="leftMargin">
 								<button data-toggle="modal" data-target="#inclusion_myModal" type="button"><i class="fa fa-plus"></i></button>
 				</span>
 
@@ -98,10 +92,7 @@
 										data-placeholder="Enter A Gene">
 								</select>
 								Alteration: <input ng-model="inclusion_newAlteration">
-								<!--
 
-Gene: <input ng-model="newGene">
-								-->
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId('inclusion')">Submit</button>
@@ -116,7 +107,7 @@ Gene: <input ng-model="newGene">
 				<p ng-show="inclusionAlterations.length === 0 && true || false">No inclusion information available</p>
 
 				<div ng-if="inclusionAlterations.length > 0" ng-repeat="x in inclusionAlterations" >
-					<div style="display:block" >
+					<div class="displayBlock">
 					<h1><small>
 
 						<div class="fixMargin" ng-if="x.status === 'unconfirmed'">
@@ -148,7 +139,7 @@ Gene: <input ng-model="newGene">
 				</span>
 
 				<label class="headerStyle">Exclusion Alterations</label>
-				<span style="margin-left:10px">
+				<span class="leftMargin">
 								<button data-toggle="modal" data-target="#exclusion_myModal" type="button"><i class="fa fa-plus"></i></button>
 				</span>
 
@@ -172,10 +163,7 @@ Gene: <input ng-model="newGene">
 										data-placeholder="Enter A Gene">
 								</select>
 								Alteration: <input ng-model="exclusion_newAlteration">
-								<!--
 
-Gene: <input ng-model="newGene">
-								-->
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addAlterationBynctId('exclusion')">Submit</button>
@@ -189,7 +177,7 @@ Gene: <input ng-model="newGene">
 				<p ng-show="exclusionAlterations.length === 0 && true || false">No exclusion information available</p>
 
 				<div ng-if="exclusionAlterations.length > 0" ng-repeat="x in exclusionAlterations" >
-					<div style="display:block" >
+					<div class="displayBlock" >
 						<h1><small>
 
 							<div class="fixMargin" ng-if="x.status === 'unconfirmed'">

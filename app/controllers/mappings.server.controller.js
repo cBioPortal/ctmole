@@ -439,11 +439,7 @@ exports.deleteAlteration = function (req, res) {
 };
 
 function compare(a, b) {
-    if (a.predicted + a.curated < b.predicted + b.curated)
-        return 1;
-    if (a.predicted + a.curated > b.predicted + b.curated)
-        return -1;
-    return 0;
+    return b.predicted + b.curated - a.predicted + a.curated;
 }
 
 exports.geneTrialCounts = function(req, res){
@@ -477,19 +473,19 @@ exports.geneTrialCounts = function(req, res){
                                     break;
                                 }
                             }
-                            if(index === -1 && item.curationMethod === 'predicted')
+                            if(index === -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
                             {
                                 geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
                             }
-                            else if(index === -1 && item.curationMethod === 'manually')
+                            else if(index === -1 && (item.curationMethod === 'manually' || item.status === 'confirmed') )
                             {
                                 geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
                             }
-                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted')
+                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
                             {
                                 geneTrialCountArr[index].predicted++;
                             }
-                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'manually')
+                            else if(geneIndex === -1 && index !== -1 && (item.curationMethod === 'manually' || item.status === 'confirmed'))
                             {
                                 geneTrialCountArr[index].curated++;
                             }
