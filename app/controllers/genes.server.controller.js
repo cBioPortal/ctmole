@@ -178,10 +178,11 @@ exports.hasAuthorization = function(req, res, next) {
 };
 
 
-exports.getAlias = function(){
+exports.getAlias = function(req, res){
+
 	var geneAlias = [];
 	var rd = readline.createInterface({
-		input: fs.createReadStream('../importor/oncokb/geneAlias.txt'),
+		input: fs.createReadStream('/Users/jiaojiao/repos/ctmole/importor/oncokb/geneAlias.txt'),
 		output: process.stdout,
 		terminal: false
 	});
@@ -205,8 +206,41 @@ exports.getAlias = function(){
 
 	});
 
+
 	rd.on('close', function(){
-		console.log('hjkalsdhfaklsd', geneAlias);
-		return geneAlias;
+
+		geneAlias.sort(compare);
+		res.jsonp(geneAlias);
 	});
+}
+
+exports.getskipItems = function(req, res){
+
+	var geneAlias = [];
+	var rd = readline.createInterface({
+		input: fs.createReadStream('/Users/jiaojiao/repos/ctmole/importor/oncokb/skipItems.txt'),
+		output: process.stdout,
+		terminal: false
+	});
+
+	var skipItems = [];
+	rd.on('line', function(line) {
+		skipItems.push(line);
+
+	});
+
+	rd.on('close', function(){
+		skipItems.sort();
+		res.jsonp(skipItems);
+	});
+}
+
+
+function compare(a, b){
+	if(a.gene < b.gene)
+	return -1;
+	else if(a.gene > b.gene)
+	return 1;
+	else
+	return 0;
 }

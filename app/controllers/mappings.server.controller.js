@@ -502,9 +502,6 @@ exports.geneTrialCounts = function(req, res){
                 .on('end', function(){
                     // final callback
                     geneTrialCountArr.sort(compare);
-
-                    console.log('here is the gene ', geneTrialCountArr);
-
                     return res.jsonp(geneTrialCountArr);
                 });
         })

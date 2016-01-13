@@ -147,7 +147,7 @@ KRAS	NS3
 KRAS	K-RAS4A
 KRAS	C-K-RAS
 KRAS	KRAS2
-KRAS    KRAS1
+KRAS	KRAS1
 KRAS	Kirsten Rat Sarcoma Viral 
 KRAS	Transforming Protein p21 
 KRAS	p21ras
@@ -162,7 +162,7 @@ MAP2K1	MAP Kinase Kinase 1
 MAP2K1	Mitogen Activated Kinase 1
 MAP2K1	Mitogen-Activated Kinase 1
 MAP2K1	Mitogen Activated Protein Kinase Kinase 1
-MAP2K1  Mitoge- Activated Protein Kinase Kinase 1
+MAP2K1	Mitoge- Activated Protein Kinase Kinase 1
 MET	RCCP2
 MET	HGFR
 MET	c-Met

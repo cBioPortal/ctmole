@@ -50,7 +50,11 @@ angular.module('genes').factory('Genes', ['$resource',
 			}),
 			getAlias: $resource('geneAlias', {
 			}, {
-				query: {isArray: true}
+				get: {isArray: true}
+			}),
+			getskipItems: $resource('getskipItems', {
+			}, {
+				get: {isArray: true}
 			})
         };
 	}

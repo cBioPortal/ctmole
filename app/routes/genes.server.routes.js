@@ -44,6 +44,9 @@ module.exports = function(app) {
 	app.route('/geneAlias')
 		.get(genes.getAlias);
 
+	app.route('/getskipItems')
+		.get(genes.getskipItems);
+
 	app.route('/genes/:symbol')
 		.get(genes.read)
 		.put(users.requiresLogin, genes.update)
