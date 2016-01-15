@@ -68,10 +68,12 @@ angular.module('trials').controller('TrialsController',
             $scope.exclusion_editing = false;
 
             $scope.geneAliasOperation = false;
+            $scope.addGeneAlias = false;
             $scope.saveGeneAlias = false;
             $scope.delGeneAlias = false;
             $scope.showNewAlias = false;
             $scope.skipItemOperation = false;
+            $scope.addSkipItem = false;
             $scope.saveSkipItem = false;
             $scope.delSkipItem = false;
             $scope.showNewSkipItem = false;
@@ -638,13 +640,13 @@ angular.module('trials').controller('TrialsController',
 
             }
 
-            $scope.rulesInitiation = function(){
+            $scope.rulesInitiation = function(){ console.log('hello world');
                 Genes.getAlias.get({},function(result){
 
                     $scope.geneAlias = result;
                 });
                 Genes.getskipItems.get({},function(result){
-                    console.log('here is the ', result);
+
                     $scope.skipItems = result;
                 });
             }
@@ -652,18 +654,21 @@ angular.module('trials').controller('TrialsController',
             $scope.addRule = function(type, value){
                 if(type === 'alias'){
                     $scope.geneAliasOperation = true;
-                    $scope.saveGeneAlias = true;
+                    $scope.addGeneAlias = true;
+                    $scope.saveGeneAlias = false;
                     $scope.delGeneAlias = false;
                     $scope.showNewAlias = false;
                     $scope.aliasGene = value;
+                    $scope.newAlias = '';
                 }
                 else if(type === 'skip'){
                     $scope.skipItemOperation = true;
-                    $scope.saveSkipItem = true;
+                    $scope.addSkipItem = true;
+                    $scope.saveSkipItem = false;
                     $scope.delSkipItem = false;
                     $scope.showNewSkipItem = true;
                     $scope.skipItem = false;
-                    $scope.newSkipItem = value;
+                    $scope.newSkipItem = '';
                 }
 
             }
@@ -671,19 +676,23 @@ angular.module('trials').controller('TrialsController',
                 if(type === 'alias'){
                     $scope.geneAliasOperation = true;
                     $scope.delGeneAlias = true;
+                    $scope.addGeneAlias = false;
                     $scope.saveGeneAlias = false;
                     $scope.showNewAlias = false;
                     $scope.aliasGene = value;
+                    $scope.newAlias = '';
                 }
                 else if(type === 'skip'){
                     $scope.skipItemOperation = false;
-
+                    $scope.oriSkipItem = value;
+                    $scope.assignRule('skip', 'delete');
                 }
 
             }
             $scope.editRule = function(type, value){
                 if(type === 'alias'){
                     $scope.geneAliasOperation = true;
+                    $scope.addGeneAlias = false;
                     $scope.delGeneAlias = false;
                     $scope.showNewAlias = true;
                     $scope.saveGeneAlias = true;
@@ -692,13 +701,49 @@ angular.module('trials').controller('TrialsController',
                 else if(type === 'skip'){
                     $scope.skipItemOperation = true;
                     $scope.saveSkipItem = true;
+                    $scope.addSkipItem = false;
                     $scope.delSkipItem = false;
                     $scope.skipItem = true;
                     $scope.showNewSkipItem = true;
                     $scope.oriSkipItem = value;
+                    $scope.newSkipItem = '';
                 }
 
             }
+
+            $scope.assignRule = function(type, operation){
+
+                var tempStr;
+                if(type === 'alias'){
+                    if(operation === 'edit'){
+                        tempStr = $scope.aliasGene + ',' + $scope.alias + ',' + $scope.newAlias;
+                        $scope.newAlias = '';
+                        $scope.geneAliasOperation = false;
+                    }else{
+                        tempStr = $scope.aliasGene + ',' + $scope.alias;
+                        $scope.alias = '';
+                        $scope.geneAliasOperation = false;
+                    }
+                }else if(type === 'skip'){
+                    if(operation === 'edit'){
+                        tempStr = $scope.oriSkipItem + ',' + $scope.newSkipItem;
+                        $scope.skipItemOperation = false;
+
+                    }else if(operation === 'add'){
+                        tempStr = $scope.newSkipItem;
+                        $scope.skipItemOperation = false;
+
+                    }else if(operation === 'delete'){
+                        tempStr = $scope.oriSkipItem;
+                    }
+
+                }
+                Genes.assignRule.get({type: type, operation: operation, values: tempStr}, function(result){
+                    $scope.rulesInitiation();
+                });
+
+            }
+
 
         }
     ]);

@@ -56,6 +56,10 @@ module.exports = function(app) {
 		.get(genes.readGenes)
 		.put(genes.create);
 
+	app.route('/assignRule/:type/:operation/:values')
+		.get(genes.assignRule);
+
+
 	// Finish by binding the Gene middleware
 	app.param('symbol', genes.geneByID);
 	app.param('nctIds', genes.geneByNctIds);

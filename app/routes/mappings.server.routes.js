@@ -53,9 +53,6 @@ module.exports = function(app) {
 	app.route('/mappingStatus/:status')
 		.get(mappings.fetchByStatus);
 
-	app.route('/mappingGeneral/mappingAltIds/:altId')
-		.get(mappings.fetchByAltId);
-
 	app.route('/mappingSave/:nctId')
 		.post(users.requiresLogin, mappings.saveMapping);
 
@@ -77,6 +74,12 @@ module.exports = function(app) {
 
 	app.route('/curationStatusCounts')
 		.get(users.requiresLogin, mappings.curationStatusCounts);
+
+	app.route('/API/genAlt/:gene/:alterations')
+		.get(users.requiresLogin, mappings.overlappingTrials);
+
+
+
 	// Finish by binding the Mapping middleware
 	//app.param('Idvalue', mappings.mappingBynctId);
 

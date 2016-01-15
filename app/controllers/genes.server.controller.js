@@ -216,7 +216,6 @@ exports.getAlias = function(req, res){
 
 exports.getskipItems = function(req, res){
 
-	var geneAlias = [];
 	var rd = readline.createInterface({
 		input: fs.createReadStream('/Users/jiaojiao/repos/ctmole/importor/oncokb/skipItems.txt'),
 		output: process.stdout,
@@ -243,4 +242,97 @@ function compare(a, b){
 	return 1;
 	else
 	return 0;
+}
+
+
+exports.assignRule = function(req, res){
+	var type = req.params.type, operation = req.params.operation, values = req.params.values.split(","), fileName = '';
+	if(type === 'alias'){
+		fileName = '/Users/jiaojiao/repos/ctmole/importor/oncokb/geneAlias.txt';
+		if(operation === 'add'){
+			fs.appendFile(fileName, values[0] + '\t' + values[1] + '\n' , function (err) {
+				return console.log(err);
+			});
+
+		}else if(operation === 'delete'){
+
+
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0] + '\t' + values[1] + '\n', "");
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+					}
+				});
+
+			});
+
+
+		}else if(operation === 'edit'){
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0] + '\t' + values[1], values[0] + '\t' + values[2]);
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+
+					}
+				});
+
+			});
+		}
+
+	}else if(type === 'skip'){
+		fileName = '/Users/jiaojiao/repos/ctmole/importor/oncokb/skipItems.txt';
+
+		console.log('gadsfahjgdadfafgdfg', values);
+
+		if(operation === 'add'){
+			fs.appendFile(fileName, values[0] + '\n' , function (err) {
+				return console.log(err);
+			});
+		}else if(operation === 'delete'){
+
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0]+ '\n', "");
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+					}
+				});
+
+			});
+
+		}else if(operation === 'edit'){
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0], values[1]);
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+					}
+				});
+
+			});
+		}
+	}
+	res.jsonp(true);
 }

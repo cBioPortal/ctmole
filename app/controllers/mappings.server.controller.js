@@ -281,22 +281,6 @@ exports.fetchByStatus = function (req, res) {
 };
 
 
-exports.fetchByAltId = function (req, res) {
-    Mapping.find({completeStatus: true}).exec(function (err, mappings) {
-
-        if (err) {
-
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-
-            res.jsonp(mappings);
-        }
-    });
-};
-
-
 exports.saveMapping = function (req, res) {
     var mapping = new Mapping({
         nctId: req.params.nctId,
@@ -543,3 +527,41 @@ exports.curationStatusCounts = function(req, res){
             });
 
 }
+
+exports.overlappingTrials = function(req, res){
+    var filteredNctIds = [], tempArr = [], firstFlag = true, count = 0;
+    var gene = req.params.gene;
+    var alterations = req.params.alterations;
+    _.each(alterations, function(item){
+        tempArr = [];
+        Mapping.find({alterations: {$in: [{gene: gene, alteration: item, curationMethod: 'manually', type: 'inclusion'},
+            {gene: gene, alteration: item, curationMethod: 'manually', type: 'exclusion'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'unconfirmed'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'confirmed'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'unconfirmed'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'confirmed'} ]}}).stream()
+            .on('data', function(mapping){
+                tempArr.push(mapping.nctId);
+            })
+            .on('error', function(err){
+                console.log('error happened when searching ', err);
+            })
+            .on('end', function(){
+                count++;
+                if(firstFlag){
+                    filteredNctIds = tempArr;
+                    firstFlag = false;
+                }
+                else{
+                    filteredNctIds = _.intersection(tempArr, filteredNctIds);
+                }
+
+                if(count === alterations.length){
+                  return res.jsonp(filteredNctIds);
+                }
+            });
+    });
+}
+
+
+
