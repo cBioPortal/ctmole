@@ -182,7 +182,7 @@ exports.getAlias = function(req, res){
 
 	var geneAlias = [];
 	var rd = readline.createInterface({
-		input: fs.createReadStream('/Users/jiaojiao/repos/ctmole/importor/oncokb/geneAlias.txt'),
+		input: fs.createReadStream(process.cwd() + '/importor/oncokb/geneAlias.txt'),
 		output: process.stdout,
 		terminal: false
 	});
@@ -208,7 +208,6 @@ exports.getAlias = function(req, res){
 
 
 	rd.on('close', function(){
-
 		geneAlias.sort(compare);
 		res.jsonp(geneAlias);
 	});
@@ -217,7 +216,7 @@ exports.getAlias = function(req, res){
 exports.getskipItems = function(req, res){
 
 	var rd = readline.createInterface({
-		input: fs.createReadStream('/Users/jiaojiao/repos/ctmole/importor/oncokb/skipItems.txt'),
+		input: fs.createReadStream(process.cwd() + '/importor/oncokb/skipItems.txt'),
 		output: process.stdout,
 		terminal: false
 	});
@@ -248,7 +247,7 @@ function compare(a, b){
 exports.assignRule = function(req, res){
 	var type = req.params.type, operation = req.params.operation, values = req.params.values.split(","), fileName = '';
 	if(type === 'alias'){
-		fileName = '/Users/jiaojiao/repos/ctmole/importor/oncokb/geneAlias.txt';
+		fileName = process.cwd() + '/importor/oncokb/geneAlias.txt';
 		if(operation === 'add'){
 			fs.appendFile(fileName, values[0] + '\t' + values[1] + '\n' , function (err) {
 				return console.log(err);
@@ -292,7 +291,7 @@ exports.assignRule = function(req, res){
 		}
 
 	}else if(type === 'skip'){
-		fileName = '/Users/jiaojiao/repos/ctmole/importor/oncokb/skipItems.txt';
+		fileName = process.cwd() + '/importor/oncokb/skipItems.txt';
 
 		console.log('gadsfahjgdadfafgdfg', values);
 

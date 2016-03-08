@@ -35,7 +35,8 @@ h1 span {
 	margin:10px
 }
 .chartOverflow{
-	overflow-x: auto
+	overflow-y: auto;
+	max-height:400px;
 }
 .pieChartStyle{
 	width: 480px;
@@ -46,7 +47,7 @@ h1 span {
 	height: 100px;
 }
 .filterStyle{
-	max-height: 400px;
+	max-height: 80px;
 	overflow-y: auto
 }
 .floatStyle{

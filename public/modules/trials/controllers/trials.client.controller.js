@@ -77,7 +77,7 @@ angular.module('trials').controller('TrialsController',
             $scope.saveSkipItem = false;
             $scope.delSkipItem = false;
             $scope.showNewSkipItem = false;
-
+            $scope.countNum = 10;
 
 
 
@@ -191,10 +191,41 @@ angular.module('trials').controller('TrialsController',
 
             // Find a list of Trials
             $scope.find = function () {
-                $scope.trials = Trials.nctId.query();
+                var trialsLength = 0;
+                Trials.nctId.query({},function(result){
+                    $scope.trials = result;
+                    trialsLength = result.length;
+
+                });
+
+
+                $(window).scroll(function() {
+                    if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                        $scope.$apply(function(){
+                            if($scope.countNum < trialsLength){
+                                $scope.countNum += 10;
+                            }
+
+                        })
+
+                    }
+                });
+
             };
 
 
+            function fetchCancertypeInfo(nctId){
+                var tempArr1 = [], tempArr2 = [];
+                Cancertypes.cancerTypeInfo.get({nctId: nctId},function(result){
+
+                    _.each(result, function(item){
+                        tempArr1.push(item.cancer);
+
+                    });
+                    $scope.cancers = tempArr1;
+                    console.log(tempArr1);
+                });
+            }
 
 
             function fetchMapInfo(){
@@ -315,6 +346,7 @@ angular.module('trials').controller('TrialsController',
                     });
 
                     fetchMapInfo();
+                    fetchCancertypeInfo($stateParams.nctId);
                     $scope.trialStatus = '1';
                     $scope.trialMappings = Mappings.mappingSearch.get({Idvalue: $stateParams.nctId}, function()
                     {
@@ -640,7 +672,8 @@ angular.module('trials').controller('TrialsController',
 
             }
 
-            $scope.rulesInitiation = function(){ console.log('hello world');
+            $scope.rulesInitiation = function(){
+
                 Genes.getAlias.get({},function(result){
 
                     $scope.geneAlias = result;

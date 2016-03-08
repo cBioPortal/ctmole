@@ -11,46 +11,36 @@ readline = require('readline');
 var	Cancertype = require('../../app/models/cancertype.server.model');
 
 var cancerTypesArr = [];
-var nctIdLocks = 0;
-var urlIndex = 0;
-var clinicalTrials = [];
-var savingToDB = false;
 
+var urlIndex = 0;
+
+var urlConditions = [];
+var savedIndices = [];
+var page = 1;
 
 main();
 
 function main() {
-    //getUrlsConditions(getListOfCancerTrialsFromClinicalTrialsGov);
-    readNctIdsFile();
+    getUrlsConditions();
+
 }
 
-function getListOfCancerTrialsFromClinicalTrialsGov(urls) {
-    checkNctLocks(urls);
-}
+function checkNctLocks() {
+    if(urlIndex < urlConditions.length) {
 
-function checkNctLocks(urls) {
-    setTimeout(function(){
-        if(nctIdLocks !== 0) {
-            checkNctLocks(urls);
-        }else {
-            if(urlIndex < urls.length) {
-                checkNctLocks(urls);
-                console.log('\n-----------------------------------------------');
-                console.log('URL: ', urls[urlIndex].url);
-                console.log('Number of conditions: ', urls[urlIndex].count);
-                console.log('URL index: ', urlIndex, ' Fnished: ', (urlIndex/urls.length * 100).toFixed(2), '%');
-                getNctIds(urls[urlIndex], 1, function(){
-                    --nctIdLocks;
-                    ++urlIndex;
-                });
-            }else {
-                console.log('\n\nFINISHIED. ');
-                //var uniqueNctIds = _.uniq(nctIds);
-                //console.log(uniqueNctIds.length, ' unique trials have been found.\n');
-                //writeNctIdsIntoFile(nctIds);
-            }
-        }
-    },500);
+        console.log('\n-----------------------------------------------');
+        console.log('URL: ', urlConditions[urlIndex].url);
+        console.log('Number of conditions: ', urlConditions[urlIndex].count);
+        console.log('URL index: ', urlIndex, ' Fnished: ', (urlIndex/urlConditions.length * 100).toFixed(2), '%');
+
+        page = 1;
+        getNctIds();
+
+    }else {
+        console.log('\n\nFINISHIED. ');
+
+        readNctIdsFile();
+    }
 }
 
 
@@ -88,6 +78,7 @@ function readNctIdsFile() {
     });
 
     rd.on('close', function(){
+
         mongoose.connect('mongodb://localhost/firstDB');
         mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
         mongoose.connection.once('open', function callback () {
@@ -103,6 +94,7 @@ function readNctIdsFile() {
 function saveNextCancer(index){
     if(index < cancerTypesArr.length)
     {
+        console.log('saving to database....', (index/cancerTypesArr.length * 100).toFixed(2), '%');
         var cancerType = new Cancertype(cancerTypesArr[index]);
         cancerType.save(function(err, cancerTypeItem){
             index = index + 1;
@@ -117,31 +109,57 @@ function saveNextCancer(index){
 
 }
 
-function getNctIds(url, page, callback) {
-    var _url = 'http://clinicaltrials.gov'+url.url+'&displayxml=true&pg='+page;
-    ++nctIdLocks;
+function getNctIds() {
+    var branchFlag = true;
+    var _url = 'http://clinicaltrials.gov'+urlConditions[urlIndex].url+'&displayxml=true&pg='+page;
+
     request(_url, function(error, response, body){
         parseString(body, {trim: true}, function (err, result) {
+
             var searchResults = result.search_results || {};
+
+            if(!_.isEmpty(searchResults)){
+                //the page already approached to the end
+                branchFlag = false;
+            }
+            else{
+                branchFlag = true;
+            }
+
             if(searchResults.hasOwnProperty('clinical_study') && searchResults.clinical_study instanceof Array && searchResults.clinical_study.length > 0) {
+                savedIndices.push(urlIndex);
                 searchResults.clinical_study.forEach(function(e, i) {
 
-                    fs.appendFile('./cancertype_nctIds.txt', e.nct_id[0] + ',' + url.url + '\n' , function (err) {
+                    fs.appendFile('./cancertype_nctIds.txt', e.nct_id[0] + ',' + urlConditions[urlIndex].url + '\n' , function (err) {
                         return 'error message is ' + err;
                     });
 
-                    //nctIds.push({nctId: e.nct_id[0], category: url.url});
                 });
+                page++;
+                getNctIds();
 
-                getNctIds(url, ++page, function(){--nctIdLocks;});
             }
-            callback();
+            else{
+
+                if(branchFlag)
+                {
+                    console.log('pausing for 10s to refetch page ', page);
+                    setTimeout(getNctIds, 10000);
+                }
+                else{
+                    urlIndex++;
+                    checkNctLocks();
+                }
+            }
+
+
+
         });
     });
 }
 
-function getUrlsConditions(callback) {
-    var urlConditions = [];
+function getUrlsConditions() {
+
     jsdom.env(
         'http://clinicaltrials.gov/ct2/search/browse?brwse=cond_cat_BC04&brwse-force=true',
         ["http://code.jquery.com/jquery.js"],
@@ -160,38 +178,9 @@ function getUrlsConditions(callback) {
                 }
             })
             console.log("Total in ", urlConditions.length, " conditions");
-            callback(urlConditions);
+            checkNctLocks();
         }
     );
-}
-
-function importTrials(nctIds) {
-
-}
-
-
-function checkNctIndex(nctIds, nctIdIndex) {
-
-    if(nctIdIndex < nctIds.length) {
-        if(savingToDB) {
-            setTimeout(function(){
-                checkNctIndex(nctIds, nctIdIndex);
-            },500);
-        }else {
-            parseClinicalTrialsGov(nctIds, nctIdIndex, checkNctIndex);
-        }
-        if ((nctIdIndex+1) % 1000 === 0) {
-            console.log('Saving data to MongoDB....');
-            savingToDB = true;
-            saveClinicalTrialMetadata(clinicalTrials);
-        }
-    }else {
-        console.log('Final saving data to MongoDB....');
-        savingToDB = true;
-        saveClinicalTrialMetadata(clinicalTrials,function(){
-            mongoose.connection.close();
-        });
-    }
 }
 
 

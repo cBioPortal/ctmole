@@ -126,7 +126,7 @@ exports.delete = function (req, res) {
  * List of Trials
  */
 exports.list = function (req, res) {
-    Trial.find({}, 'nctId title phase drugs recruitingStatus drugs countries').limit(10).exec(function (err, trials) {
+    Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).exec(function (err, trials) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

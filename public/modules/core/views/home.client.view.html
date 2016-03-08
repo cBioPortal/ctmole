@@ -2,9 +2,9 @@
 <section data-ng-controller="HomeController" data-ng-init="find()">
 
 
-	<div class="col-md-2" ng-show="showRefine">
+	<div class="col-md-2" ng-show="showRefine" style="position:fixed;left:10px;top:50px;">
 
-		<h3>Curation Status</h3>
+		<h4>Curation Status</h4>
 
                 <div class="radio">
                 <label><input type="radio" ng-model="status" value="4" ng-change="getCriteria('all', status, 'status')">All</label><br/>
@@ -12,50 +12,50 @@
                 <label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(true, status, 'status')">In Progress</label><br/>
                 <label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, status, 'status')">Completed</label>
                 </div>
-		<h3>Recruit Status</h3>
-
+		<h4>Recruit Status</h4>
+		<div class="filterStyle">
 		<div class="checkbox" ng-repeat="a in recruitingStatus">
 			<input id="{{a}}" ng-model="recruit" ng-change="getCriteria(recruit, a, 'recruit')" type="checkbox" ng-checked="chosenRecruits.indexOf(a) !== -1"><label for="{{a}}"> {{a}}</label>
 		</div>
-
-		<h3>Location</h3>
+		</div>
+		<h4>Location</h4>
 
 		<div ng-show="allCountries">
 			<select chosen multiple ng-options="x as x for x in countries" class="multiSelect" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
 			</select>
-			<br/><br/>
+
 		</div>
 
-		<h3>Tumor Types</h3>
+		<h4>Tumor Types</h4>
 		<select chosen multiple ng-options="m as m for m in tumorTypes" class="multiSelect" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
 		</select>
-		<br/><br/>
 
 
-		<h3>Gene</h3>
+
+		<h4>Gene</h4>
 		<div class="filterStyle">
 		<div class="checkbox"  ng-repeat="y in genes">
 			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="chosenGenes.indexOf(y) !== -1"><label for="{{y}}"> {{y}}</label>
 		</div>
 		</div>
 
-		<h3>Mutation</h3>
+		<h4>Mutation</h4>
 		<div class="filterStyle">
 		<div class="checkbox" ng-repeat="z in mutations">
 			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.gene+','+z.alteration) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
 		</div>
 		</div>
-		<br/><br/>
+		<br/>
 		<small>
 			<em class="text-muted">
 				Powered by OncoKB
 			</em>
 		</small>
 	</div>
-	<div class="container col-md-10">
+	<div class="container col-md-10" style="float:right">
 
-		<div class="input-group input-group-lg">
-			<input type="text" class="form-control" ng-model="searchKeyword" name="keywordInputBox" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
+		<div class="input-group input-group-lg" style="width:90%">
+			<input type="text" class="form-control" ng-model="searchKeyword" name="keywordInputBox" size="20" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
 			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search()"></i></span>
 		</div>
 		<br/><br/>
@@ -63,10 +63,9 @@
 			<img class="loadingLogo" src="modules/core/img/loaders/loading.gif">
 		</div>
 
-
-		<div ng-if="showResult" class="well list-group">
+		<div ng-show="showResult" class="well list-group">
 			<h2>MATCHING TRIALS | {{filteredTrials.length}}</h2><br/>
-			<a data-ng-repeat="trial in filteredTrials = (trials | filter: searchCriteria())  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+			<a data-ng-repeat="trial in filteredTrials = (trials | filter: searchCriteria())  | limitTo: countNum  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
 				<div>
 					<h3>{{trial.title}}</h3>
 					<h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/> {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
@@ -105,15 +104,15 @@
 	</div>
 
 	<div class="panel panel-default plotlyChart">
-		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body chartOverflow" id="tumorTypeTrials">
+		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: {{cancerTypeCounts}}</div>
+		<div class="panel-body chartOverflow" id="oncoKBtumorTypeTrials">
 			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingTumorData">
 		</div>
 		<br/>
 	</div>
 	<div class="panel panel-default plotlyChart">
 		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body pieChartStyle" id="USTrials">
+		<div class="panel-body pieChartStyle"  id="USTrials">
 			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingStatusData">
 		</div>
 		<br/>
@@ -125,6 +124,7 @@
 		</div>
 		<br/>
 	</div>
+
 </div>
 
 </section>

@@ -75,7 +75,8 @@ module.exports = {
 				'public/lib/angular-datatables/dist/angular-datatables.js',
 				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
 				'public/lib/bootbox/bootbox.js',
-				'https://cdn.plot.ly/plotly-latest.min.js'
+				'https://cdn.plot.ly/plotly-latest.min.js',
+				'public/lib/angularUtils-pagination/dirPagination.js'
 				//,
 				//'public/lib/color/index.js',
 				//'public/lib/gradient/gradient.min.js'

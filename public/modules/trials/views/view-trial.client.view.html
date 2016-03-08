@@ -14,14 +14,14 @@
 
 				<div ng-show="showAllDisease" class="addBGColor">
 					<h2><small>
-						<p>{{trial.tumorTypes[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
-						<p ng-if="$index > 0" ng-repeat="m in trial.tumorTypes">{{m}}</p>
+						<p>{{cancers[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
+						<p ng-if="$index > 0" ng-repeat="m in cancers">{{m}}</p>
 					</small></h2>
 				</div>
 
 				<div ng-show="!showAllDisease">
 					<h2><small>
-						<p>{{trial.tumorTypes[0]}}<a  ng-if="trial.tumorTypes.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.tumorTypes.length-1}} more </a></p>
+						<p>{{cancers[0]}}<a  ng-if="cancers.length > 1" ng-click="displayDiseaseStyle()"> and {{cancers.length-1}} more </a></p>
 					</small></h2>
 				</div>
 

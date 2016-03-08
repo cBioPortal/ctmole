@@ -47,7 +47,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         $scope.loadingGeneData = true;
         $scope.loadingStatusData = true;
         $scope.loadingCurationStatusData = true;
-
+        $scope.countNum = 10;
         $scope.mutations = [];
         $scope.countryCriteria = ['United States'];
         $scope.criteria = [{type: 'country', value: ['United States']}];
@@ -63,10 +63,12 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         var allGenes = [], allAlts = [];
         var continueFlag = true;
 
+
         function endSearch() {
             $scope.loading = false;
             $scope.showResult = true;
             $scope.showRefine = true;
+
 
         }
 
@@ -76,6 +78,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
             if (a.gene > b.gene)
                 return 1;
             return 0;
+        }
+
+        function sortTumor(a, b) {
+            return a.nctIds.length - b.nctIds.length;
         }
 
         //search in the mapping table
@@ -199,15 +205,23 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                         return false;
                     }
                     else {
-                        var tempIndex = 0;
+                        $(window).scroll(function() {
+                            if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                                $scope.$apply(function(){
+                                    if($scope.countNum < trials.length){
+                                        $scope.countNum += 10;
+                                    }
+
+                                })
+
+                            }
+                        });
 
                         for (var i = 0; i < trials.length; i++) {
                             $scope.countries = $scope.countries.concat(trials[i].countries);
                             $scope.trialsNctIds.push(trials[i].nctId);
                             $scope.tumorTypes = $scope.tumorTypes.concat(trials[i].tumorTypes);
-    if(trials[i].nctId === 'NCT02195011'){
-        console.log('title ', trials[i].title);
-    }
+
                         }
                         fetchAltInfo(trials, 0);
 
@@ -274,6 +288,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             $location.search('country', 'United States');
 
                         }
+
 
                     }
 
@@ -399,6 +414,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 $scope.search();
 
             }
+
 
         };
 
@@ -644,21 +660,23 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
             $scope.loadingGeneData = false;
             var geneTrace1 = {
-                x: _.map(result, function(item){return item.gene;}),
-                y: _.map(result, function(item){return item.predicted;}),
+                y: _.map(result, function(item){return item.gene;}),
+                x: _.map(result, function(item){return item.predicted;}),
                 name: 'Predicted',
-                type: 'bar'
+                type: 'bar',
+                orientation: 'h'
             };
 
             var geneTrace2 = {
-                x: _.map(result, function(item){return item.gene;}),//['BRAF', 'KIT', 'KRAS', 'ALK', 'MET', 'EGFR', 'PTEN'],
-                y: _.map(result, function(item){return item.curated;}),//[12, 18, 29, 2, 4, 10, 9],
+                y: _.map(result, function(item){return item.gene;}),//['BRAF', 'KIT', 'KRAS', 'ALK', 'MET', 'EGFR', 'PTEN'],
+                x: _.map(result, function(item){return item.curated;}),//[12, 18, 29, 2, 4, 10, 9],
                 name: 'Curated',
-                type: 'bar'
+                type: 'bar',
+                orientation: 'h'
             };
             var geneLayout = {barmode: 'stack',
-            width:3000,
-            height: 400};
+            width:450,
+            height: 2000};
             var geneData = [geneTrace1, geneTrace2];
             Plotly.newPlot('geneTrails', geneData, geneLayout);
 
@@ -673,20 +691,35 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
 
             Cancertypes.tumorTypes.get({},function(result){
 
+                result.sort(sortTumor);
                 $scope.loadingTumorData = false;
                 var tumorType = {
-                    x: _.map(result, function(item){return item.cancer;}),
-                    y: _.map(result, function(item){return item.counts;}),
-                    type: 'bar'
+                    x: _.map(result, function(item){return item.nctIds.length;}),
+                    y: _.map(result, function(item){return item.OncoKBCancerType;}),
+                    type: 'bar',
+                    orientation: 'h'
+
                 };
 
                 var tumorLayout = {barmode: 'stack',
-                    width:3000,
-                    height: 400};
+                    width:450,
+                    height: 800,
+                    yaxis: {
+                        tickangle: 45,
+                        tickfont: {
+                            size: 8,
 
+                        }
+                    }
+                };
+
+                var allNctIds = [];
+                _.map(result, function(item){allNctIds = allNctIds.concat(item.nctIds)});
+                allNctIds = _.uniq(allNctIds);
+                $scope.cancerTypeCounts = allNctIds.length;
 
                 var tumorTypeData = [tumorType];
-                Plotly.newPlot('tumorTypeTrials', tumorTypeData, tumorLayout);
+                Plotly.newPlot('oncoKBtumorTypeTrials', tumorTypeData, tumorLayout);
             });
 
             Trials.recruitingStatusCount.get({},function(result){
@@ -720,9 +753,10 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 Plotly.newPlot('curationStatus', curationData, layout);
             });
 
-
         };
         plottyChart();
+
+
 
     }
 ]);

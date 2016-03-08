@@ -1,16 +1,19 @@
 <section data-ng-controller="TrialsController" data-ng-init="find()">
+
     <div class="page-header">
-        <h1>Trials<span>(Only ten drugs listed.)</span></h1>
+        <h1>Trials</h1>
     </div>
         <div class="list-group">
-            <a data-ng-repeat="trial in trials" data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+
+            <a data-ng-repeat="trial in trials | limitTo: countNum" data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+
                 <div>
-                    <h4 class="list-group-item-heading" data-ng-bind="trial.nctId"></h4>
-                    <p>Title: {{trial.title}} <br/>Phase: {{trial.phase}}<br/>Recruiting Status: {{trial.recruitingStatus}}<br/>Country: {{trial.countries.join(', ')}}<br/>Drugs: {{getDrugs(trial.drugs)}}</p>
+                    <h3>{{trial.title}}</h3>
+                    <h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/>
+                        {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
+
                 </div>
             </a>
         </div>
-    <div class="alert alert-warning text-center" data-ng-hide="!trials.$resolved || trials.length">
-    	No Trials yet.
-    </div>
+
 </section>

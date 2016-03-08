@@ -43,6 +43,7 @@ var mongoose = require('mongoose'),
  */
 var CancertypeSchema = new Schema({
 	cancer: String,
+	OncoKBCancerType: String,
 	nctIds: Array
 });
 

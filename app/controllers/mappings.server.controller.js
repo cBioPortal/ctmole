@@ -423,13 +423,13 @@ exports.deleteAlteration = function (req, res) {
 };
 
 function compare(a, b) {
-    return b.predicted + b.curated - a.predicted + a.curated;
+    return a.predicted + a.curated - b.predicted + b.curated;
 }
 
 exports.geneTrialCounts = function(req, res){
     var geneTrialCountArr = [];
     var validStatusTrials = [];
-    Trial.find({$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]}).stream()
+    Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
         .on('data', function(trial){
             validStatusTrials.push(trial.nctId);
         })
@@ -557,6 +557,7 @@ exports.overlappingTrials = function(req, res){
                 }
 
                 if(count === alterations.length){
+                    console.log('here is the mapping info ', filteredNctIds);
                   return res.jsonp(filteredNctIds);
                 }
             });

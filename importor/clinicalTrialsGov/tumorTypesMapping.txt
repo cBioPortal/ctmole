@@ -1,0 +1,60 @@
+Teratoma, Germ Cell Tumor
+Thymoma, Thymic Tumor
+Thymus Neoplasms, Thymic Tumor
+Thyroid Neoplasms, Thyroid Cancer
+Thyroid Nodule, Thyroid Cancer
+Trophoblastic Neoplasms, Gestational Trophoblastic Disease
+Ureteral Neoplasms, Renal Cell Carcinoma
+Urethral Neoplasms, Bladder Cancer
+Urinary Bladder Neoplasms, Bladder Cancer
+Urticaria Pigmentosa, Mastocytosis
+Uterine Cervical Neoplasms, Cervical Cancer
+Uveal Neoplasms, Melanoma
+Vaginal Neoplasms, Vaginal Cancer
+Vulvar Neoplasms, Vulvar Carcinoma
+Waldenstrom Macroglobulinemia, Non-Hodgkin Lymphoma
+Wilms Tumor, Wilms Tumor
+Rectal Neoplasms, Colorectal Cancer
+Glioblastoma, Glioma
+Glioma, Glioma
+Glioma Subependymal, Glioma
+Gliosarcoma, Glioma
+Granular Cell Tumor, Sellar Tumor
+Granulosa Cell Tumor, Sex Cord Stromal Tumor
+Growth Hormone-Secreting Pituitary Adenoma, Sellar Tumor
+Head and Neck Neoplasms, Head and Neck Carcinoma
+Hemangioblastoma, Miscellaneous Brain Tumor
+Hemangioendothelioma, Soft Tissue Sarcoma
+Hemangioendothelioma, Epithelioid, Soft Tissue Sarcoma
+Hemangioma, Soft Tissue Sarcoma
+Hemangiopericytoma, Soft Tissue Sarcoma
+Biliary Tract Neoplasms, Biliary Cancer
+Burkitt Lymphoma, Non-Hodgkin Lymphoma
+Carcinoma Acinar Cell, Cancer of Unknown Primary
+Carcinoma Adenoid Cystic, Salivary Carcinoma
+Carcinoma Basal Cell, Skin Cancer, Non-Melanoma
+Carcinoma Ductal Breast, Breast Carcinoma
+Carcinoma Embryonal, Germ Cell Tumor
+Carcinoma Endometrioid, Endometrial Cancer
+Carcinoma Hepatocellular, Hepatocellular Carcinoma
+Carcinoma Lobular, Breast Carcinoma
+Carcinoma Medullary, renal or thyroid
+Carcinoma Merkel Cell, Skin Cancer, Non-Melanoma
+Carcinoma Mucoepidermoid, Salivary Carcinoma
+Carcinoma Non-Small-Cell Lung , Non-Small Cell Lung Cancer
+Carcinoma Pancreatic Ductal, Pancreatic Cancer
+Carcinoma Renal Cell, Renal Cell Carcinoma
+Cervical Intraepithelial Neoplasia, Cervical Cancer
+Cholangiocarcinoma, Biliary Cancer
+Chondrosarcoma, Chondrosarcoma
+Chondrosarcoma, Mesenchymal	Chondrosarcoma
+Chordoma, Chordoma
+Choriocarcinoma, Germ Cell Tumor
+Choroid Plexus Neoplasms, Choroid Plexus Tumor
+Colorectal Neoplasms, Colorectal Cancer
+Conjunctival Neoplasms, Melanoma (Squamous cell carcinoma)
+Craniopharyngioma, Sellar Tumor
+Cystadenoma, Serous, Pancreatic Cancer (or ovarian)
+Dermatofibrosarcoma	Skin Cancer, Non-Melanoma
+Desmoplastic Small Round Cell Tumor, Soft Tissue Sarcoma
+Dysgerminoma, Germ Cell Tumor
