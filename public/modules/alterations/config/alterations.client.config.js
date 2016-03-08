@@ -37,11 +37,11 @@ angular.module('alterations').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', false);
-        Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
-		Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
-		Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
-        Menus.addSubMenuItem('topbar', '/', 'List Drugs', 'drugs');
+        //Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
+        //Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
+        //Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
+        //Menus.addSubMenuItem('topbar', '/', 'List Drugs', 'drugs');
         Menus.addSubMenuItem('topbar', '/', 'List Trials', 'trials');
-        Menus.addSubMenuItem('topbar', '/', 'Copy Number', 'trials/search');
+        //Menus.addSubMenuItem('topbar', '/', 'Copy Number', 'trials/search');
 	}
 ]);
