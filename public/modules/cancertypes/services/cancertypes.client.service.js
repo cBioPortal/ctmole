@@ -59,7 +59,10 @@ angular.module('cancertypes').factory('Cancertypes', ['$resource',
 			}),
 			newCancertype: $resource('cancertypes/:newCancertypeSymbol/:nctId', { newCancertypeSymbol: '@symbol'
 			}),
-			nctIds: $resource('cancertypes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}})
+			nctIds: $resource('cancertypes/trials/:nctIds', {nctIds: []}, {get: {isArray: true}}),
+			tumorTypes: $resource('tumorTypes/', {}, {get: {isArray: true}}),
+			cancerTypeInfo: $resource('cancerTypeInfo/:nctId', {}, {get: {isArray: true}})
+
 		};
 	}
 ]);

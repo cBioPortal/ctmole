@@ -48,7 +48,7 @@ var MappingSchema = new Schema({
 		required: 'Please fill Mapping name',
 		trim: true
 	},
-	alteration: {
+	alterations: {
 		type: Array
 	},
 	completeStatus: {
@@ -59,11 +59,12 @@ var MappingSchema = new Schema({
 	},
 	comments: {
 		type: Array
-	},
+	}
+	/*,
 	predictedGenes: {
 		type: Array
 	}
-	/*
+
 	created: {
 		type: Date,
 		default: Date.now

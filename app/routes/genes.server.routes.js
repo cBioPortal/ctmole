@@ -41,6 +41,12 @@ module.exports = function(app) {
 		.get(genes.list)
 		.post(users.requiresLogin, genes.create);
 
+	app.route('/geneAlias')
+		.get(genes.getAlias);
+
+	app.route('/getskipItems')
+		.get(genes.getskipItems);
+
 	app.route('/genes/:symbol')
 		.get(genes.read)
 		.put(users.requiresLogin, genes.update)
@@ -49,6 +55,10 @@ module.exports = function(app) {
 	app.route('/genes/trials/:nctIds')
 		.get(genes.readGenes)
 		.put(genes.create);
+
+	app.route('/assignRule/:type/:operation/:values')
+		.get(genes.assignRule);
+
 
 	// Finish by binding the Gene middleware
 	app.param('symbol', genes.geneByID);

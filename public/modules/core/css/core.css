@@ -29,4 +29,27 @@ h1 span {
 .multiSelect{
 	width:200px;
 }
-
+.plotlyChart{
+	width: 45%;
+	float:left;
+	margin:10px
+}
+.chartOverflow{
+	overflow-y: auto;
+	max-height:400px;
+}
+.pieChartStyle{
+	width: 480px;
+	height: 400px;
+}
+.loadingLogo{
+	width: 100px;
+	height: 100px;
+}
+.filterStyle{
+	max-height: 80px;
+	overflow-y: auto
+}
+.floatStyle{
+	float:left;
+}

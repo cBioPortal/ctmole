@@ -42,8 +42,9 @@ var mongoose = require('mongoose'),
  * Cancertype Schema
  */
 var CancertypeSchema = new Schema({
-	symbol: String,
+	cancer: String,
+	OncoKBCancerType: String,
 	nctIds: Array
 });
 
-mongoose.model('Cancertype', CancertypeSchema);
+module.exports = mongoose.model('Cancertype', CancertypeSchema);

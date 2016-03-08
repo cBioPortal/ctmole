@@ -62,6 +62,11 @@ module.exports = function(app) {
 	app.route('/trialsMultiSearch/:nctIds')
 		.get(trials.multiTrials);
 
+	app.route('/tumorTypes')
+		.get(trials.tumorTypes);
+
+	app.route('/recruitingStatusCount')
+		.get(trials.statusCounts);
 
 	// Finish by binding the Trial middleware
 	app.param('nctId', trials.trialByID);

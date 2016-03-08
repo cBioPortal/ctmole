@@ -104,3 +104,6 @@ table.table.trialTableStyle tr:nth-child(even) {
 .highlight{
     background-color:yellow;
 }
+.displayBlock{
+    display:block
+}

@@ -40,6 +40,8 @@ var mongoose = require('mongoose'),
 	Gene = mongoose.model('Gene'),
 	_ = require('lodash');
 
+var fs = require('fs'), readline = require('readline');
+
 /**
  * Create a Gene
  */
@@ -174,3 +176,162 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
+
+
+exports.getAlias = function(req, res){
+
+	var geneAlias = [];
+	var rd = readline.createInterface({
+		input: fs.createReadStream(process.cwd() + '/importor/oncokb/geneAlias.txt'),
+		output: process.stdout,
+		terminal: false
+	});
+
+	var tempArr = [], tempIndex = -1;
+	rd.on('line', function(line) {
+		tempArr = line.split('\t');
+		tempIndex = -1;
+		for(var i = 0;i < geneAlias.length;i++){
+			if(geneAlias[i].gene === tempArr[0]){
+				tempIndex = i;
+				break;
+			}
+		}
+		if(tempIndex === -1){
+			geneAlias.push({gene: tempArr[0], alias: [tempArr[1]] });
+		}
+		else{
+			geneAlias[tempIndex].alias.push(tempArr[1]);
+		}
+
+	});
+
+
+	rd.on('close', function(){
+		geneAlias.sort(compare);
+		res.jsonp(geneAlias);
+	});
+}
+
+exports.getskipItems = function(req, res){
+
+	var rd = readline.createInterface({
+		input: fs.createReadStream(process.cwd() + '/importor/oncokb/skipItems.txt'),
+		output: process.stdout,
+		terminal: false
+	});
+
+	var skipItems = [];
+	rd.on('line', function(line) {
+		skipItems.push(line);
+
+	});
+
+	rd.on('close', function(){
+		skipItems.sort();
+		res.jsonp(skipItems);
+	});
+}
+
+
+function compare(a, b){
+	if(a.gene < b.gene)
+	return -1;
+	else if(a.gene > b.gene)
+	return 1;
+	else
+	return 0;
+}
+
+
+exports.assignRule = function(req, res){
+	var type = req.params.type, operation = req.params.operation, values = req.params.values.split(","), fileName = '';
+	if(type === 'alias'){
+		fileName = process.cwd() + '/importor/oncokb/geneAlias.txt';
+		if(operation === 'add'){
+			fs.appendFile(fileName, values[0] + '\t' + values[1] + '\n' , function (err) {
+				return console.log(err);
+			});
+
+		}else if(operation === 'delete'){
+
+
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0] + '\t' + values[1] + '\n', "");
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+					}
+				});
+
+			});
+
+
+		}else if(operation === 'edit'){
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0] + '\t' + values[1], values[0] + '\t' + values[2]);
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+
+					}
+				});
+
+			});
+		}
+
+	}else if(type === 'skip'){
+		fileName = process.cwd() + '/importor/oncokb/skipItems.txt';
+
+		console.log('gadsfahjgdadfafgdfg', values);
+
+		if(operation === 'add'){
+			fs.appendFile(fileName, values[0] + '\n' , function (err) {
+				return console.log(err);
+			});
+		}else if(operation === 'delete'){
+
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0]+ '\n', "");
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+					}
+				});
+
+			});
+
+		}else if(operation === 'edit'){
+			fs.readFile(fileName, 'utf8', function (err,data) {
+				if (err) {
+					return console.log(err);
+				}
+				var newData = data.replace(values[0], values[1]);
+				fs.writeFile(fileName, newData, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log("The file was saved!");
+					}
+				});
+
+			});
+		}
+	}
+	res.jsonp(true);
+}

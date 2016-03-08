@@ -48,6 +48,18 @@ angular.module('genes').factory('Genes', ['$resource',
 			}, {
 				query: {isArray: true}
 			}),
+			getAlias: $resource('geneAlias', {
+			}, {
+				get: {isArray: true}
+			}),
+			getskipItems: $resource('getskipItems', {
+			}, {
+				get: {isArray: true}
+			}),
+			assignRule: $resource('assignRule/:type/:operation/:values', {
+			}, {
+				get: {isArray: false}
+			})
         };
 	}
 ]);

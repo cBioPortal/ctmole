@@ -7,3 +7,10 @@ public/lib
 app/tests/coverage/
 .bower-*/
 .idea/
+dumpData
+
+*.zip
+
+config/env/development.js
+
+config/env/production.js

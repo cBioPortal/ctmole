@@ -126,7 +126,7 @@ exports.delete = function (req, res) {
  * List of Trials
  */
 exports.list = function (req, res) {
-    Trial.find({}, 'nctId title phase drugs recruitingStatus drugs countries').limit(10).exec(function (err, trials) {
+    Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).exec(function (err, trials) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -168,10 +168,19 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
     var finalExp = new RegExp(finalPattern, 'i');
 
     var counter = 0;
-    var alterationsFetched = [];
-    Trial.find({$or: [{ purpose: { $regex: finalExp } },
-        { arm_group: { $regex: finalExp } },
-        { eligibilityCriteria: { $regex: finalExp } }] }).exec(function (err, trials) {
+
+    Trial.find({$or: [{ nctId: { $regex: finalExp } },
+        { title: { $regex: finalExp } },
+        { purpose: { $regex: finalExp } },
+        { recruitingStatus: { $regex: finalExp } },
+        { eligibilityCriteria: { $regex: finalExp } },
+        { phase: { $regex: finalExp } },
+        { diseaseCondition: { $regex: finalExp } },
+        { lastChangedDate: { $regex: finalExp } },
+        { countries: { $regex: finalExp } },
+        { drugs: { $regex: finalExp } },
+        { tumorTypes: { $regex: finalExp } },
+        { arm_group: { $regex: finalExp } }] }).exec(function (err, trials) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -182,59 +191,43 @@ exports.generalSearch = function (req, res, searchEngineKeyword) {
                 res.jsonp();
             }
             else {
-                console.log('here is the trials length found ', trials.length);
-                _.each(trials, function (trial) {
+                var trialIds = _.map(trials, function(item){return item.nctId;});
+                var altRecords = [], tempIndex = -1;
+                Mapping.find({nctId: {$in: trialIds} }).stream()
+                    .on('data', function(mapping){
 
-                    Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
-                        if (mapErr) {
-                            counter++;
-                            if (counter === trials.length) {
-                                trials.push(alterationsFetched);
-                                res.jsonp(trials);
-                            }
-                            console.log('error happens when searching for mapping record');
-                        }
-                        else if (!mapping) {
-                            console.log('Failed to find Mapping ');
-                            counter++;
-                            if (counter === trials.length) {
-                                trials.push(alterationsFetched);
-                                res.jsonp(trials);
+                        _.each(mapping.alterations, function(item){
+                            tempIndex = -1;
+                            for(var i = 0;i < altRecords.length;i++)
+                            {
+                                if(altRecords[i].gene === item.gene && altRecords[i].alteration === item.alteration){
+                                    tempIndex = i;
+                                    break;
+                                }
                             }
 
-                        }
-                        else {
+                            if(tempIndex === -1){
+                                altRecords.push({gene: item.gene, alteration: item.alteration, nctIds: [mapping.nctId]});
+                            }
+                            else{
+                                if(altRecords[tempIndex].nctIds.indexOf(mapping.nctId) === -1)
+                                {
+                                    altRecords[tempIndex].nctIds.push(mapping.nctId);
+                                }
+                            }
 
-                            Alteration.find({
-                                _id: {
-                                    $in: mapping.alteration.map(function (e) {
-                                        return new ObjectId(e.alteration_Id);
-                                    })
-                                }
-                            }).exec(function (altErr, alteration) {
+                        });
 
-                                if (altErr) {
-                                    console.log('error happens when searching for alteration record');
-                                }
-                                else if (!alteration) {
-                                    console.log('Failed to find Alteration ');
-                                }
-                                else {
-                                    alterationsFetched.push({nctId: trial.nctId, alterationsFetched: alteration});
-                                }
-                                counter++;
-                                if (counter === trials.length) {
-                                    trials.push(alterationsFetched);
-                                    res.jsonp(trials);
-                                }
+                    })
+                    .on('error', function(){
 
-                            });
-
-                        }
+                    })
+                    .on('end', function(){
+                        trials.push(altRecords);
+                        res.jsonp(trials);
 
                     });
 
-                });
             }
         }
     });
@@ -259,8 +252,6 @@ exports.trialByID = function (req, res, next, id) {
             var updateRequiredTrial;
             request(url, function (error, response, body) {
                 parseString(body, {trim: true, attrkey: '__attrkey', charkey: '__charkey'}, function (err, result) {
-
-                    console.log('here is the result ', result);
 
                     if (typeof result !== 'undefined' && result.hasOwnProperty('clinical_study')) {
                         updateRequiredTrial = result.clinical_study;
@@ -300,51 +291,8 @@ exports.trialByID = function (req, res, next, id) {
         }
 
         else {
-            Mapping.findOne({nctId: trial.nctId}).exec(function (mapErr, mapping) {
-
-                if (mapErr) {
-                    console.log('error happens when searching for mapping record');
-                }
-                else if (!mapping) {
-
-                    console.log('Failed to find Mapping ');
-                    req.trial = trial;
-                    next();
-                }
-                else {
-
-                    Alteration.find({
-                        _id: {
-                            $in: mapping.alteration.map(function (e) {
-                                return new ObjectId(e.alteration_Id);
-                            })
-                        }
-                    }).exec(function (altErr, alteration) {
-
-                        if (altErr) {
-                            console.log('error happens when searching for alteration record');
-                        }
-                        else if (!alteration) {
-                            console.log('Failed to find Alteration ');
-                            console.log('returned from here, last trial has no alteration');
-                            req.trial = trial;
-                            next();
-                        }
-                        else {
-
-                            trial.alterationsFetched = alteration;
-                            console.log('return from here, last trial has alterations');
-                            req.trial = trial;
-                            next();
-                        }
-
-                    });
-
-                }
-
-            });
-
-
+            req.trial = trial;
+            next();
         }
 
 
@@ -444,3 +392,85 @@ exports.multiTrials = function (req, res) {
         }
     });
 };
+
+exports.tumorTypes = function(req, res){
+    var tumorTypes = [];
+    Trial.find({countries: {$in:['United States']}}).stream()
+        .on('data', function(trial){
+            if(trial.tumorTypes !== undefined)
+            {
+                tumorTypes = tumorTypes.concat(trial.tumorTypes);
+            }
+        })
+        .on('error', function(err){
+            // handle error
+            console.log('error happened tumor');
+        })
+        .on('end', function(){
+            // final callback
+            tumorTypes.sort();
+            var finalTumors = [{tumor: tumorTypes[0], count: 1}];
+
+            for(var i = 1;i < tumorTypes.length;i++)
+            {
+                for(var j = 0;j < finalTumors.length;j++)
+                {
+                    if(tumorTypes[i] === finalTumors[j].tumor){
+                        finalTumors[j].count++;
+                        break;
+                    }
+                    else if(j === finalTumors.length-1)
+                    {
+                        finalTumors.push({tumor: tumorTypes[i], count: 1});
+                    }
+
+                }
+
+            }
+            return res.jsonp(finalTumors);
+        });
+
+}
+
+exports.statusCounts = function(req, res){
+    var statusCounts = {'Not_yet_recruiting': 0, 'Recruiting': 0, 'Enrolling_by_invitation': 0,
+        'Active_not_recruiting': 0, 'Completed': 0, 'Others': 0};
+
+    Trial.find({countries: {$in:['United States']}}).stream()
+        .on('data', function(trial){
+            if(trial.recruitingStatus === 'Not yet recruiting')
+            {
+                statusCounts.Not_yet_recruiting++;
+            }
+            else if(trial.recruitingStatus === 'Recruiting')
+            {
+                statusCounts.Recruiting++;
+            }
+            else if(trial.recruitingStatus === 'Enrolling by invitation')
+            {
+                statusCounts.Enrolling_by_invitation++;
+            }
+            else if(trial.recruitingStatus === 'Active, not recruiting')
+            {
+                statusCounts.Active_not_recruiting++;
+            }
+            else if(trial.recruitingStatus === 'Completed')
+            {
+                statusCounts.Completed++;
+            }
+            else
+            {
+                statusCounts.Others++;
+            }
+
+        })
+        .on('error', function(err){
+            // handle error
+            console.log('error happened tumor');
+        })
+        .on('end', function(){
+            // final callback
+            return res.jsonp(statusCounts);
+        });
+
+}

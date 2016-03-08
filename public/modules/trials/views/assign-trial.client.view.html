@@ -1,19 +1,87 @@
-<section data-ng-controller="TrialsController">
-    <div class="row">
-        <div class="input-group col-lg-6 col-md-6" style="margin-top:50px" >
-    	  	<input type="text" class="form-control" ng-model='nctId' placeholder='Please input NCT ID'>
-    	  	<span class="input-group-addon" ng-click='assignTrailBynctId()'>Assign Trial</span>
-    	</div>
-    </div>
-    <div class="row assign">
-        <div ng-if="trialGenes.length > 0" class="col-lg-4 col-md-4">
-            <p>Associate genes</p>
-            <div>
-                <ul class="nav nav-list">
-                    <li ng-repeat="trailGene in trialGenes">
-                    <input id="box{{$index}}" type="checkbox" ng-model="checkboxVal[key]" checked><label for="box{{$index}}">{{trailGene.symbol}}</label></li>
-                </ul>
-            </div>
+<section data-ng-controller="TrialsController" data-ng-init="rulesInitiation()">
+    <br/>
+    <div class="container">
+    <div class="panel panel-default" >
+        <div class="panel-heading">Gene Aliases</div>
+        <div class="panel-body " >
+           <div style="max-height: 250px;overflow-y: auto">
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Gene</th>
+                    <th>Alias</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="x in geneAlias" >
+                    <td>
+                        <i class="fa fa-plus" ng-click="addRule('alias', x.gene)"></i>
+                        <i class="fa fa-times" ng-click="deleteRule('alias', x.gene)"></i>
+                        <i class="fa fa-pencil" ng-click="editRule('alias', x.gene)"></i>
+                    </td>
+                    <td>{{x.gene}}</td>
+                    <td>{{x.alias.toString()}}</td>
+                </tr>
+
+                </tbody>
+            </table>
+           </div>
+            </br>
+             <form ng-show="geneAliasOperation" class="form-inline" role="form">
+                <div class="form-group">
+                    <input type="input" placeholder="Orignal Gene" ng-model="aliasGene" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="input" placeholder="Alias" ng-model="alias" class="form-control">
+                    <input type="input" placeholder="New Alias" ng-model="newAlias" ng-show="showNewAlias" class="form-control">
+                </div>
+                 <button type="submit" ng-show="addGeneAlias" class="btn btn-default" ng-click="assignRule('alias', 'add')">Add</button>
+                <button type="submit" ng-show="saveGeneAlias" class="btn btn-default" ng-click="assignRule('alias', 'edit')">Save</button>
+                 <button type="submit" ng-show="delGeneAlias" class="btn btn-default" ng-click="assignRule('alias', 'delete')">Delete</button>
+            </form>
         </div>
+
+        <br/>
+    </div>
+        <div class="panel panel-default" >
+            <div class="panel-heading">Skip Scan Items</div>
+            <div class="panel-body " >
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>Item</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="x in skipItems">
+                        <td>
+                            <i class="fa fa-plus" ng-click="addRule('skip', x)"></i>
+                            <i class="fa fa-times" ng-click="deleteRule('skip', x)"></i>
+                            <i class="fa fa-pencil" ng-click="editRule('skip', x)"></i>
+                        </td>
+                        <td>{{x}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <form ng-show="skipItemOperation" class="form-inline" role="form">
+
+                    <div class="form-group">
+                        <input type="input" placeholder="Skip Item" ng-show="skipItem" ng-model="oriSkipItem" class="form-control">
+                        <input type="input" placeholder="New Skip Item"  ng-show="showNewSkipItem" ng-model="newSkipItem" class="form-control">
+                    </div>
+                    <button type="submit" ng-show="addSkipItem" class="btn btn-default" ng-click="assignRule('skip', 'add')">Add</button>
+                    <button type="submit" ng-show="saveSkipItem" class="btn btn-default" ng-click="assignRule('skip', 'edit')">Save</button>
+                    <button type="submit" ng-show="delSkipItem" class="btn btn-default" ng-click="assignRule('skip', 'delete')">Delete</button>
+                </form>
+            </div>
+
+            <br/>
+        </div>
+        <!--<button type="button" class="btn btn-primary">Rerun BioMarker Prediction</button>-->
     </div>
 </section>

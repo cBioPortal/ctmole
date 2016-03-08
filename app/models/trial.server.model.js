@@ -72,9 +72,6 @@ var TrialSchema = new Schema({
 		type: String,
 		trim: true
 	},
-	diseaseCondition: {
-		type: Array
-	},
 	lastChangeDate: {
 		type: String,
 		trim: true
@@ -88,6 +85,12 @@ var TrialSchema = new Schema({
 	countries: {
 		type: Array
 	},
+	tumorTypes: {
+		type: Array
+	},
+	drugs: {
+		type: Array
+	}
 });
 
 

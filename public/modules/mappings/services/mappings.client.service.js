@@ -70,9 +70,6 @@ angular.module('mappings').factory('Mappings', ['$resource',
 			}, {
 				'query':  {method:'GET', isArray:true}
 			}),
-			searchByAltId: $resource('mappingGeneral/mappingAltId/:altId', {}, {
-				'query':  {method:'GET', isArray:true}
-			}),
 			mappingSave: $resource('mappingSave/:nctId', {nctId: '@nctId'}, {
 
 				}),
@@ -81,32 +78,29 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					method: 'GET'
 				}
 			}),
-			confirmGene: $resource('confirmGene/:trialID/:gene', {trialID: '@nctId'}, {
-				confirmGene: {
-					method: 'GET'
-				}
-			}),
-			excludeGene: $resource('excludeGene/:trialID/:gene', {trialID: '@nctId'}, {
-				excludeGene: {
-					method: 'GET'
-				}
-			}),
-			confirmAlteration: $resource('confirmAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
+			confirmAlteration: $resource('confirmAlteration/:trialID/:gene/:alteration/:type', {trialID: '@nctId'}, {
 				confirmAlteration: {
 					method: 'GET'
 				}
 			}),
-			deleteAlteration: $resource('deleteAlteration/:trialID/:alteration_Id', {trialID: '@nctId'}, {
+			deleteAlteration: $resource('deleteAlteration/:trialID/:gene/:alteration/:type', {trialID: '@nctId'}, {
 				deleteAlteration: {
 					method: 'GET'
 				}
 			}),
-			deleteGene: $resource('deleteGene/:trialID/:gene', {trialID: '@nctId'}, {
-				deleteGene: {
-					method: 'GET'
+			convertLog: $resource('convertLog/:trialID', {trialID: '@nctId'}, {
+				get: {
+					method: 'GET',
+					isArray: true
 				}
 			}),
-			convertLog: $resource('convertLog/:trialID', {trialID: '@nctId'}, {
+			geneTrialCounts: $resource('geneTrialCounts/', {}, {
+				get: {
+					method: 'GET',
+					isArray: true
+				}
+			}),
+			curationStatusCounts: $resource('curationStatusCounts/', {}, {
 				get: {
 					method: 'GET',
 					isArray: true

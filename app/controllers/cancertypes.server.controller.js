@@ -38,6 +38,7 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors'),
 	Cancertype = mongoose.model('Cancertype'),
+	Trial = mongoose.model('clinicaltrial'),
 	_ = require('lodash');
 
 /**
@@ -156,3 +157,55 @@ exports.hasAuthorization = function(req, res, next) {
 	}
 	next();
 };
+
+exports.cancertypeCount = function(req, res) {
+	var cancertypesCount = [], validStatusTrials = [], overlappingNctIds = [], tempIndex = -1;
+	Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
+		.on('data', function(trial){
+			validStatusTrials.push(trial.nctId);
+		})
+		.on('error', function(){
+			console.log('error happened when searching valid status trials ');
+		})
+		.on('end', function(){
+			Cancertype.find({OncoKBCancerType: {$exists: true}}).stream()
+				.on('data', function(cancerType){
+					overlappingNctIds = _.intersection(validStatusTrials, cancerType.nctIds);
+					tempIndex = cancertypesCount.map(function(e){return e.OncoKBCancerType;}).indexOf(cancerType.OncoKBCancerType);
+					if(tempIndex === -1){
+						cancertypesCount.push({OncoKBCancerType: cancerType.OncoKBCancerType, nctIds: overlappingNctIds});
+					}else{
+						cancertypesCount[tempIndex].nctIds = _.union(cancertypesCount[tempIndex].nctIds, overlappingNctIds);
+					}
+				})
+				.on('error', function(err){
+					// handle error
+					console.log('error happened tumor');
+				})
+				.on('end', function(){
+					// final callback
+
+					return res.jsonp(cancertypesCount);
+				});
+		});
+
+
+};
+
+exports.cancerTypeInfo = function(req, res){
+	var cancerTypes = [];
+	Cancertype.find({}).stream()
+		.on('data', function(cancerType){
+			if(cancerType.nctIds.indexOf(req.params.nctId) !== -1){
+				cancerTypes.push({cancer: cancerType.cancer});
+			}
+		})
+		.on('error', function(err){
+			// handle error
+			console.log('error happened tumor');
+		})
+		.on('end', function(){
+			// final callback
+			return res.jsonp(cancerTypes);
+		});
+}

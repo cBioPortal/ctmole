@@ -25,79 +25,113 @@ function connectDB(){
 
 function workers() {
 	var count = 0;
-	ClinicalTrialMetadata.find({}).exec(function(err, metadatas) {
-		if (err)
-		{
-			console.log('error happened when searching ClinicalTrialMetadata', err);
-		}
-		else
-		{
-			_.each(metadatas, function(metadata){
+	var total = 0;
+	ClinicalTrialMetadata.find({}).count().exec(function(err, result){
+		total = result;
 
+	ClinicalTrialMetadata.find({}).stream()
+		.on('data', function(metadata){
+			// handle doc
+
+			if(metadata.id_info !== undefined){
 				var trialID = metadata.id_info[0].nct_id[0];
-				Trial.findOne({nctId: trialID}).exec(function(err1, trial){
-					if(err1)
+				Trial.findOne({nctId: trialID}).exec(function(err, trial){
+
+					if(_.isNull(trial) )
 					{
-						console.log('error happened when searching Trial', err1);
-					}
-					else if(_.isNull(trial) )
-					{
-						console.log('Inserting new trial record ',trialID);
 						var drugsNeeded = [];
-						_.each(metadata.intervention, function(item){
-							drugsNeeded.push(item.intervention_name);
-						});
+						if(metadata.intervention !== undefined)
+						{
+							_.each(metadata.intervention, function(item){
+								drugsNeeded = drugsNeeded.concat(item.intervention_name);
+							});
+						}
 
 						var trialRecord = new Trial({nctId: trialID,
-							title: metadata.brief_title[0],
-							purpose: metadata.brief_summary[0].textblock[0],
-							recruitingStatus: metadata.overall_status[0],
-							eligibilityCriteria: metadata.eligibility[0].criteria[0].textblock[0],
-							phase: metadata.phase[0],
-							diseaseCondition: metadata.condition_browse[0].mesh_term,
-							lastChangedDate: metadata.lastchanged_date[0],
-							countries: metadata.location_countries[0].country,
+							title: (metadata.brief_title !== undefined && metadata.brief_title.length !== 0) ? metadata.brief_title[0] : "",
+							purpose: (metadata.brief_summary !== undefined && metadata.brief_summary.length !== 0 && metadata.brief_summary[0].textblock !== undefined) ? metadata.brief_summary[0].textblock[0] : "",
+							recruitingStatus: (metadata.overall_status !== undefined && metadata.overall_status.length !== 0) ? metadata.overall_status[0] : "",
+							eligibilityCriteria: (metadata.eligibility !== undefined &&  metadata.eligibility.length !== 0 && metadata.eligibility[0].criteria !== undefined) ? metadata.eligibility[0].criteria[0].textblock[0] : "",
+							phase: (metadata.phase !== undefined && metadata.phase.length !== 0) ? metadata.phase[0] : "",
+							tumorTypes: (metadata.condition_browse !== undefined && metadata.condition_browse.length !== 0 && metadata.condition_browse[0].mesh_term !== undefined) ? metadata.condition_browse[0].mesh_term : "",
+							lastChangedDate: (metadata.lastchanged_date !== undefined && metadata.lastchanged_date.length !== 0) ? metadata.lastchanged_date[0] : "",
+							countries: (metadata.location_countries !== undefined && metadata.location_countries.length !== 0 && metadata.location_countries[0].country !== undefined) ? metadata.location_countries[0].country : "",
 							drugs: drugsNeeded,
-							arm_group: metadata.arm_group});
+							arm_group: (metadata.arm_group !== undefined) ? metadata.arm_group : ""});
 
 
 						trialRecord.save(function(err, trail){
-							if(err)console.log('Error happened when saving to db', err);
-							else console.log('Insert', trialID, ' into db successfully');
-
 							count++;
-							console.log("**********************************************");
-							console.log(count);
+
+							if(err)console.log('Error happened when saving to db', err);
+							else if(count % 1000 === 0)
+							{
+								console.log("**********************************************");
+								console.log(' Fnished: ', (count/total * 100).toFixed(2), '%');
+							}
+
+
+
+
 						});
 
 					}
 					else
 					{
-
-						if(metadata.overall_status[0] === trial.recruitingStatus)
+						if(metadata.overall_status !== undefined)
 						{
-							console.log('Trial ', trialID, 'is already updated to the most recent version');
-						}
-						else
-						{
-							Trial.update({nctId: trialID},{$set: {phase:'phase tesing...'}}).exec(function (err, trial) {
-								if (err) {
-									console.log('Error happened when trying to update trial ', trialID);
-								} else {
-									console.log('Successfully updated trial', trialID);
-								}
+							if(metadata.overall_status[0] === trial.recruitingStatus)
+							{
 								count++;
-								console.log("**********************************************");
-								console.log(count);
-							});
+								console.log('Trial ', trialID, 'is already updated to the most recent version');
+								if(count % 1000 === 0)
+								{
+									console.log("**********************************************");
+									console.log(' Fnished: ', (count/total * 100).toFixed(2), '%');
+								}
+							}
+							else
+							{
+								Trial.update({nctId: trialID},{$set: {phase: metadata.overall_status[0]}}).exec(function (err, trial) {
+									count++;
+									if (err) {
+										console.log('Error happened when trying to update trial ', trialID);
+
+									}
+									else if(count % 1000 === 0)
+									{
+
+										console.log("**********************************************");
+										console.log(' Fnished: ', (count/total * 100).toFixed(2), '%');
+									}
+
+
+
+
+								});
+							}
 						}
+
 
 					}
 				});
-			});
-		}
-	});
+			}
 
+
+
+
+
+		})
+		.on('error', function(err){
+			// handle error
+			console.log('error happened');
+		})
+		.on('end', function(){
+			// final callback
+			console.log('this is the end');
+		});
+
+	});
 }
 
 function main() {

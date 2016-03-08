@@ -38,6 +38,7 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors'),
     Mapping = mongoose.model('Mapping'),
+    Trial = mongoose.model('clinicaltrial'),
     _ = require('lodash');
 
 
@@ -208,49 +209,13 @@ exports.convertLog = function (req, res) {
                     }
                     else
                     {
-                        if(item.operationType === 'changeStatus')
-                        {
-                            records.push({user: user.displayName, changetoStatus: item.changetoStatus, date: item.date, operationType: item.operationType});
+                        records.push({user: user.displayName, changetoStatus: item.changetoStatus, date: item.date, operationType: item.operationType, alteration: item.alteration, gene: item.gene});
 
-                            count++;
-                            if(count === mapping.log.length){
-                                records.sort(compare);
-                                res.jsonp(records);
-                            }
+                        count++;
+                        if(count === mapping.log.length){
+                            records.sort(compare);
+                            res.jsonp(records);
                         }
-                        else if(item.alteration_Id !== undefined)
-                        {
-                            Alteration.findOne({_id: new ObjectId(item.alteration_Id)}).populate('user', 'displayName').exec(function (err1, alteration) {
-
-                                if (err1) console.log('error happened when searching ',err1);
-                                if (!alteration) {
-                                    console.log('No alteration Record Exist');
-                                }
-                                else
-                                {
-                                    records.push({user: user.displayName, alteration: alteration, date: item.date, operationType: item.operationType});
-
-                                }
-                                count++;
-                                if(count === mapping.log.length){
-                                    records.sort(compare);
-                                    res.jsonp(records);
-
-                                }
-
-                            });
-                        }
-                        else if(item.gene !== undefined)
-                        {
-                            records.push({user: user.displayName, gene: item.gene, date: item.date, operationType: item.operationType});
-
-                            count++;
-                            if(count === mapping.log.length){
-                                records.sort(compare);
-                                res.jsonp(records);
-                            }
-                        }
-
                     }
 
                 });
@@ -316,22 +281,6 @@ exports.fetchByStatus = function (req, res) {
 };
 
 
-exports.fetchByAltId = function (req, res) {
-    Mapping.find({completeStatus: true}).exec(function (err, mappings) {
-
-        if (err) {
-
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-
-            res.jsonp(mappings);
-        }
-    });
-};
-
-
 exports.saveMapping = function (req, res) {
     var mapping = new Mapping({
         nctId: req.params.nctId,
@@ -381,8 +330,11 @@ exports.saveComments = function (req, res) {
         {
             req.mapping = mapping;
             mapping.comments.push(req.params.comment);
-
-            Mapping.update({nctId: req.params.trialID}, {$set: {comments: mapping.comments}}).exec(function (err, mapping) {
+            if(mapping.completeStatus === '1')
+            {
+                mapping.completeStatus = '2';
+            }
+            Mapping.update({nctId: req.params.trialID}, {$set: {comments: mapping.comments, completeStatus: mapping.completeStatus}}).exec(function (err, mapping) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
@@ -398,51 +350,27 @@ exports.saveComments = function (req, res) {
     });
 };
 
-
-exports.confirmGene = function (req, res) {
-    var rightNow = new Date();
-    rightNow = rightNow.toString();
-    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
-        req.mapping = mapping;
-
-        _.each(mapping.predictedGenes, function(item){
-            if(item.gene === req.params.gene){
-                item.confirmStatus = 'confirmed';
-            }
-        });
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
-
-        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log}}).exec(function (err, mapping) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                return res.jsonp(mapping);
-            }
-        });
-
-    });
-};
-
-
 exports.confirmAlteration = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
         if (err) console.log('error happened when searching ',err);
         req.mapping = mapping;
 
-        _.each(mapping.alteration, function(item){
-            if(item.alteration_Id === req.params.alteration_Id){
-                item.confirmStatus = 'confirmed';
+        _.each(mapping.alterations, function(item){
+            if(item.alteration === req.params.alteration && item.gene === req.params.gene && item.type === req.params.type){
+                item.status = 'confirmed';
             }
         });
         var rightNow = new Date();
         rightNow = rightNow.toString();
 
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmAlteration', alteration_Id: req.params.alteration_Id});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirm', alteration_Id: req.params.alteration_Id});
 
-        Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration, log: mapping.log}}).exec(function (err, mapping) {
+        if(mapping.completeStatus === '1')
+        {
+            mapping.completeStatus = '2';
+        }
+
+        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -462,51 +390,24 @@ exports.deleteAlteration = function (req, res) {
         if (err) console.log('error happened when searching ',err);
         req.mapping = mapping;
 
-        for (var i = 0; i < mapping.alteration.length; i++) {
-            if (mapping.alteration[i].alteration_Id === req.params.alteration_Id) {console.log('deleting...');
-                mapping.alteration.splice(i, 1);
+        for (var i = 0; i < mapping.alterations.length; i++) {
+            if ((req.params.alteration === 'unspecified' || mapping.alterations[i].alteration === req.params.alteration) && mapping.alterations[i].type === req.params.type && mapping.alterations[i].gene === req.params.gene)
+            {
+                mapping.alterations.splice(i, 1);
                 break;
             }
         }
         var rightNow = new Date();
         rightNow = rightNow.toString();
 
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', alteration_Id: req.params.alteration_Id});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', alteration: req.params.alteration, gene: req.params.gene});
 
-        Mapping.update({nctId: req.params.trialID}, {$set: {alteration: mapping.alteration, log: mapping.log }}).exec(function (err, mapping) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                return res.jsonp(mapping);
-            }
-        });
-
-    });
-
-
-};
-
-
-exports.deleteGene = function (req, res) {
-
-    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
-        req.mapping = mapping;
-
-        for (var i = 0; i < mapping.predictedGenes.length; i++) {
-            if (mapping.predictedGenes[i].gene === req.params.gene) {
-                mapping.predictedGenes.splice(i, 1);
-                break;
-            }
+        if(mapping.completeStatus === '1')
+        {
+            mapping.completeStatus = '2';
         }
-        var rightNow = new Date();
-        rightNow = rightNow.toString();
 
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', gene: req.params.gene});
-
-        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log }}).exec(function (err, mapping) {
+        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus }}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -521,28 +422,147 @@ exports.deleteGene = function (req, res) {
 
 };
 
-exports.excludeGene = function (req, res) {
-    var rightNow = new Date();
-    rightNow = rightNow.toString();
-    Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
-        req.mapping = mapping;
+function compare(a, b) {
+    return a.predicted + a.curated - b.predicted + b.curated;
+}
 
-        _.each(mapping.predictedGenes, function(item){
-            if(item.gene === req.params.gene){
-                item.confirmStatus = 'excluded';
-            }
-        });
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirmGene', gene: req.params.gene});
-        Mapping.update({nctId: req.params.trialID}, {$set: {predictedGenes: mapping.predictedGenes, log: mapping.log}}).exec(function (err, mapping) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
+exports.geneTrialCounts = function(req, res){
+    var geneTrialCountArr = [];
+    var validStatusTrials = [];
+    Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
+        .on('data', function(trial){
+            validStatusTrials.push(trial.nctId);
+        })
+        .on('error', function(){
+            console.log('error happened when searching valid status trials ');
+        })
+        .on('end', function(){
+            Mapping.find({nctId: {$in: validStatusTrials}}).stream()
+                .on('data', function(mapping){
+
+
+                    if(mapping.alterations !== undefined && mapping.alterations.length !== 0)
+                    {
+                        var countedGenes = [];
+                        _.each(mapping.alterations, function(item){
+                            //use geneIndex to make sure each gene only count once for each trial
+                            var currentGene = item.gene;
+
+                            var index = -1, geneIndex = countedGenes.indexOf(currentGene);
+                            for(var i = 0;i < geneTrialCountArr.length;i++)
+                            {
+                                if(geneTrialCountArr[i].gene === currentGene)
+                                {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                            if(index === -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
+                            {
+                                geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
+                            }
+                            else if(index === -1 && (item.curationMethod === 'manually' || item.status === 'confirmed') )
+                            {
+                                geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
+                            }
+                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
+                            {
+                                geneTrialCountArr[index].predicted++;
+                            }
+                            else if(geneIndex === -1 && index !== -1 && (item.curationMethod === 'manually' || item.status === 'confirmed'))
+                            {
+                                geneTrialCountArr[index].curated++;
+                            }
+
+                            countedGenes.push(currentGene);
+
+                        });
+                    }
+                })
+                .on('error', function(err){
+                    // handle error
+                    console.log('error happened');
+                })
+                .on('end', function(){
+                    // final callback
+                    geneTrialCountArr.sort(compare);
+                    return res.jsonp(geneTrialCountArr);
                 });
-            } else {
-                return res.jsonp(mapping);
-            }
-        });
+        })
 
+
+
+}
+
+
+exports.curationStatusCounts = function(req, res){
+    var curationStatusCountArr = [0, 0, 0];
+
+        Mapping.find({}).stream()
+            .on('data', function(mapping){
+                //var countFlag = true;
+                if(mapping.completeStatus !== undefined)
+                {
+                    if(mapping.completeStatus === '2')
+                    {
+                        curationStatusCountArr[1]++;
+                    }
+                    else if(mapping.completeStatus === '3')
+                    {
+                        curationStatusCountArr[2]++;
+                    }
+                }
+            })
+            .on('error', function(err){
+                // handle error
+                console.log('error happened');
+            })
+            .on('end', function(){
+                // final callback
+                Trial.find({countries: {$in: ['United States']}}).count().exec(function(err, countResult){
+                    curationStatusCountArr[0] = countResult - curationStatusCountArr[1] - curationStatusCountArr[2];
+                    return res.jsonp(curationStatusCountArr);
+                });
+
+            });
+
+}
+
+exports.overlappingTrials = function(req, res){
+    var filteredNctIds = [], tempArr = [], firstFlag = true, count = 0;
+    var gene = req.params.gene;
+    var alterations = req.params.alterations;
+    _.each(alterations, function(item){
+        tempArr = [];
+        Mapping.find({alterations: {$in: [{gene: gene, alteration: item, curationMethod: 'manually', type: 'inclusion'},
+            {gene: gene, alteration: item, curationMethod: 'manually', type: 'exclusion'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'unconfirmed'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'confirmed'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'unconfirmed'},
+            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'confirmed'} ]}}).stream()
+            .on('data', function(mapping){
+                tempArr.push(mapping.nctId);
+            })
+            .on('error', function(err){
+                console.log('error happened when searching ', err);
+            })
+            .on('end', function(){
+                count++;
+                if(firstFlag){
+                    filteredNctIds = tempArr;
+                    firstFlag = false;
+                }
+                else{
+                    filteredNctIds = _.intersection(tempArr, filteredNctIds);
+                }
+
+                if(count === alterations.length){
+                    console.log('here is the mapping info ', filteredNctIds);
+                  return res.jsonp(filteredNctIds);
+                }
+            });
     });
-};
+}
+
+
+

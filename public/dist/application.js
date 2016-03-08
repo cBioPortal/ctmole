@@ -433,12 +433,12 @@ angular.module('alterations').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Details', '/', 'dropdown', false);
-        Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
-		Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
-		Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
-        Menus.addSubMenuItem('topbar', '/', 'List Drugs', 'drugs');
+        //Menus.addSubMenuItem('topbar', '/', 'List Genes', 'genes');
+        //Menus.addSubMenuItem('topbar', '/', 'List Alterations', 'alterations');
+        //Menus.addSubMenuItem('topbar', '/', 'List Cancer Types', 'cancertypes');
+        //Menus.addSubMenuItem('topbar', '/', 'List Drugs', 'drugs');
         Menus.addSubMenuItem('topbar', '/', 'List Trials', 'trials');
-        Menus.addSubMenuItem('topbar', '/', 'Search Trial', 'trials/search');
+        //Menus.addSubMenuItem('topbar', '/', 'Search Trial', 'trials/search');
 	}
 ]);
 /*
@@ -2233,8 +2233,8 @@ angular.module('mappings',['localytics.directives', 'angular-underscore', 'datat
 	function(Menus) {
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Mappings', 'mappings', 'dropdown', false, true, ['*'], -1);
-		Menus.addSubMenuItem('topbar', 'mappings', 'Find common trials', 'mappings');
-        Menus.addSubMenuItem('topbar', 'mappings', 'Assign trial', 'trials/assign');
+		//Menus.addSubMenuItem('topbar', 'mappings', 'Find common trials', 'mappings');
+        Menus.addSubMenuItem('topbar', 'mappings', 'Assign rules', 'trials/assign');
 		// Menus.addSubMenuItem('topbar', 'mappings', 'New Mapping', 'mappings/create');
 	}
 ]);
