@@ -66,6 +66,9 @@ module.exports = function(app) {
 	app.route('/deleteAlteration/:trialID/:gene/:alteration/:type')
 		.get(users.requiresLogin, mappings.deleteAlteration);
 
+	app.route('/deleteAlterationByTumor/:trialID/:gene/:alteration/:type/:tumor')
+		.get(users.requiresLogin, mappings.deleteAlterationByTumor);
+
 	app.route('/convertLog/:trialID')
 		.get(users.requiresLogin, mappings.convertLog);
 

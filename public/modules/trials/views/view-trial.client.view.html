@@ -15,13 +15,13 @@
 				<div ng-show="showAllDisease" class="addBGColor">
 					<h2><small>
 						<p>{{cancers[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
-						<p ng-if="$index > 0" ng-repeat="m in cancers">{{m}}</p>
+						<p ng-if="$index > 0" ng-repeat="m in trial.tumorTypes">{{m}}</p>
 					</small></h2>
 				</div>
 
 				<div ng-show="!showAllDisease">
 					<h2><small>
-						<p>{{cancers[0]}}<a  ng-if="cancers.length > 1" ng-click="displayDiseaseStyle()"> and {{cancers.length-1}} more </a></p>
+						<p>{{trial.tumorTypes[0]}}<a  ng-if="trial.tumorTypes.length > 1" ng-click="displayDiseaseStyle()"> and {{trial.tumorTypes.length-1}} more </a></p>
 					</small></h2>
 				</div>
 
@@ -76,12 +76,12 @@
 					<div class="modal-dialog">
 
 						<!-- Modal content-->
-						<div class="modal-content">
+						<div class="modal-content" style="width:800px">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 								<h4 class="modal-title">Add new inclusion alteration</h4>
 							</div>
-							<div class="modal-body">
+							<div class="modal-body" >
 
 								Gene:
 								<select chosen
@@ -92,6 +92,13 @@
 										data-placeholder="Enter A Gene">
 								</select>
 								Alteration: <input ng-model="inclusion_newAlteration">
+								TumorType:
+								<select chosen
+										ng-model="inclusion_newTumor"
+										ng-options="m as m for m in trial.tumorTypes"
+										class="chosen-select"
+										data-placeholder="Enter A Tumortype">
+								</select>
 
 							</div>
 							<div class="modal-footer">
@@ -111,12 +118,13 @@
 					<h1><small>
 
 						<div class="fixMargin" ng-if="x.status === 'unconfirmed'">
-						<span class="label label-warning" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene+ "     " + x.alteration}}</span>
+						<span class="label label-warning" ng-click="showTumors(x.gene + '_' + x.alteration)" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene+ "     " + x.alteration}}</span>
 						<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x, 'inclusion')"></i>
 								<i class="fa fa-check" ng-if="x.alteration !== 'unspecified' " ng-click="confirmAlteration(x)"></i>
 								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
 						</span>
+
 						</div>
 						<div class="fixMargin" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">
 							<span  class="label label-success" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
@@ -125,6 +133,13 @@
 								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
 							</span>
 						</div>
+						<div ng-attr-id="{{x.gene + '_' + x.alteration}}">
+							<p ng-repeat="y in x.tumors"><span class="label label-danger tumorStyle newMargin">{{y}}</span>
+							<span class="newMargin"><i class="fa fa-times" ng-click="deleteTumor(x.gene, x.alteration,y)"></i>
+								</span></p>
+
+						</div>
+
 
 					</small></h1>
 					</div>
@@ -134,7 +149,8 @@
 				<span ng-show="inclusion_editing">
 					<input type="text" ng-model="inclusion_editedGene" placeholder="Gene">
 					<input type="text" ng-model="inclusion_editedMutation" placeholder="Mutation">
-					<i class="fa fa-floppy-o" ng-click="saveAlteration(inclusion_editedGene, inclusion_editedMutation, 'inclusion')"></i>
+					<input type="text" ng-model="inclusion_editedTumor" placeholder="Tumor">
+					<i class="fa fa-floppy-o" ng-click="saveAlteration(inclusion_editedGene, inclusion_editedMutation, 'inclusion', inclusion_editedTumor)"></i>
 				<br/><br/>
 				</span>
 

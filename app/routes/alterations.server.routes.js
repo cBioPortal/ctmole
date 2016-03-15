@@ -56,7 +56,7 @@ module.exports = function(app) {
 		.get(alterations.generalSearch);
 
 
-	app.route('/addAlteration/:alteration/:gene/:nctId/:type')
+	app.route('/addAlteration/:alteration/:gene/:nctId/:type/:tumor')
 		.get(users.requiresLogin, alterations.addNewAlteration);
 
 	// Finish by binding the Alteration middleware

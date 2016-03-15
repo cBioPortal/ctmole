@@ -107,9 +107,7 @@ function worker2(){
     var predictedMutation = predictedMutations[predictedMutationIndex];
 
     Mapping.findOne({nctId: predictedMutation.nctId}).exec(function(err, mapping){
-
         if(!_.isNull(mapping)){
-
             mapping.alterations.push(predictedMutation.alteration);
             Mapping.update({nctId: predictedMutation.nctId}, {$set: {alterations: mapping.alterations}}, function(err){
                 if(err)
@@ -123,7 +121,7 @@ function worker2(){
                         predictedMutationIndex++;
                         if(predictedMutationIndex%100 === 0)
                         {
-                            console.log('updating trial...');
+                            console.log('updating existed mapping record...');
                             console.log('Saving to database ', (predictedMutationIndex/predictedMutations.length*100).toFixed(2), '% finished');
                         }
 
@@ -152,7 +150,7 @@ function worker2(){
                         predictedMutationIndex++;
                         if(predictedMutationIndex%100 === 0)
                         {
-                            console.log('saving new trial...');
+                            console.log('saving new mapping record...');
                             console.log('Saving to database ', (predictedMutationIndex/predictedMutations.length*100).toFixed(2), '% finished');
                         }
                         worker2();
@@ -243,7 +241,7 @@ function worker3()
                         if (inclusionAltIndex !== -1) {
                             predictedMutations.push({
                                 nctId: trial.nctId,
-                                alteration: {gene: hugo_symbol, alteration: alt, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
+                                alteration: {gene: hugo_symbol, alteration: alt, tumors: trial.tumorTypes, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
                             });
                             saveGeneInclusionFlag = false;
                         }
@@ -251,7 +249,7 @@ function worker3()
                         if (exclusionAltIndex !== -1) {
                             predictedMutations.push({
                                 nctId: trial.nctId,
-                                alteration: {gene: hugo_symbol, alteration: alt, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
+                                alteration: {gene: hugo_symbol, alteration: alt, tumors: trial.tumorTypes, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
                             });
                             saveGeneExclusionFlag = false;
                         }
@@ -260,14 +258,14 @@ function worker3()
                     if (inclusionGeneIndex !== -1 && saveGeneInclusionFlag === true) {
                         predictedMutations.push({
                             nctId: trial.nctId,
-                            alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
+                            alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
                         });
                     }
 
                     if (exclusionGeneIndex !== -1 && saveGeneExclusionFlag === true) {
                         predictedMutations.push({
                             nctId: trial.nctId,
-                            alteration: {gene: hugo_symbol, alteration: 'unspecified',status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
+                            alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
                         });
                     }
 
@@ -278,12 +276,14 @@ function worker3()
                {
                    if(inclusionGeneIndex !== -1)
                    {
-                       predictedMutations.push({nctId: trial.nctId, alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}});
+                       predictedMutations.push({nctId: trial.nctId,
+                           alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}});
                    }
 
                    if(exclusionGeneIndex !== -1)
                    {
-                       predictedMutations.push({nctId: trial.nctId, alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}});
+                       predictedMutations.push({nctId: trial.nctId,
+                           alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}});
                    }
                }
 
@@ -307,15 +307,42 @@ function worker3()
             {
                 console.log('**************************************');
                 console.log('Bio-Marker Predicting is done, Saving to database...');
-                console.log('here is the length ', predictedMutations.length);
+                console.log('The length of predicted records is ', predictedMutations.length);
 
                 worker2();
 
             }
         })
 }
+function worker4(){
+    //update the mapping table, remove previous predicted items except manually added or confirmed prediction
+    var tempAlts = [];
+    Mapping.find({}).stream()
+        .on('data', function(mapping){
+            tempAlts = mapping.alterations;
+            for(var i = 0;i < tempAlts.length;i++){
+                if(tempAlts[i].curationMethod === 'predicted' && tempAlts[i].status === 'unconfirmed'){
+                    tempAlts.splice(i, 1);
+                }
+            }
+            console.log('alteration array ', tempAlts);
+            Mapping.update({nctId: mapping.nctId}, {$set: {alterations: tempAlts}}, function(err){
+                if(err)
+                {
+                    console.log('Error happened when saving new mapping record ', err);
+                }
 
-function worker4() {
+            });
+        })
+        .on('error', function(err){
+            console.log('Sorry Error happened when updating old mapping record! ', err);
+        })
+        .on('end', function(){
+            //worker2();
+        })
+
+}
+function main() {
     var rd = readline.createInterface({
         input: fs.createReadStream('./geneAlias.txt'),
         output: process.stdout,
@@ -346,11 +373,6 @@ function worker4() {
         connectDB(workers);
 
     });
-}
-
-function main() {
-    //generate gene alias array with input file
-    worker4();
 }
 
 main();

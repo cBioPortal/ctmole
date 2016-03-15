@@ -107,3 +107,10 @@ table.table.trialTableStyle tr:nth-child(even) {
 .displayBlock{
     display:block
 }
+.tumorStyle{
+    margin-left: 40px;
+}
+.newMargin{
+    margin-top: 100px;
+    font-size: 15px;
+}

@@ -64,9 +64,9 @@ function trialsByCancersMutationsGET(req, res) {
                     nctIdsB = nctIdsB.concat(cancertype.nctIds);
                 });
                 nctIdsB = _.uniq(nctIdsB);
-                nctIds = _.intersection(nctIdsA, nctIdsB);console.log( nctIdsA.length, 'd', nctIdsB.length, 'c', nctIds.length);
-                results.push({gene: gene, alteration: alteration, tumortype: tumortype, nctIds: nctIds });
-                res.json(results);
+                nctIds = _.intersection(nctIdsA, nctIdsB);
+                //results.push({gene: gene, alteration: alteration, tumortype: tumortype, nctIds: nctIdsA });
+                res.json(nctIdsA);
                 mongoose.connection.close();
             });
         })
@@ -113,9 +113,9 @@ function trialsByCancersMutationsPOST(req, res) {
                         nctIdsB = nctIdsB.concat(cancertype.nctIds);
                     });
                     nctIdsB = _.uniq(nctIdsB);
-                    nctIds = _.intersection(nctIdsA, nctIdsB);console.log( nctIdsA.length, 'd', nctIdsB.length, 'c', nctIds.length);
-                    results.push({gene: gene, alteration: alteration, tumortype: tumortype, nctIds: nctIds });
-                    res.json(results);
+                    nctIds = _.intersection(nctIdsA, nctIdsB);
+                    //results.push({gene: gene, alteration: alteration, tumortype: tumortype, nctIds: nctIdsA });
+                    res.json(nctIdsA);
                     mongoose.connection.close();
                 });
             })

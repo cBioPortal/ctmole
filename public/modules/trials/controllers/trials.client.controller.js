@@ -87,6 +87,9 @@ angular.module('trials').controller('TrialsController',
 
             var editingAlteration = {};
 
+            $scope.showTumors = function(id){
+                $('#'+id).toggle();
+            }
             $scope.showAllComments = function(){
                 $scope.showAllCom = !$scope.showAllCom;
             };
@@ -223,7 +226,7 @@ angular.module('trials').controller('TrialsController',
 
                     });
                     $scope.cancers = tempArr1;
-                    console.log(tempArr1);
+
                 });
             }
 
@@ -422,19 +425,21 @@ angular.module('trials').controller('TrialsController',
             $scope.addAlterationBynctId = function (type) {
 
                 var addFalg = true;
-                var tempAlteration = '', tempGene = '', tempArr = [];
+                var tempAlteration = '', tempGene = '', tempArr = [], tempTumor = '';
                 if(type === 'inclusion'){
                     tempAlteration = $scope.inclusion_newAlteration;
                     tempGene = $scope.inclusion_newGene;
                     tempArr = $scope.inclusionAlterations;
+                    tempTumor = $scope.inclusion_newTumor;
+
                 }
                 else if(type === 'exclusion'){
                     tempAlteration = $scope.exclusion_newAlteration;
                     tempGene = $scope.exclusion_newGene;
                     tempArr = $scope.exclusionAlterations;
-                }
+                }console.log('here ', tempArr);
                 _.each(tempArr, function(item){
-                    if(tempAlteration.toUpperCase() === item.alteration && tempGene.toUpperCase() === item.gene)
+                    if(tempAlteration.toUpperCase() === item.alteration && tempGene.toUpperCase() === item.gene && item.tumors.indexOf(tempTumor) !== -1)
                     {
                         bootbox.alert('Sorry but entered alteration already added for this trial!');
                         addFalg = false;
@@ -446,7 +451,8 @@ angular.module('trials').controller('TrialsController',
                         alteration: tempAlteration.toUpperCase(),
                         gene: tempGene.toUpperCase(),
                         nctId: $scope.trial.nctId,
-                        type: type
+                        type: type,
+                        tumor: tempTumor
                     }, function (u) {
                         if(u[1] === 'e'){
                             bootbox.alert('Sorry but error happened when inserting the record. Please try again');
@@ -507,12 +513,12 @@ angular.module('trials').controller('TrialsController',
                     $scope.exclusion_editedMutation = x.alteration;
                 }
             };
-            $scope.saveAlteration = function(tempGene, tempAlteration, type){
+            $scope.saveAlteration = function(tempGene, tempAlteration, type, tempTumor){
 
                 if( tempGene === editingAlteration.gene && tempAlteration === editingAlteration.alteration)
                 {
-                    bootbox.alert('Please edit mutation record before save it!');
-                    return false;
+                    //bootbox.alert('Please edit mutation record before save it!');
+                    //return false;
                 }
                 else
                 {
@@ -523,7 +529,7 @@ angular.module('trials').controller('TrialsController',
                     if(type === 'inclusion'){
                         $scope.inclusion_newAlteration = tempAlteration;
                         $scope.inclusion_newGene =  tempGene;
-
+                        $scope.inclusion_newTumor = tempTumor;
                         $scope.inclusion_editedGene = '';
                         $scope.inclusion_editedMutation = '';
                     }
@@ -538,8 +544,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.addAlterationBynctId(type);
 
                 }
-
-                $scope.editing = false;
+                $scope.inclusion_editing = false;
 
             };
 
@@ -555,6 +560,13 @@ angular.module('trials').controller('TrialsController',
 
             };
 
+            $scope.deleteTumor = function(gene, alteration, tumor){
+                console.log('here is the value', gene, alteration, tumor);
+                Mappings.deleteAlterationByTumor.get({trialID: $scope.trial.nctId, gene: gene, alteration: alteration, type: 'inclusion', tumor: tumor},
+                function(){
+                    fetchMapInfo();
+                });
+            }
             $scope.updateTrial = function () {
 
                 Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function (u, getResponseHeaders) {

@@ -402,6 +402,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
         }
 
         $scope.find = function () {
+
             $scope.refineFlag = false;
             $scope.criteria = [{type: 'country', value: ['United States']}];
             $scope.types = ['country'];
