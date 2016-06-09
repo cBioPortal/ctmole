@@ -48,22 +48,22 @@ var	Trial = require('../../app/models/trial.server.model.js');
 
 
 var predictedMutations = [];
-var index = 0, alterationCollectionIndex = 0, predictedMutationIndex = 0;
-var hugo_symbol = '', alt = '', altId = '';
+var index = 0, predictedMutationIndex = 0;
+var hugo_symbol = '', alt = '';
 var type = '';
 var alterationCollections = [];
 var geneAlias = [];
 var genesWithAlias = [];
 
-var skipScanItems = ['anti egfr', 'anti-egfr'];
+var skipScanItems = [];
 
 
-function connectDB(callback123){
+function connectDB(callback){
 
     mongoose.connect('mongodb://localhost/firstDB');
     mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
-    mongoose.connection.once('open', function callback () {
-        callback123();
+    mongoose.connection.once('open', function(){
+        callback();
     });
 }
 
@@ -108,7 +108,12 @@ function worker2(){
 
     Mapping.findOne({nctId: predictedMutation.nctId}).exec(function(err, mapping){
         if(!_.isNull(mapping)){
-            mapping.alterations.push(predictedMutation.alteration);
+            var tempArr = mapping.alterations.filter(function(obj){
+                return obj.alteration === predictedMutation.alteration.alteration && obj.gene === predictedMutation.alteration.gene;
+            });
+            if(tempArr.length === 0){
+                mapping.alterations.push(predictedMutation.alteration);
+            }
             Mapping.update({nctId: predictedMutation.nctId}, {$set: {alterations: mapping.alterations}}, function(err){
                 if(err)
                 {
@@ -134,6 +139,7 @@ function worker2(){
                     }
                 }
             });
+
         }
         else{
             var newMappingRecord = new Mapping({nctId: predictedMutation.nctId, completeStatus: '1', alterations: [predictedMutation.alteration]});
@@ -241,7 +247,7 @@ function worker3()
                         if (inclusionAltIndex !== -1) {
                             predictedMutations.push({
                                 nctId: trial.nctId,
-                                alteration: {gene: hugo_symbol, alteration: alt, tumors: trial.tumorTypes, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
+                                alteration: {gene: hugo_symbol, alteration: alt, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
                             });
                             saveGeneInclusionFlag = false;
                         }
@@ -249,7 +255,7 @@ function worker3()
                         if (exclusionAltIndex !== -1) {
                             predictedMutations.push({
                                 nctId: trial.nctId,
-                                alteration: {gene: hugo_symbol, alteration: alt, tumors: trial.tumorTypes, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
+                                alteration: {gene: hugo_symbol, alteration: alt, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
                             });
                             saveGeneExclusionFlag = false;
                         }
@@ -258,14 +264,14 @@ function worker3()
                     if (inclusionGeneIndex !== -1 && saveGeneInclusionFlag === true) {
                         predictedMutations.push({
                             nctId: trial.nctId,
-                            alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
+                            alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}
                         });
                     }
 
                     if (exclusionGeneIndex !== -1 && saveGeneExclusionFlag === true) {
                         predictedMutations.push({
                             nctId: trial.nctId,
-                            alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
+                            alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}
                         });
                     }
 
@@ -277,19 +283,15 @@ function worker3()
                    if(inclusionGeneIndex !== -1)
                    {
                        predictedMutations.push({nctId: trial.nctId,
-                           alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}});
+                           alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'inclusion', curationMethod: 'predicted'}});
                    }
 
                    if(exclusionGeneIndex !== -1)
                    {
                        predictedMutations.push({nctId: trial.nctId,
-                           alteration: {gene: hugo_symbol, alteration: 'unspecified', tumors: trial.tumorTypes, status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}});
+                           alteration: {gene: hugo_symbol, alteration: 'unspecified', status: 'unconfirmed', type: 'exclusion', curationMethod: 'predicted'}});
                    }
                }
-
-                //if(trial.nctId === 'NCT02448810' && hugo_symbol === 'NRAS'){
-                //    console.log('NCT0244sadafdfafd8810', type, exclusionGeneIndex, tempStrExp);
-                //}
 
         })
         .on('error', function(){
@@ -309,7 +311,7 @@ function worker3()
                 console.log('Bio-Marker Predicting is done, Saving to database...');
                 console.log('The length of predicted records is ', predictedMutations.length);
 
-                worker2();
+                worker4();
 
             }
         })
@@ -319,13 +321,10 @@ function worker4(){
     var tempAlts = [];
     Mapping.find({}).stream()
         .on('data', function(mapping){
-            tempAlts = mapping.alterations;
-            for(var i = 0;i < tempAlts.length;i++){
-                if(tempAlts[i].curationMethod === 'predicted' && tempAlts[i].status === 'unconfirmed'){
-                    tempAlts.splice(i, 1);
-                }
-            }
-            console.log('alteration array ', tempAlts);
+            tempAlts = mapping.alterations.filter(function(obj){
+                return obj.curationMethod === 'predicted' && obj.status === 'confirmed' || obj.curationMethod === 'manually';
+            });
+
             Mapping.update({nctId: mapping.nctId}, {$set: {alterations: tempAlts}}, function(err){
                 if(err)
                 {
@@ -338,7 +337,7 @@ function worker4(){
             console.log('Sorry Error happened when updating old mapping record! ', err);
         })
         .on('end', function(){
-            //worker2();
+            worker2();
         })
 
 }
@@ -370,6 +369,20 @@ function main() {
 
     rd.on('close', function(){
         genesWithAlias = _.map(geneAlias, function(e){return e.gene;});
+    });
+
+    var reader = readline.createInterface({
+        input: fs.createReadStream('./skipItems.txt'),
+        output: process.stdout,
+        terminal: false
+    });
+
+    reader.on('line', function(line) {
+        tempArr = line.trim();
+        skipScanItems.push(tempArr);
+    });
+
+    reader.on('close', function(){
         connectDB(workers);
 
     });

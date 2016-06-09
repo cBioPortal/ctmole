@@ -110,6 +110,16 @@ angular.module('mappings').factory('Mappings', ['$resource',
 				deleteAlterationByTumor: {
 					method: 'GET'
 				}
+			}),
+			addTumor: $resource('addTumor/:trialID/:tumor/:predictedTumors', {trialID: '@nctId',tumor: '@oncoTreeTumors'}, {
+				get: {
+					method: 'GET'
+				}
+			}),
+			deleteTumor: $resource('deleteTumor/:trialID/:tumor', {trialID: '@nctId',tumor: '@oncoTreeTumors'}, {
+				get: {
+					method: 'GET'
+				}
 			})
 		};
 

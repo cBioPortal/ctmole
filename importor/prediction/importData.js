@@ -1,3 +1,6 @@
+/**
+ * Created by jiaojiao on 12/28/15.
+ */
 /*
  * Copyright (c) 2015 Memorial Sloan-Kettering Cancer Center.
  *
@@ -28,38 +31,40 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 'use strict';
 
 
-angular.module('alterations').factory('Alterations', ['$resource',
-	function($resource) {
-		return {
-			alterationByIds: $resource('alterations/:Ids', {Ids:[]}, {query: {isArray: true}}),
+var mongoose = require('mongoose');
+var _ = require('underscore');
+var fs = require('fs'), readline = require('readline');
+var Alteration = require('../../app/models/alteration.server.model.js');
+ 
+function main(){
 
-			alteration: $resource('alterations/:alteration/:gene', { alteration: '@alteration',gene: '@gene'
-			}, {
-				update: {
-					method: 'PUT'
-				},
-				query: {isArray: true}
-			}),
-			searchEngine: $resource('alterationGeneral/:searchEngineKeyword', {
-			}, {
-				'query':  {method:'GET', isArray:true}
-			}),
-			addAlteration: $resource('addAlteration/:alteration/:gene/:nctId/:type', { alteration: '@alteration',gene: '@gene'
-			}, {})
+    mongoose.connect('mongodb://localhost/firstDB');
+    mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+    mongoose.connection.once('open', function(){
+         scanData();
+    });
+}
+function scanData(){
+        var rd = readline.createInterface({
+        input: fs.createReadStream('./alterations.txt'),
+        output: process.stdout,
+        terminal: false
+    });
 
+    var tempArr = [];
+    rd.on('line', function(line) {
+        tempArr = line.split('	');
+       
 
-		};
-	}
-]);
+    });
 
-
-
-
-
-
-
+    rd.on('close', function(){
+        console.log('done saving');
+    });
+}
+main();

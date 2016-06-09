@@ -14,7 +14,7 @@
 
 				<div ng-show="showAllDisease" class="addBGColor">
 					<h2><small>
-						<p>{{cancers[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
+						<p>{{trial.tumorTypes[0]}}<i ng-click="displayDiseaseStyle()" class="fa fa-compress"></i></p>
 						<p ng-if="$index > 0" ng-repeat="m in trial.tumorTypes">{{m}}</p>
 					</small></h2>
 				</div>
@@ -76,12 +76,12 @@
 					<div class="modal-dialog">
 
 						<!-- Modal content-->
-						<div class="modal-content" style="width:800px">
+						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 								<h4 class="modal-title">Add new inclusion alteration</h4>
 							</div>
-							<div class="modal-body" >
+							<div class="modal-body">
 
 								Gene:
 								<select chosen
@@ -92,13 +92,6 @@
 										data-placeholder="Enter A Gene">
 								</select>
 								Alteration: <input ng-model="inclusion_newAlteration">
-								TumorType:
-								<select chosen
-										ng-model="inclusion_newTumor"
-										ng-options="m as m for m in trial.tumorTypes"
-										class="chosen-select"
-										data-placeholder="Enter A Tumortype">
-								</select>
 
 							</div>
 							<div class="modal-footer">
@@ -118,13 +111,12 @@
 					<h1><small>
 
 						<div class="fixMargin" ng-if="x.status === 'unconfirmed'">
-						<span class="label label-warning" ng-click="showTumors(x.gene + '_' + x.alteration)" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene+ "     " + x.alteration}}</span>
+						<span class="label label-warning" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene+ "     " + x.alteration}}</span>
 						<span>
 								<i class="fa fa-times "  ng-click="deleteAlteration(x, 'inclusion')"></i>
 								<i class="fa fa-check" ng-if="x.alteration !== 'unspecified' " ng-click="confirmAlteration(x)"></i>
 								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
 						</span>
-
 						</div>
 						<div class="fixMargin" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">
 							<span  class="label label-success" ng-mouseover="highlight(x.gene, x.alteration)">{{x.gene + "     " + x.alteration}}</span>
@@ -133,13 +125,6 @@
 								<i class="fa fa-pencil" ng-click="editAlteration(x, 'inclusion')"></i>
 							</span>
 						</div>
-						<div ng-attr-id="{{x.gene + '_' + x.alteration}}">
-							<p ng-repeat="y in x.tumors"><span class="label label-danger tumorStyle newMargin">{{y}}</span>
-							<span class="newMargin"><i class="fa fa-times" ng-click="deleteTumor(x.gene, x.alteration,y)"></i>
-								</span></p>
-
-						</div>
-
 
 					</small></h1>
 					</div>
@@ -149,8 +134,7 @@
 				<span ng-show="inclusion_editing">
 					<input type="text" ng-model="inclusion_editedGene" placeholder="Gene">
 					<input type="text" ng-model="inclusion_editedMutation" placeholder="Mutation">
-					<input type="text" ng-model="inclusion_editedTumor" placeholder="Tumor">
-					<i class="fa fa-floppy-o" ng-click="saveAlteration(inclusion_editedGene, inclusion_editedMutation, 'inclusion', inclusion_editedTumor)"></i>
+					<i class="fa fa-floppy-o" ng-click="saveAlteration(inclusion_editedGene, inclusion_editedMutation, 'inclusion')"></i>
 				<br/><br/>
 				</span>
 
@@ -225,8 +209,53 @@
 				<br/>
 				</span>
 
+				<label class="headerStyle">OncoTree Tumor Types</label>
+				<span class="leftMargin">
+								<button data-toggle="modal" data-target="#oncotree" type="button"><i class="fa fa-plus"></i></button>
+				</span>
+				<div class="modal fade" id="oncotree" role="dialog">
+					<div class="modal-dialog">
 
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Add new exclusion alteration</h4>
+							</div>
+							<div class="modal-body">
 
+								OncoTree TumorTypes:
+								<select chosen
+										option="oncoTreeTumor"
+										ng-model="newOncoTreeTumor"
+										ng-options="m as m for m in allOncoTreeTumors"
+										class="chosen-select"
+										data-placeholder="Enter A TumorType">
+								</select>
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addOncoTreeTumor()">Submit</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div ng-if="oncoTreeTumors.length > 0" ng-repeat="x in oncoTreeTumors" >
+					<div class="displayBlock">
+						<h1><small>
+							<div class="fixMargin">
+								<span class="label label-primary">{{x}}</span>
+								<span><i class="fa fa-times "  ng-click="deleteOncoTreeTumor(x)"></i></span>
+							</div>
+						</small></h1>
+					</div>
+
+				</div>
+				<p ng-if="oncoTreeTumors.length === 0">No information available</p>
+
+				<br/>
 
 				<label class="headerStyle" for="sel1">Curation Status</label>
 				<select class="form-control" id="sel1" ng-model="trialStatus" ng-change="switchStatus(trialStatus)">

@@ -221,7 +221,7 @@ exports.addNewAlteration = function (req, res) {
                     var mapping = new Mapping({
                         nctId: req.params.nctId,
                         alterations: [{alteration: req.params.alteration, gene: req.params.gene,
-                            curationMethod: 'manually', type: req.params.type, tumors: [req.params.tumor]}],
+                            curationMethod: 'manually', type: req.params.type}],
                         completeStatus: 1,
                         log: [{
                             date: rightNow,
@@ -241,26 +241,13 @@ exports.addNewAlteration = function (req, res) {
                     });
                 }
                 else {
-                    var alterationExisted = true;
-                    for(var i = 0;i < mapping.alterations.length;i++){
-                        if(mapping.alterations[i].alteration === req.params.alteration && mapping.alterations[i].gene === req.params.gene && mapping.alterations[i].type === req.params.type){
-                            mapping.alterations[i].tumors.push(req.params.tumor);
-                            alterationExisted = false;
-                            break;
-                        }
-                    }console.log('here is the value ', alterationExisted, req.params.alteration, req.params.gene, req.params.type);
-                    if(alterationExisted){
-                        mapping.alterations.push({alteration: req.params.alteration, gene: req.params.gene,
-                            curationMethod: 'manually', type: req.params.type, tumors: [req.params.tumor]});
-                    }
-
+                    mapping.alterations.push({alteration: req.params.alteration, gene: req.params.gene,
+                        curationMethod: 'manually', type: req.params.type});
                     mapping.log.push({
                         date: rightNow,
                         user: req.user._id.toString(),
                         operationType: 'add',
-                        alteration: req.params.alteration,
-                        gene: req.params.gene,
-                        tumor: req.params.tumor
+                        alteration: req.params.alteration, gene: req.params.gene
                     });
                     if(mapping.completeStatus === '1')
                     {
@@ -302,15 +289,13 @@ exports.addNewAlteration = function (req, res) {
                             var mapping = new Mapping({
                                 nctId: req.params.nctId,
                                 alterations: [{alteration: req.params.alteration, gene: req.params.gene,
-                                    curationMethod: 'manually', type: req.params.type, tumors: [req.params.tumor]}],
+                                    curationMethod: 'manually', type: req.params.type}],
                                 completeStatus: 1,
                                 log: [{
                                     date: rightNow,
                                     user: req.user._id.toString(),
                                     operationType: 'add',
-                                    alteration: req.params.alteration,
-                                    gene: req.params.gene,
-                                    tumor: req.params.tumor
+                                    alteration: req.params.alteration, gene: req.params.gene
                                 }]
                             });
                             mapping.user = req.user;
@@ -323,18 +308,7 @@ exports.addNewAlteration = function (req, res) {
                             });
                         }
                         else {
-                            var alterationExisted = true;
-                            for(var i = 0;i < mapping.alterations.length;i++){
-                                if(mapping.alterations[i].alteration === req.params.alteration && mapping.alterations[i].gene === req.params.gene && mapping.alterations[i].type === req.params.type){
-                                    mapping.alterations[i].tumors.push(req.params.tumor);
-                                    alterationExisted = false;
-                                    break;
-                                }
-                            }
-                            if(alterationExisted){
-                                mapping.alterations.push({alteration: req.params.alteration, gene: req.params.gene,
-                                    curationMethod: 'manually', type: req.params.type, tumors: [req.params.tumor]});
-                            }
+                            mapping.alterations.push({alteration: req.params.alteration, gene: req.params.gene, curationMethod: 'manually', type: req.params.type});
                             mapping.log.push({
                                 date: rightNow,
                                 user: req.user._id.toString(),

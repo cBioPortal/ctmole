@@ -32,34 +32,18 @@
 
 'use strict';
 
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+	Schema = mongoose.Schema;
 
-angular.module('alterations').factory('Alterations', ['$resource',
-	function($resource) {
-		return {
-			alterationByIds: $resource('alterations/:Ids', {Ids:[]}, {query: {isArray: true}}),
+/**
+ * Alteration Schema
+ */
+var AlterationSchema = new Schema({
+	alteration: String,
+	gene: String
+});
 
-			alteration: $resource('alterations/:alteration/:gene', { alteration: '@alteration',gene: '@gene'
-			}, {
-				update: {
-					method: 'PUT'
-				},
-				query: {isArray: true}
-			}),
-			searchEngine: $resource('alterationGeneral/:searchEngineKeyword', {
-			}, {
-				'query':  {method:'GET', isArray:true}
-			}),
-			addAlteration: $resource('addAlteration/:alteration/:gene/:nctId/:type', { alteration: '@alteration',gene: '@gene'
-			}, {})
-
-
-		};
-	}
-]);
-
-
-
-
-
-
-
+module.exports = mongoose.model('Alteration', AlterationSchema);

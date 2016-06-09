@@ -185,7 +185,7 @@ function compare(a, b) {
     if (a.date > b.date)
         return 1;
     return 0;
-};
+}
 
 exports.convertLog = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
@@ -477,7 +477,7 @@ function compare(a, b) {
 exports.geneTrialCounts = function(req, res){
     var geneTrialCountArr = [];
     var validStatusTrials = [];
-    Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
+    Trial.find({$and:[{countries: {$in: ['United States']}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
         .on('data', function(trial){
             validStatusTrials.push(trial.nctId);
         })
@@ -536,11 +536,11 @@ exports.geneTrialCounts = function(req, res){
                     geneTrialCountArr.sort(compare);
                     return res.jsonp(geneTrialCountArr);
                 });
-        })
+        });
 
 
 
-}
+};
 
 
 exports.curationStatusCounts = function(req, res){
@@ -574,7 +574,7 @@ exports.curationStatusCounts = function(req, res){
 
             });
 
-}
+};
 
 exports.overlappingTrials = function(req, res){
     var filteredNctIds = [], tempArr = [], firstFlag = true, count = 0;
@@ -610,7 +610,102 @@ exports.overlappingTrials = function(req, res){
                 }
             });
     });
+};
+
+exports.addTumor = function(req, res){
+    Mapping.findOne({nctId: req.params.trialID}).exec(function(error, mapping){
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
+            if(req.params.predictedTumors === 'emptyTumorsStored'){
+                req.params.predictedTumors = [];
+            }
+            else{
+                req.params.predictedTumors = req.params.predictedTumors.split(",");
+            }
+            req.params.predictedTumors.push(req.params.tumor);
+            var mapping = new Mapping({
+                nctId: req.params.trialID,
+                alteration: [],
+                completeStatus: '1',
+                comments: [],
+                log: [],
+                oncoTreeTumors: req.params.predictedTumors
+            });
+            mapping.user = req.user;
+            mapping.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.jsonp(mapping);
+                }
+            });
+
+
+        }
+        else{
+            if(mapping.oncoTreeTumors === undefined)mapping.oncoTreeTumors = req.params.predictedTumors;
+            mapping.oncoTreeTumors.push(req.params.tumor);
+            Mapping.update({nctId: req.params.trialID}, {$set: {oncoTreeTumors: mapping.oncoTreeTumors}}).exec(function(err){
+                if(err){
+                    console.log('error happened!');
+                }else{
+                     res.jsonp(mapping);
+                }
+            });
+        }
+
+
+    });
+
 }
 
+exports.deleteTumor = function(req, res){
+    Mapping.findOne({nctId: req.params.trialID}).exec(function(error, mapping){
+        if (!mapping) {
+            console.log('No Mapping Record Exist');
 
+            var mapping = new Mapping({
+                nctId: req.params.trialID,
+                alteration: [],
+                completeStatus: '1',
+                comments: [],
+                log: [],
+                oncoTreeTumors: []
+            });
+            mapping.user = req.user;
+            mapping.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.jsonp(mapping);
+                }
+            });
+
+
+        }
+        else{
+            if(mapping.oncoTreeTumors === undefined)mapping.oncoTreeTumors = [];
+            else{
+                mapping.oncoTreeTumors = mapping.oncoTreeTumors.filter(function(item){
+                    return item !== req.params.tumor;
+                });
+
+            }
+            Mapping.update({nctId: req.params.trialID}, {$set: {oncoTreeTumors: mapping.oncoTreeTumors}}).exec(function(err){
+                if(err){
+                    console.log('error happened!');
+                }else{
+                    res.jsonp(mapping);
+                }
+            });
+        }
+
+
+    });
+
+}
 

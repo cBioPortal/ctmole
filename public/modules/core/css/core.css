@@ -47,7 +47,6 @@ h1 span {
 	height: 100px;
 }
 .filterStyle{
-	max-height: 5%;
 	overflow-y: auto
 }
 .floatStyle{

@@ -42,6 +42,14 @@ var mongoose = require('mongoose'),
 
 var fs = require('fs'), readline = require('readline');
 
+function compare(a, b){
+	if(a.gene < b.gene)
+		return -1;
+	else if(a.gene > b.gene)
+		return 1;
+	else
+		return 0;
+}
 /**
  * Create a Gene
  */
@@ -182,7 +190,7 @@ exports.getAlias = function(req, res){
 
 	var geneAlias = [];
 	var rd = readline.createInterface({
-		input: fs.createReadStream(process.cwd() + '/importor/oncokb/geneAlias.txt'),
+		input: fs.createReadStream(process.cwd() + '/importor/prediction/geneAlias.txt'),
 		output: process.stdout,
 		terminal: false
 	});
@@ -211,12 +219,12 @@ exports.getAlias = function(req, res){
 		geneAlias.sort(compare);
 		res.jsonp(geneAlias);
 	});
-}
+};
 
 exports.getskipItems = function(req, res){
 
 	var rd = readline.createInterface({
-		input: fs.createReadStream(process.cwd() + '/importor/oncokb/skipItems.txt'),
+		input: fs.createReadStream(process.cwd() + '/importor/prediction/skipItems.txt'),
 		output: process.stdout,
 		terminal: false
 	});
@@ -231,23 +239,15 @@ exports.getskipItems = function(req, res){
 		skipItems.sort();
 		res.jsonp(skipItems);
 	});
-}
+};
 
 
-function compare(a, b){
-	if(a.gene < b.gene)
-	return -1;
-	else if(a.gene > b.gene)
-	return 1;
-	else
-	return 0;
-}
 
 
 exports.assignRule = function(req, res){
-	var type = req.params.type, operation = req.params.operation, values = req.params.values.split(","), fileName = '';
+	var type = req.params.type, operation = req.params.operation, values = req.params.values.split(','), fileName = '';
 	if(type === 'alias'){
-		fileName = process.cwd() + '/importor/oncokb/geneAlias.txt';
+		fileName = process.cwd() + '/importor/prediction/geneAlias.txt';
 		if(operation === 'add'){
 			fs.appendFile(fileName, values[0] + '\t' + values[1] + '\n' , function (err) {
 				return console.log(err);
@@ -260,12 +260,12 @@ exports.assignRule = function(req, res){
 				if (err) {
 					return console.log(err);
 				}
-				var newData = data.replace(values[0] + '\t' + values[1] + '\n', "");
+				var newData = data.replace(values[0] + '\t' + values[1] + '\n', '');
 				fs.writeFile(fileName, newData, function(err) {
 					if(err) {
 						console.log(err);
 					} else {
-						console.log("The file was saved!");
+						console.log('The file was saved!');
 					}
 				});
 
@@ -282,7 +282,7 @@ exports.assignRule = function(req, res){
 					if(err) {
 						console.log(err);
 					} else {
-						console.log("The file was saved!");
+						console.log('The file was saved!');
 
 					}
 				});
@@ -291,9 +291,8 @@ exports.assignRule = function(req, res){
 		}
 
 	}else if(type === 'skip'){
-		fileName = process.cwd() + '/importor/oncokb/skipItems.txt';
+		fileName = process.cwd() + '/importor/prediction/skipItems.txt';
 
-		console.log('gadsfahjgdadfafgdfg', values);
 
 		if(operation === 'add'){
 			fs.appendFile(fileName, values[0] + '\n' , function (err) {
@@ -305,12 +304,12 @@ exports.assignRule = function(req, res){
 				if (err) {
 					return console.log(err);
 				}
-				var newData = data.replace(values[0]+ '\n', "");
+				var newData = data.replace(values[0]+ '\n', '');
 				fs.writeFile(fileName, newData, function(err) {
 					if(err) {
 						console.log(err);
 					} else {
-						console.log("The file was saved!");
+						console.log('The file was saved!');
 					}
 				});
 
@@ -326,7 +325,7 @@ exports.assignRule = function(req, res){
 					if(err) {
 						console.log(err);
 					} else {
-						console.log("The file was saved!");
+						console.log('The file was saved!');
 					}
 				});
 
@@ -334,4 +333,4 @@ exports.assignRule = function(req, res){
 		}
 	}
 	res.jsonp(true);
-}
+};

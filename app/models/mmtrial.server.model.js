@@ -32,34 +32,58 @@
 
 'use strict';
 
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+	Schema = mongoose.Schema;
 
-angular.module('alterations').factory('Alterations', ['$resource',
-	function($resource) {
-		return {
-			alterationByIds: $resource('alterations/:Ids', {Ids:[]}, {query: {isArray: true}}),
-
-			alteration: $resource('alterations/:alteration/:gene', { alteration: '@alteration',gene: '@gene'
-			}, {
-				update: {
-					method: 'PUT'
-				},
-				query: {isArray: true}
-			}),
-			searchEngine: $resource('alterationGeneral/:searchEngineKeyword', {
-			}, {
-				'query':  {method:'GET', isArray:true}
-			}),
-			addAlteration: $resource('addAlteration/:alteration/:gene/:nctId/:type', { alteration: '@alteration',gene: '@gene'
-			}, {})
-
-
-		};
+/**
+ * Alteration Schema
+ */
+var MMTrialSchema = new Schema({
+	id: {
+		type: String,
+		required: 'Please fill NCT ID',
+		trim: true
+	},
+	briefTitle: {
+		type: String,
+		trim: true
+	},
+	locations: {
+		type: Array
+	},
+	phase: {
+		type: String,
+		trim: true
+	},
+	startDate: {
+		type: String,
+		trim: true
+	},
+	status: {
+		type: String,
+		trim: true
+	},
+	studyType: {
+		type: String,
+		trim: true
+	},
+	title: {
+		type: String,
+		trim: true
+	},
+	_score: {
+		type: String,
+		trim: true
+	},
+	interventions: {
+		type: Array
+	},
+	tags: {
+		type: Array
 	}
-]);
+});
 
-
-
-
-
-
-
+module.exports = mongoose.model('MMTrial', MMTrialSchema);

@@ -206,13 +206,13 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                     }
                     else {
                         $(window).scroll(function() {
-                            if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                            if($(window).scrollTop() + $(window).height() === $(document).height()) {
                                 $scope.$apply(function(){
                                     if($scope.countNum < trials.length){
                                         $scope.countNum += 10;
                                     }
 
-                                })
+                                });
 
                             }
                         });
@@ -244,7 +244,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                             tempAltIndex = -1;
                             if(item.alteration !== 'unspecified'){
                                 for(var j = 0;j < allAlts.length;j++){
-                                    if(allAlts[j].gene == item.gene && allAlts[j].alteration === item.alteration){
+                                    if(allAlts[j].gene === item.gene && allAlts[j].alteration === item.alteration){
                                         tempAltIndex = j;
                                         break;
                                     }
@@ -415,7 +415,9 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 $scope.search();
 
             }
-
+            _.each(document.getElementsByClassName('filterStyle'), function(item){
+                item.style.maxHeight = (window.innerHeight - 620)/2 + 'px';
+            });
 
         };
 
@@ -715,7 +717,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 };
 
                 var allNctIds = [];
-                _.map(result, function(item){allNctIds = allNctIds.concat(item.nctIds)});
+                _.map(result, function(item){allNctIds = allNctIds.concat(item.nctIds);});
                 allNctIds = _.uniq(allNctIds);
                 $scope.cancerTypeCounts = allNctIds.length;
 
@@ -754,7 +756,7 @@ angular.module('core').controller('HomeController', ['$scope', '$location', '$ro
                 Plotly.newPlot('curationStatus', curationData, layout);
             });
 
-        };
+        }
         plottyChart();
 
 
