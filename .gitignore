@@ -14,3 +14,4 @@ dumpData
 config/env/development.js
 
 config/env/production.js
+/nbproject/private/

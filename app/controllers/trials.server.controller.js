@@ -126,7 +126,7 @@ exports.delete = function (req, res) {
  * List of Trials
  */
 exports.list = function (req, res) {
-    Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).exec(function (err, trials) {
+    Trial.find({$and:[{countries: {$in: ['United States']}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).exec(function (err, trials) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -430,7 +430,7 @@ exports.tumorTypes = function(req, res){
             return res.jsonp(finalTumors);
         });
 
-}
+};
 
 exports.statusCounts = function(req, res){
     var statusCounts = {'Not_yet_recruiting': 0, 'Recruiting': 0, 'Enrolling_by_invitation': 0,
@@ -473,4 +473,4 @@ exports.statusCounts = function(req, res){
             return res.jsonp(statusCounts);
         });
 
-}
+};

@@ -1,0 +1,11 @@
+{
+  "spec_dir": "spec",
+  "spec_files": [
+    “jasmine_examples/PlayerSpec.js”
+  ],
+  "helpers": [
+    "helpers/jasmine_examples/*.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": false
+}

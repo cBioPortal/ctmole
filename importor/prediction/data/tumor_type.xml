@@ -1,0 +1,517 @@
+<?xml version="1.0"?>
+
+<!--
+-
+- Sequel Pro XML dump
+- Version 4096
+-
+- http://www.sequelpro.com/
+- http://code.google.com/p/sequel-pro/
+-
+- Host: 127.0.0.1 (MySQL 5.6.20)
+- Database: oncokb
+- Generation Time Time: 2014-12-17 19:40:14 +0000
+-
+-->
+
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="oncokb">
+
+	<table_structure name="tumor_type">
+		<field field="tumor_type_id" type="varchar(100)" null="NO" key="PRI" default="<null>" extra="" />
+		<field field="name" type="varchar(255)" null="NO" key="UNI" default="<null>" extra="" />
+		<field field="short_name" type="varchar(100)" null="YES" key="UNI" default="<null>" extra="" />
+		<field field="tissue" type="varchar(255)" null="YES" key="" default="<null>" extra="" />
+
+		<options name="tumor_type" engine="InnoDB" version="10" row_format="Compact" rows="69" avg_row_length="237" data_length="16384" max_data_length="0" index_length="32768" data_free="0" create_time="2014-12-16 13:56:35" update_time="<null>" collation="utf8_general_ci" create_options="" comment="" />
+	</table_structure>
+
+	<table_data name="tumor_type">
+
+	<row>
+		<field name="tumor_type_id">Acute Myeloid Leukemia, Chronic Myeloid Leukemia</field>
+		<field name="name">Acute Myeloid Leukemia, Chronic Myeloid Leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">ACYC</field>
+		<field name="name">adenoid cystic carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">head and neck</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">AITL/ACTL</field>
+		<field name="name">angioimmunoblastic t cell lymphoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">Lymph</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">ALCL</field>
+		<field name="name">anaplastic large cell lymphoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">Lymph</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">all tumors</field>
+		<field name="name">all tumors</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">AML</field>
+		<field name="name">acute myeloid leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">B-ALL</field>
+		<field name="name">b cell acute lymphoblastic leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">basal cell carcinoma</field>
+		<field name="name">basal cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">BLADDER</field>
+		<field name="name">bladder cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">bladder</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">BLCA</field>
+		<field name="name">bladder urothelial carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">bladder</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">BREAST</field>
+		<field name="name">breast cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">breast</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">CERVIX</field>
+		<field name="name">cervical cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">cervix</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">cholangiocarcinoma</field>
+		<field name="name">cholangiocarcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">bile</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">chronic eosinophilic leukemia, not otherwise specified</field>
+		<field name="name">chronic eosinophilic leukemia, not otherwise specified</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">CHS</field>
+		<field name="name">chondrosarcoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">bone</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">CLL</field>
+		<field name="name">chronic lymphocytic leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">CML</field>
+		<field name="name">chronic myelomonocytic leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">colorectal cancer, gastric cancer</field>
+		<field name="name">colorectal cancer, gastric cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">CRC</field>
+		<field name="name">colorectal cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">colon and rectum</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">cscc</field>
+		<field name="name">cutaneous squamous cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">skin</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">desmoid</field>
+		<field name="name">desmoid tumors</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">diffuse large B cell lymphoma</field>
+		<field name="name">diffuse large B cell lymphoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">diffuse large B cell lymphoma (DLBCL)</field>
+		<field name="name">diffuse large B cell lymphoma (DLBCL)</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">embryonal rhabdomyosarcoma</field>
+		<field name="name">embryonal rhabdomyosarcoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">endometrial cancer</field>
+		<field name="name">endometrial cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">ESCC</field>
+		<field name="name">esophageal squamous cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">esophagus</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">esophageal and gastric adenocarcinoma</field>
+		<field name="name">esophageal and gastric adenocarcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">gastric</field>
+		<field name="name">gastric cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">stomach</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">GBM</field>
+		<field name="name">glioblastoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">brain</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">GCT-ovary</field>
+		<field name="name">ovarian granulosa cell tumors</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">ovary</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">GIST</field>
+		<field name="name">gastrointestinal stromal tumor</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">Esophagus/Stomach</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">GLIO</field>
+		<field name="name">glioma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">brain</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">glioma and glioblastoma (GBM)</field>
+		<field name="name">glioma and glioblastoma (GBM)</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">glioma/glioblastoma</field>
+		<field name="name">glioma/glioblastoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">HCC</field>
+		<field name="name">hepatocellular carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">liver</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">HCL</field>
+		<field name="name">hairy cell leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">head and neck</field>
+		<field name="name">head and neck cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">head and neck</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">HNSC</field>
+		<field name="name">head and neck squamous cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">head and neck</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">IMT</field>
+		<field name="name">inflammatory myofibroblastic tumor</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">LGG</field>
+		<field name="name">low grade glioma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">brain</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">liver</field>
+		<field name="name">liver cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">liver</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">lung</field>
+		<field name="name">lung cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">lung</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">LUSC</field>
+		<field name="name">lung squamous cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">lung</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">MBL</field>
+		<field name="name">medulloblastoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">brain</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">MENG</field>
+		<field name="name">meningioma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">brain</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">Merkel cell carcinoma</field>
+		<field name="name">Merkel cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">MM</field>
+		<field name="name">multiple myeloma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">MPNs</field>
+		<field name="name">myeloproliferative neoplasms</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">NBL</field>
+		<field name="name">neuroblastoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">Nervous system</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">non–small cell lung cancer</field>
+		<field name="name">non–small cell lung cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">NSCLC</field>
+		<field name="name">non-small cell lung cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">lung</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">ovary</field>
+		<field name="name">ovarian cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">ovary</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">pancreas</field>
+		<field name="name">pancreatic cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">pancreas</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">PHC</field>
+		<field name="name">pheochromocytoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">Nervous system</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">pituitary</field>
+		<field name="name">pituitary tumors</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">pituitary gland</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">pituitary_adeno</field>
+		<field name="name">pituitary adenomas</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">pituitary gland</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">prostate</field>
+		<field name="name">prostate cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">prostate</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">RCC</field>
+		<field name="name">renal cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">kidney</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">RMS</field>
+		<field name="name">rhabdomyosarcoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">SKBC</field>
+		<field name="name">skin basal cell carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">skin</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">SKCM</field>
+		<field name="name">melanoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">melanoma</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">STAD</field>
+		<field name="name">stomach cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">stomach</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">T-ALL</field>
+		<field name="name">t cell acute lymphoblastic leukemia</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">blood</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">THCA</field>
+		<field name="name">thyroid cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">thyroid</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">THYMC</field>
+		<field name="name">thymic carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">thymus</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">UCEC</field>
+		<field name="name">endometrial carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">uterus</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">UM</field>
+		<field name="name">uveal melanoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">Eye</field>
+	</row>
+
+	<row>
+		<field name="tumor_type_id">urothelial/bladder carcinoma</field>
+		<field name="name">urothelial/bladder carcinoma</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue" xsi:nil="true" />
+	</row>
+
+	<row>
+		<field name="tumor_type_id">uterine</field>
+		<field name="name">uterine cancer</field>
+		<field name="short_name" xsi:nil="true" />
+		<field name="tissue">uterine</field>
+	</row>
+
+	</table_data>
+
+</database>
+</mysqldump>

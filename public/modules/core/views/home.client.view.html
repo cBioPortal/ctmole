@@ -2,7 +2,7 @@
 <section data-ng-controller="HomeController" data-ng-init="find()">
 
 
-	<div class="col-md-2" ng-show="showRefine" style="position:fixed;left:10px;top:50px;">
+	<div class="col-md-2" ng-show="showRefine" style="position:fixed;left:10px;top:50px;height:100%">
 
 		<h4>Curation Status</h4>
 
@@ -13,7 +13,7 @@
                 <label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, status, 'status')">Completed</label>
                 </div>
 		<h4>Recruit Status</h4>
-		<div class="filterStyle">
+		<div class="">
 		<div class="checkbox" ng-repeat="a in recruitingStatus">
 			<input id="{{a}}" ng-model="recruit" ng-change="getCriteria(recruit, a, 'recruit')" type="checkbox" ng-checked="chosenRecruits.indexOf(a) !== -1"><label for="{{a}}"> {{a}}</label>
 		</div>
@@ -51,6 +51,7 @@
 				Powered by OncoKB
 			</em>
 		</small>
+		<br/><br/>
 	</div>
 	<div class="container col-md-10" style="float:right">
 

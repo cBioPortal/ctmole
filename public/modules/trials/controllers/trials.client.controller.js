@@ -56,7 +56,8 @@ angular.module('trials').controller('TrialsController',
 
             $scope.criteriaTitles = ['Inclusion Criteria:', 'Exclusion Criteria:', 'DISEASE CHARACTERISTICS:', 'PATIENT CHARACTERISTICS:', 'PRIOR CONCURRENT THERAPY:',
                 '-  INCLUSION CRITERIA:', 'EXCLUSION CRITERIA:'];
-
+            $scope.allOncoTreeTumors = ['Adrenocortical Carcinoma','Ampullary Carcinoma','Anal Cancer','Appendiceal Cancer','Biliary Cancer','Bladder Cancer','Blastic Plasmacytoid Dendritic Cell Neoplasm','Breast Carcinoma','Breast Sarcoma','Cancer of Unknown Primary','Cervical Cancer','Chondroblastoma','Chordoma','Choroid Plexus Tumor','Colorectal Cancer','Embryonal Tumor','Endometrial Cancer','Ependymomal Tumor','Esophagogastric Carcinoma','Ewing Sarcoma','Gastrointestinal Neuroendocrine Tumor','Gastrointestinal Stromal Tumor','Germ Cell Tumor','Gestational Trophoblastic Disease','Giant Cell Tumor','Glioma','Head and Neck Carcinoma','Hepatocellular Carcinoma','Histiocytic Disorder','Histiocytosis','Hodgkin Lymphoma','Leukemia','Mastocytosis','Melanoma','Meningothelial Tumor','Mesothelioma','Miscellaneous Brain Tumor','Miscellaneous Neuroepithelial Tumor','Multiple Myeloma','Myelodysplasia',
+                'Myeloproliferative Neoplasm','Nerve Sheath Tumor','Non-Hodgkin Lymphoma','Non-Small Cell Lung Cancer','Osteosarcoma','Ovarian Cancer','Pancreatic Cancer','Penile Cancer','Pheochromocytoma','Pineal Tumor','Prostate Cancer','Renal Cell Carcinoma','Retinoblastoma','Salivary Carcinoma','Sellar Tumor','Sex Cord Stromal Tumor','Skin Cancer, Non-Melanoma','Small Bowel Cancer','Small Cell Lung Cancer','Soft Tissue Sarcoma','Thymic Tumor','Thyroid Cancer','Uterine Sarcoma','Vaginal Cancer','Vulvar Carcinoma','Wilms Tumor'];
 
             $scope.showVar = false;
             $scope.alertShow = false;
@@ -79,14 +80,13 @@ angular.module('trials').controller('TrialsController',
             $scope.showNewSkipItem = false;
             $scope.countNum = 10;
 
-
+            $scope.loadingTrials = true;
 
             String.prototype.capitalize = function() {
                 return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
             };
 
             var editingAlteration = {};
-
             $scope.showAllComments = function(){
                 $scope.showAllCom = !$scope.showAllCom;
             };
@@ -161,6 +161,7 @@ angular.module('trials').controller('TrialsController',
                 });
             };
 
+
             // Remove existing Trial
             $scope.remove = function (trial) {
                 if (trial) {
@@ -195,18 +196,18 @@ angular.module('trials').controller('TrialsController',
                 Trials.nctId.query({},function(result){
                     $scope.trials = result;
                     trialsLength = result.length;
-
+                    $scope.loadingTrials = false;
                 });
 
 
                 $(window).scroll(function() {
-                    if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                    if($(window).scrollTop() + $(window).height() === $(document).height()) {
                         $scope.$apply(function(){
                             if($scope.countNum < trialsLength){
                                 $scope.countNum += 10;
                             }
 
-                        })
+                        });
 
                     }
                 });
@@ -215,19 +216,40 @@ angular.module('trials').controller('TrialsController',
 
 
             function fetchCancertypeInfo(nctId){
-                var tempArr1 = [], tempArr2 = [];
-                Cancertypes.cancerTypeInfo.get({nctId: nctId},function(result){
 
-                    _.each(result, function(item){
-                        tempArr1.push(item.cancer);
+                Mappings.mappingSearch.get({Idvalue: nctId},function(mapping){
+                    if(mapping === null || mapping.oncoTreeTumors === undefined)
+                    {
+                        Cancertypes.cancerTypeInfo.get({nctId: nctId},function(result){
+                            $scope.oncoTreeTumors = result;
+                        });
 
-                    });
-                    $scope.cancers = tempArr1;
-                    console.log(tempArr1);
+                    }
+                    else
+                    {
+                        $scope.oncoTreeTumors = mapping.oncoTreeTumors;
+                    }
+
                 });
+
+
             }
-
-
+            $scope.addOncoTreeTumor = function(){
+                var tempValue = $scope.oncoTreeTumors;
+                if($scope.oncoTreeTumors.length === 0)
+                {
+                    tempValue = 'emptyTumorsStored';
+                }
+                Mappings.addTumor.get({trialID: $scope.trial.nctId, tumor: $scope.newOncoTreeTumor, predictedTumors: tempValue}, function(a){
+                    $scope.oncoTreeTumors = a.oncoTreeTumors;
+                });
+            };
+            $scope.deleteOncoTreeTumor = function(tumor){
+                Mappings.deleteTumor.get({trialID: $scope.trial.nctId, tumor: tumor}, function(a){
+                    console.log('here ', a);
+                    $scope.oncoTreeTumors = a.oncoTreeTumors;
+                });
+            };
             function fetchMapInfo(){
 
                 $scope.inclusionAlterations = [];
@@ -408,8 +430,6 @@ angular.module('trials').controller('TrialsController',
 
             $scope.getEligibility = function () {
                 var eligibility = $scope.trial.eligibilityCriteria;
-                //var eleArr = eligibility.split("\n\n");
-                //var eleArr = eligibility.split("\r\n");
                 var eleArr = eligibility.split(/\r?\n | \n\n | \n/);
                 var tempArr = [];
                 _.each(eleArr, function(item){
@@ -427,6 +447,7 @@ angular.module('trials').controller('TrialsController',
                     tempAlteration = $scope.inclusion_newAlteration;
                     tempGene = $scope.inclusion_newGene;
                     tempArr = $scope.inclusionAlterations;
+
                 }
                 else if(type === 'exclusion'){
                     tempAlteration = $scope.exclusion_newAlteration;
@@ -507,12 +528,12 @@ angular.module('trials').controller('TrialsController',
                     $scope.exclusion_editedMutation = x.alteration;
                 }
             };
-            $scope.saveAlteration = function(tempGene, tempAlteration, type){
+            $scope.saveAlteration = function(tempGene, tempAlteration, type, tempTumor){
 
                 if( tempGene === editingAlteration.gene && tempAlteration === editingAlteration.alteration)
                 {
-                    bootbox.alert('Please edit mutation record before save it!');
-                    return false;
+                    //bootbox.alert('Please edit mutation record before save it!');
+                    //return false;
                 }
                 else
                 {
@@ -523,7 +544,7 @@ angular.module('trials').controller('TrialsController',
                     if(type === 'inclusion'){
                         $scope.inclusion_newAlteration = tempAlteration;
                         $scope.inclusion_newGene =  tempGene;
-
+                        $scope.inclusion_newTumor = tempTumor;
                         $scope.inclusion_editedGene = '';
                         $scope.inclusion_editedMutation = '';
                     }
@@ -538,8 +559,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.addAlterationBynctId(type);
 
                 }
-
-                $scope.editing = false;
+                $scope.inclusion_editing = false;
 
             };
 
@@ -555,6 +575,13 @@ angular.module('trials').controller('TrialsController',
 
             };
 
+            $scope.deleteTumor = function(gene, alteration, tumor){
+                console.log('here is the value', gene, alteration, tumor);
+                Mappings.deleteAlterationByTumor.get({trialID: $scope.trial.nctId, gene: gene, alteration: alteration, type: 'inclusion', tumor: tumor},
+                function(){
+                    fetchMapInfo();
+                });
+            };
             $scope.updateTrial = function () {
 
                 Trials.updateRequestedTrial.get({requestednctId: $scope.trial.nctId}, function (u, getResponseHeaders) {
@@ -602,7 +629,7 @@ angular.module('trials').controller('TrialsController',
             };
 
             function highLightSearch(inputText, elementIDs){
-                inputText = " " + inputText;
+                inputText = ' ' + inputText;
                 if(typeof elementIDs === 'string')
                 {
                     elementIDs = [elementIDs];
@@ -614,7 +641,7 @@ angular.module('trials').controller('TrialsController',
                     {
                         var innerHTML = searchEle.innerHTML.toLowerCase();
 
-                        var regex = new RegExp(inputText, "gi"), result, indices = [], tempStr;
+                        var regex = new RegExp(inputText, 'gi'), result, indices = [], tempStr;
                         while ( (result = regex.exec(innerHTML)) ) {
                             indices.push(result.index);
                         }
@@ -624,12 +651,10 @@ angular.module('trials').controller('TrialsController',
                             var tempIndex = indices.length-1;
                             for(var i = 0; i < tempIndex;i++)
                             {
-                                tempStr += "<span class='highlight'>" + innerHTML.substring(indices[i],indices[i]+inputText.length) + "</span>"
-                                    + innerHTML.substring(indices[i]+inputText.length,indices[i+1]);
+                                tempStr += "<span class='highlight'>" + innerHTML.substring(indices[i],indices[i]+inputText.length) + "</span>" + innerHTML.substring(indices[i]+inputText.length,indices[i+1]);
                             }
 
-                            tempStr += "<span class='highlight'>" + innerHTML.substring(indices[tempIndex],indices[tempIndex]+inputText.length) + "</span>"
-                                + innerHTML.substring(indices[tempIndex]+inputText.length);
+                            tempStr += "<span class='highlight'>" + innerHTML.substring(indices[tempIndex],indices[tempIndex]+inputText.length) + "</span>" + innerHTML.substring(indices[tempIndex]+inputText.length);
 
                             searchEle.innerHTML = tempStr;
                         }
@@ -682,7 +707,7 @@ angular.module('trials').controller('TrialsController',
 
                     $scope.skipItems = result;
                 });
-            }
+            };
 
             $scope.addRule = function(type, value){
                 if(type === 'alias'){
@@ -704,7 +729,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.newSkipItem = '';
                 }
 
-            }
+            };
             $scope.deleteRule = function(type, value){
                 if(type === 'alias'){
                     $scope.geneAliasOperation = true;
@@ -721,7 +746,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.assignRule('skip', 'delete');
                 }
 
-            }
+            };
             $scope.editRule = function(type, value){
                 if(type === 'alias'){
                     $scope.geneAliasOperation = true;
@@ -742,7 +767,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.newSkipItem = '';
                 }
 
-            }
+            };
 
             $scope.assignRule = function(type, operation){
 
@@ -775,7 +800,7 @@ angular.module('trials').controller('TrialsController',
                     $scope.rulesInitiation();
                 });
 
-            }
+            };
 
 
         }

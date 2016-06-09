@@ -3,6 +3,7 @@
     <div class="page-header">
         <h1>Trials</h1>
     </div>
+    <img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingTrials">
         <div class="list-group">
 
             <a data-ng-repeat="trial in trials | limitTo: countNum" data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">

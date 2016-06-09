@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+
+<!--
+-
+- Sequel Pro XML dump
+- Version 4096
+-
+- http://www.sequelpro.com/
+- http://code.google.com/p/sequel-pro/
+-
+- Host: 127.0.0.1 (MySQL 5.6.20)
+- Database: oncokb
+- Generation Time Time: 2014-12-17 19:40:14 +0000
+-
+-->
+
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="oncokb">
+
+	<table_structure name="gene">
+		<field field="entrez_gene_id" type="int(11)" null="NO" key="PRI" default="<null>" extra="" />
+		<field field="hugo_symbol" type="varchar(50)" null="NO" key="UNI" default="<null>" extra="" />
+		<field field="name" type="text" null="NO" key="" default="<null>" extra="" />
+		<field field="summary" type="text" null="YES" key="" default="<null>" extra="" />
+
+		<options name="gene" engine="InnoDB" version="10" row_format="Compact" rows="34" avg_row_length="1927" data_length="65536" max_data_length="0" index_length="16384" data_free="0" create_time="2014-12-16 13:56:35" update_time="<null>" collation="utf8_general_ci" create_options="" comment="" />
+	</table_structure>
+
+	<table_data name="gene">
+
+	<row>
+		<field name="entrez_gene_id">207</field>
+		<field name="hugo_symbol">AKT1</field>
+		<field name="name">v-akt murine thymoma viral oncogene homolog 1</field>
+		<field name="summary">The serine-threonine protein kinase encoded by the AKT1 gene is catalytically inactive in serum-starved primary and immortalized fibroblasts. AKT1 and the related AKT2 are activated by platelet-derived growth factor. The activation is rapid and specific, and it is abrogated by mutations in the pleckstrin homology domain of AKT1. It was shown that the activation occurs through phosphatidylinositol 3-kinase. In the developing nervous system AKT is a critical mediator of growth factor-induced neuronal survival. Survival factors can suppress apoptosis in a transcription-independent manner by activating the serine/threonine kinase AKT1, which then phosphorylates and inactivates components of the apoptotic machinery. Mutations in this gene have been associated with the Proteus syndrome. Multiple alternatively spliced transcript variants have been found for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">238</field>
+		<field name="hugo_symbol">ALK</field>
+		<field name="name">anaplastic lymphoma receptor tyrosine kinase</field>
+		<field name="summary">This gene encodes a receptor tyrosine kinase, which belongs to the insulin receptor superfamily. This protein comprises an extracellular domain, an hydrophobic stretch corresponding to a single pass transmembrane region, and an intracellular kinase domain. It plays an important role in the development of the brain and exerts its effects on specific neurons in the nervous system. This gene has been found to be rearranged, mutated, or amplified in a series of tumours including anaplastic large cell lymphomas, neuroblastoma, and non-small cell lung cancer. The chromosomal rearrangements are the most common genetic alterations in this gene, which result in creation of multiple fusion genes in tumourigenesis, including ALK (chromosome 2)/EML4 (chromosome 2), ALK/RANBP2 (chromosome 2), ALK/ATIC (chromosome 2), ALK/TFG (chromosome 3), ALK/NPM1 (chromosome 5), ALK/SQSTM1 (chromosome 5), ALK/KIF5B (chromosome 10), ALK/CLTC (chromosome 17), ALK/TPM4 (chromosome 19), and ALK/MSN (chromosome X).</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">668</field>
+		<field name="hugo_symbol">FOXL2</field>
+		<field name="name">forkhead box L2</field>
+		<field name="summary">This gene encodes a forkhead transcription factor. The protein contains a fork-head DNA-binding domain and may play a role in ovarian development and function. Mutations in this gene are a cause of blepharophimosis syndrome and premature ovarian failure 3.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">673</field>
+		<field name="hugo_symbol">BRAF</field>
+		<field name="name">B-Raf proto-oncogene, serine/threonine kinase</field>
+		<field name="summary">This gene encodes a protein belonging to the raf/mil family of serine/threonine protein kinases. This protein plays a role in regulating the MAP kinase/ERKs signaling pathway, which affects cell division, differentiation, and secretion. Mutations in this gene are associated with cardiofaciocutaneous syndrome, a disease characterized by heart defects, mental retardation and a distinctive facial appearance. Mutations in this gene have also been associated with various cancers, including non-Hodgkin lymphoma, colorectal cancer, malignant melanoma, thyroid carcinoma, non-small cell lung carcinoma, and adenocarcinoma of lung. A pseudogene, which is located on chromosome X, has been identified for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">1499</field>
+		<field name="hugo_symbol">CTNNB1</field>
+		<field name="name">catenin (cadherin-associated protein), beta 1, 88kDa</field>
+		<field name="summary">The protein encoded by this gene is part of a complex of proteins that constitute adherens junctions (AJs). AJs are necessary for the creation and maintenance of epithelial cell layers by regulating cell growth and adhesion between cells. The encoded protein also anchors the actin cytoskeleton and may be responsible for transmitting the contact inhibition signal that causes cells to stop dividing once the epithelial sheet is complete. Finally, this protein binds to the product of the APC gene, which is mutated in adenomatous polyposis of the colon. Mutations in this gene are a cause of colorectal cancer (CRC), pilomatrixoma (PTR), medulloblastoma (MDB), and ovarian cancer. Three transcript variants encoding the same protein have been found for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">1956</field>
+		<field name="hugo_symbol">EGFR</field>
+		<field name="name">epidermal growth factor receptor</field>
+		<field name="summary">The protein encoded by this gene is a transmembrane glycoprotein that is a member of the protein kinase superfamily. This protein is a receptor for members of the epidermal growth factor family. EGFR is a cell surface protein that binds to epidermal growth factor. Binding of the protein to a ligand induces receptor dimerization and tyrosine autophosphorylation and leads to cell proliferation. Mutations in this gene are associated with lung cancer. Multiple alternatively spliced transcript variants that encode different protein isoforms have been found for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2064</field>
+		<field name="hugo_symbol">ERBB2</field>
+		<field name="name">v-erb-b2 avian erythroblastic leukemia viral oncogene homolog 2</field>
+		<field name="summary">This gene encodes a member of the epidermal growth factor (EGF) receptor family of receptor tyrosine kinases. This protein has no ligand binding domain of its own and therefore cannot bind growth factors. However, it does bind tightly to other ligand-bound EGF receptor family members to form a heterodimer, stabilizing ligand binding and enhancing kinase-mediated activation of downstream signalling pathways, such as those involving mitogen-activated protein kinase and phosphatidylinositol-3 kinase. Allelic variations at amino acid positions 654 and 655 of isoform a (positions 624 and 625 of isoform b) have been reported, with the most common allele, Ile654/Ile655, shown here. Amplification and/or overexpression of this gene has been reported in numerous cancers, including breast and ovarian tumors. Alternative splicing results in several additional transcript variants, some encoding different isoforms and others that have not been fully characterized.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2066</field>
+		<field name="hugo_symbol">ERBB4</field>
+		<field name="name">v-erb-b2 avian erythroblastic leukemia viral oncogene homolog 4</field>
+		<field name="summary">This gene is a member of the Tyr protein kinase family and the epidermal growth factor receptor subfamily. It encodes a single-pass type I membrane protein with multiple cysteine rich domains, a transmembrane domain, a tyrosine kinase domain, a phosphotidylinositol-3 kinase binding site and a PDZ domain binding motif. The protein binds to and is activated by neuregulins and other factors and induces a variety of cellular responses including mitogenesis and differentiation. Multiple proteolytic events allow for the release of a cytoplasmic fragment and an extracellular fragment. Mutations in this gene have been associated with cancer. Alternatively spliced variants which encode different protein isoforms have been described; however, not all variants have been fully characterized.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2261</field>
+		<field name="hugo_symbol">FGFR3</field>
+		<field name="name">fibroblast growth factor receptor 3</field>
+		<field name="summary">This gene encodes a member of the fibroblast growth factor receptor (FGFR) family, with its amino acid sequence being highly conserved between members and among divergent species. FGFR family members differ from one another in their ligand affinities and tissue distribution. A full-length representative protein would consist of an extracellular region, composed of three immunoglobulin-like domains, a single hydrophobic membrane-spanning segment and a cytoplasmic tyrosine kinase domain. The extracellular portion of the protein interacts with fibroblast growth factors, setting in motion a cascade of downstream signals, ultimately influencing mitogenesis and differentiation. This particular family member binds acidic and basic fibroblast growth hormone and plays a role in bone development and maintenance. Mutations in this gene lead to craniosynostosis and multiple types of skeletal dysplasia. Three alternatively spliced transcript variants that encode different protein isoforms have been described.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2263</field>
+		<field name="hugo_symbol">FGFR2</field>
+		<field name="name">fibroblast growth factor receptor 2</field>
+		<field name="summary">The protein encoded by this gene is a member of the fibroblast growth factor receptor family, where amino acid sequence is highly conserved between members and throughout evolution. FGFR family members differ from one another in their ligand affinities and tissue distribution. A full-length representative protein consists of an extracellular region, composed of three immunoglobulin-like domains, a single hydrophobic membrane-spanning segment and a cytoplasmic tyrosine kinase domain. The extracellular portion of the protein interacts with fibroblast growth factors, setting in motion a cascade of downstream signals, ultimately influencing mitogenesis and differentiation. This particular family member is a high-affinity receptor for acidic, basic and/or keratinocyte growth factor, depending on the isoform. Mutations in this gene are associated with Crouzon syndrome, Pfeiffer syndrome, Craniosynostosis, Apert syndrome, Jackson-Weiss syndrome, Beare-Stevenson cutis gyrata syndrome, Saethre-Chotzen syndrome, and syndromic craniosynostosis. Multiple alternatively spliced transcript variants encoding different isoforms have been noted for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2264</field>
+		<field name="hugo_symbol">FGFR4</field>
+		<field name="name">fibroblast growth factor receptor 4</field>
+		<field name="summary">The protein encoded by this gene is a member of the fibroblast growth factor receptor family, where amino acid sequence is highly conserved between members and throughout evolution. FGFR family members differ from one another in their ligand affinities and tissue distribution. A full-length representative protein would consist of an extracellular region, composed of three immunoglobulin-like domains, a single hydrophobic membrane-spanning segment and a cytoplasmic tyrosine kinase domain. The extracellular portion of the protein interacts with fibroblast growth factors, setting in motion a cascade of downstream signals, ultimately influencing mitogenesis and differentiation. The genomic organization of this gene, compared to members 1-3, encompasses 18 exons rather than 19 or 20. Although alternative splicing has been observed, there is no evidence that the C-terminal half of the IgIII domain of this protein varies between three alternate forms, as indicated for members 1-3. This particular family member preferentially binds acidic fibroblast growth factor and, although its specific function is unknown, it is overexpressed in gynecological tumor samples, suggesting a role in breast and ovarian tumorigenesis.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2767</field>
+		<field name="hugo_symbol">GNA11</field>
+		<field name="name">guanine nucleotide binding protein (G protein), alpha 11 (Gq class)</field>
+		<field name="summary">The protein encoded by this gene belongs to the family of guanine nucleotide-binding proteins (G proteins), which function as modulators or transducers in various transmembrane signaling systems. G proteins are composed of 3 units: alpha, beta and gamma. This gene encodes one of the alpha subunits (subunit alpha-11). Mutations in this gene have been associated with hypocalciuric hypercalcemia type II (HHC2) and hypocalcemia dominant 2 (HYPOC2). Patients with HHC2 and HYPOC2 exhibit decreased or increased sensitivity, respectively, to changes in extracellular calcium concentrations.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2776</field>
+		<field name="hugo_symbol">GNAQ</field>
+		<field name="name">guanine nucleotide binding protein (G protein), q polypeptide</field>
+		<field name="summary">This locus encodes a guanine nucleotide-binding protein. The encoded protein, an alpha subunit in the Gq class, couples a seven-transmembrane domain receptor to activation of phospolipase C-beta. Mutations at this locus have been associated with problems in platelet activation and aggregation. A related pseudogene exists on chromosome 2.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">2778</field>
+		<field name="hugo_symbol">GNAS</field>
+		<field name="name">GNAS complex locus</field>
+		<field name="summary">This locus has a highly complex imprinted expression pattern. It gives rise to maternally, paternally, and biallelically expressed transcripts that are derived from four alternative promoters and 5' exons. Some transcripts contain a differentially methylated region (DMR) at their 5' exons, and this DMR is commonly found in imprinted genes and correlates with transcript expression. An antisense transcript is produced from an overlapping locus on the opposite strand. One of the transcripts produced from this locus, and the antisense transcript, are paternally expressed noncoding RNAs, and may regulate imprinting in this region. In addition, one of the transcripts contains a second overlapping ORF, which encodes a structurally unrelated protein - Alex. Alternative splicing of downstream exons is also observed, which results in different forms of the stimulatory G-protein alpha subunit, a key element of the classical signal transduction pathway linking receptor-ligand interactions with the activation of adenylyl cyclase and a variety of cellular reponses. Multiple transcript variants encoding different isoforms have been found for this gene. Mutations in this gene result in pseudohypoparathyroidism type 1a, pseudohypoparathyroidism type 1b, Albright hereditary osteodystrophy, pseudopseudohypoparathyroidism, McCune-Albright syndrome, progressive osseus heteroplasia, polyostotic fibrous dysplasia of bone, and some pituitary tumors.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">3265</field>
+		<field name="hugo_symbol">HRAS</field>
+		<field name="name">Harvey rat sarcoma viral oncogene homolog</field>
+		<field name="summary">This gene belongs to the Ras oncogene family, whose members are related to the transforming genes of mammalian sarcoma retroviruses. The products encoded by these genes function in signal transduction pathways. These proteins can bind GTP and GDP, and they have intrinsic GTPase activity. This protein undergoes a continuous cycle of de- and re-palmitoylation, which regulates its rapid exchange between the plasma membrane and the Golgi apparatus. Mutations in this gene cause Costello syndrome, a disease characterized by increased growth at the prenatal stage, growth deficiency at the postnatal stage, predisposition to tumor formation, mental retardation, skin and musculoskeletal abnormalities, distinctive facial appearance and cardiovascular abnormalities. Defects in this gene are implicated in a variety of cancers, including bladder cancer, follicular thyroid cancer, and oral squamous cell carcinoma. Multiple transcript variants, which encode different isoforms, have been identified for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">3417</field>
+		<field name="hugo_symbol">IDH1</field>
+		<field name="name">isocitrate dehydrogenase 1 (NADP+), soluble</field>
+		<field name="summary">Isocitrate dehydrogenases catalyze the oxidative decarboxylation of isocitrate to 2-oxoglutarate. These enzymes belong to two distinct subclasses, one of which utilizes NAD(+) as the electron acceptor and the other NADP(+). Five isocitrate dehydrogenases have been reported: three NAD(+)-dependent isocitrate dehydrogenases, which localize to the mitochondrial matrix, and two NADP(+)-dependent isocitrate dehydrogenases, one of which is mitochondrial and the other predominantly cytosolic. Each NADP(+)-dependent isozyme is a homodimer. The protein encoded by this gene is the NADP(+)-dependent isocitrate dehydrogenase found in the cytoplasm and peroxisomes. It contains the PTS-1 peroxisomal targeting signal sequence. The presence of this enzyme in peroxisomes suggests roles in the regeneration of NADPH for intraperoxisomal reductions, such as the conversion of 2, 4-dienoyl-CoAs to 3-enoyl-CoAs, as well as in peroxisomal reactions that consume 2-oxoglutarate, namely the alpha-hydroxylation of phytanic acid. The cytoplasmic enzyme serves a significant role in cytoplasmic NADPH production. Alternatively spliced transcript variants encoding the same protein have been found for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">3418</field>
+		<field name="hugo_symbol">IDH2</field>
+		<field name="name">isocitrate dehydrogenase 2 (NADP+), mitochondrial</field>
+		<field name="summary">Isocitrate dehydrogenases catalyze the oxidative decarboxylation of isocitrate to 2-oxoglutarate. These enzymes belong to two distinct subclasses, one of which utilizes NAD(+) as the electron acceptor and the other NADP(+). Five isocitrate dehydrogenases have been reported: three NAD(+)-dependent isocitrate dehydrogenases, which localize to the mitochondrial matrix, and two NADP(+)-dependent isocitrate dehydrogenases, one of which is mitochondrial and the other predominantly cytosolic. Each NADP(+)-dependent isozyme is a homodimer. The protein encoded by this gene is the NADP(+)-dependent isocitrate dehydrogenase found in the mitochondria. It plays a role in intermediary metabolism and energy production. This protein may tightly associate or interact with the pyruvate dehydrogenase complex. Alternative splicing results in multiple transcript variants.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">3815</field>
+		<field name="hugo_symbol">KIT</field>
+		<field name="name">v-kit Hardy-Zuckerman 4 feline sarcoma viral oncogene homolog</field>
+		<field name="summary">This gene encodes the human homolog of the proto-oncogene c-kit. C-kit was first identified as the cellular homolog of the feline sarcoma viral oncogene v-kit. This protein is a type 3 transmembrane receptor for MGF (mast cell growth factor, also known as stem cell factor). Mutations in this gene are associated with gastrointestinal stromal tumors, mast cell disease, acute myelogenous lukemia, and piebaldism. Multiple transcript variants encoding different isoforms have been found for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">3845</field>
+		<field name="hugo_symbol">KRAS</field>
+		<field name="name">Kirsten rat sarcoma viral oncogene homolog</field>
+		<field name="summary">This gene, a Kirsten ras oncogene homolog from the mammalian ras gene family, encodes a protein that is a member of the small GTPase superfamily. A single amino acid substitution is responsible for an activating mutation. The transforming protein that results is implicated in various malignancies, including lung adenocarcinoma, mucinous adenoma, ductal carcinoma of the pancreas and colorectal carcinoma. Alternative splicing leads to variants encoding two isoforms that differ in the C-terminal region.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">4233</field>
+		<field name="hugo_symbol">MET</field>
+		<field name="name">MET proto-oncogene, receptor tyrosine kinase</field>
+		<field name="summary">The proto-oncogene MET product is the hepatocyte growth factor receptor and encodes tyrosine-kinase activity. The primary single chain precursor protein is post-translationally cleaved to produce the alpha and beta subunits, which are disulfide linked to form the mature receptor. Various mutations in the MET gene are associated with papillary renal carcinoma. Two transcript variants encoding different isoforms have been found for this gene.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">4851</field>
+		<field name="hugo_symbol">NOTCH1</field>
+		<field name="name">notch 1</field>
+		<field name="summary">This gene encodes a member of the Notch family. Members of this Type 1 transmembrane protein family share structural characteristics including an extracellular domain consisting of multiple epidermal growth factor-like (EGF) repeats, and an intracellular domain consisting of multiple, different domain types. Notch family members play a role in a variety of developmental processes by controlling cell fate decisions. The Notch signaling network is an evolutionarily conserved intercellular signaling pathway which regulates interactions between physically adjacent cells. In Drosophilia, notch interaction with its cell-bound ligands (delta, serrate) establishes an intercellular signaling pathway that plays a key role in development. Homologues of the notch-ligands have also been identified in human, but precise interactions between these ligands and the human notch homologues remain to be determined. This protein is cleaved in the trans-Golgi network, and presented on the cell surface as a heterodimer. This protein functions as a receptor for membrane bound ligands, and may play multiple roles during development.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">4893</field>
+		<field name="hugo_symbol">NRAS</field>
+		<field name="name">neuroblastoma RAS viral (v-ras) oncogene homolog</field>
+		<field name="summary">This is an N-ras oncogene encoding a membrane protein that shuttles between the Golgi apparatus and the plasma membrane. This shuttling is regulated through palmitoylation and depalmitoylation by the ZDHHC9-GOLGA7 complex. The encoded protein, which has intrinsic GTPase activity, is activated by a guanine nucleotide-exchange factor and inactivated by a GTPase activating protein. Mutations in this gene have been associated with somatic rectal cancer, follicular thyroid cancer, autoimmune lymphoproliferative syndrome, Noonan syndrome, and juvenile myelomonocytic leukemia.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">4921</field>
+		<field name="hugo_symbol">DDR2</field>
+		<field name="name">discoidin domain receptor tyrosine kinase 2</field>
+		<field name="summary">Receptor tyrosine kinases (RTKs) play a key role in the communication of cells with their microenvironment. These molecules are involved in the regulation of cell growth, differentiation, and metabolism. In several cases the biochemical mechanism by which RTKs transduce signals across the membrane has been shown to be ligand induced receptor oligomerization and subsequent intracellular phosphorylation. This autophosphorylation leads to phosphorylation of cytosolic targets as well as association with other molecules, which are involved in pleiotropic effects of signal transduction. RTKs have a tripartite structure with extracellular, transmembrane, and cytoplasmic regions. This gene encodes a member of a novel subclass of RTKs and contains a distinct extracellular region encompassing a factor VIII-like domain. Alternative splicing in the 5' UTR results in multiple transcript variants encoding the same protein.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5159</field>
+		<field name="hugo_symbol">PDGFRB</field>
+		<field name="name">platelet-derived growth factor receptor, beta polypeptide</field>
+		<field name="summary">This gene encodes a cell surface tyrosine kinase receptor for members of the platelet-derived growth factor family. These growth factors are mitogens for cells of mesenchymal origin. The identity of the growth factor bound to a receptor monomer determines whether the functional receptor is a homodimer or a heterodimer, composed of both platelet-derived growth factor receptor alpha and beta polypeptides. This gene is flanked on chromosome 5 by the genes for granulocyte-macrophage colony-stimulating factor and macrophage-colony stimulating factor receptor; all three genes may be implicated in the 5-q syndrome. A translocation between chromosomes 5 and 12, that fuses this gene to that of the translocation, ETV6, leukemia gene, results in chronic myeloproliferative disorder with eosinophilia.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5290</field>
+		<field name="hugo_symbol">PIK3CA</field>
+		<field name="name">phosphatidylinositol-4,5-bisphosphate 3-kinase, catalytic subunit alpha</field>
+		<field name="summary">Phosphatidylinositol 3-kinase is composed of an 85 kDa regulatory subunit and a 110 kDa catalytic subunit. The protein encoded by this gene represents the catalytic subunit, which uses ATP to phosphorylate PtdIns, PtdIns4P and PtdIns(4,5)P2. This gene has been found to be oncogenic and has been implicated in cervical cancers.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5295</field>
+		<field name="hugo_symbol">PIK3R1</field>
+		<field name="name">phosphoinositide-3-kinase, regulatory subunit 1 (alpha)</field>
+		<field name="summary">Phosphatidylinositol 3-kinase phosphorylates the inositol ring of phosphatidylinositol at the 3-prime position. The enzyme comprises a 110 kD catalytic subunit and a regulatory subunit of either 85, 55, or 50 kD. This gene encodes the 85 kD regulatory subunit. Phosphatidylinositol 3-kinase plays an important role in the metabolic actions of insulin, and a mutation in this gene has been associated with insulin resistance. Alternative splicing of this gene results in four transcript variants encoding different isoforms.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5604</field>
+		<field name="hugo_symbol">MAP2K1</field>
+		<field name="name">mitogen-activated protein kinase kinase 1</field>
+		<field name="summary">The protein encoded by this gene is a member of the dual specificity protein kinase family, which acts as a mitogen-activated protein (MAP) kinase kinase. MAP kinases, also known as extracellular signal-regulated kinases (ERKs), act as an integration point for multiple biochemical signals. This protein kinase lies upstream of MAP kinases and stimulates the enzymatic activity of MAP kinases upon wide variety of extra- and intracellular signals. As an essential component of MAP kinase signal transduction pathway, this kinase is involved in many cellular processes such as proliferation, differentiation, transcription regulation and development.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5727</field>
+		<field name="hugo_symbol">PTCH1</field>
+		<field name="name">patched 1</field>
+		<field name="summary">This gene encodes a member of the patched gene family. The encoded protein is the receptor for sonic hedgehog, a secreted molecule implicated in the formation of embryonic structures and in tumorigenesis, as well as the desert hedgehog and indian hedgehog proteins. This gene functions as a tumor suppressor. Mutations of this gene have been associated with basal cell nevus syndrome, esophageal squamous cell carcinoma, trichoepitheliomas, transitional cell carcinomas of the bladder, as well as holoprosencephaly. Alternative splicing results in multiple transcript variants encoding different isoforms. Additional splice variants have been described, but their full length sequences and biological validity cannot be determined currently.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5728</field>
+		<field name="hugo_symbol">PTEN</field>
+		<field name="name">phosphatase and tensin homolog</field>
+		<field name="summary">This gene was identified as a tumor suppressor that is mutated in a large number of cancers at high frequency. The protein encoded this gene is a phosphatidylinositol-3,4,5-trisphosphate 3-phosphatase. It contains a tensin like domain as well as a catalytic domain similar to that of the dual specificity protein tyrosine phosphatases. Unlike most of the protein tyrosine phosphatases, this protein preferentially dephosphorylates phosphoinositide substrates. It negatively regulates intracellular levels of phosphatidylinositol-3,4,5-trisphosphate in cells and functions as a tumor suppressor by negatively regulating AKT/PKB signaling pathway.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">5979</field>
+		<field name="hugo_symbol">RET</field>
+		<field name="name">ret proto-oncogene</field>
+		<field name="summary">This gene, a member of the cadherin superfamily, encodes one of the receptor tyrosine kinases, which are cell-surface molecules that transduce signals for cell growth and differentiation. This gene plays a crucial role in neural crest development, and it can undergo oncogenic activation in vivo and in vitro by cytogenetic rearrangement. Mutations in this gene are associated with the disorders multiple endocrine neoplasia, type IIA, multiple endocrine neoplasia, type IIB, Hirschsprung disease, and medullary thyroid carcinoma. Two transcript variants encoding different isoforms have been found for this gene. Additional transcript variants have been described but their biological validity has not been confirmed.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">6608</field>
+		<field name="hugo_symbol">SMO</field>
+		<field name="name">smoothened, frizzled class receptor</field>
+		<field name="summary">The protein encoded by this gene is a G protein-coupled receptor that interacts with the patched protein, a receptor for hedgehog proteins. The encoded protein tranduces signals to other proteins after activation by a hedgehog protein/patched protein complex.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">6794</field>
+		<field name="hugo_symbol">STK11</field>
+		<field name="name">serine/threonine kinase 11</field>
+		<field name="summary">This gene, which encodes a member of the serine/threonine kinase family, regulates cell polarity and functions as a tumor suppressor. Mutations in this gene have been associated with Peutz-Jeghers syndrome, an autosomal dominant disorder characterized by the growth of polyps in the gastrointestinal tract, pigmented macules on the skin and mouth, and other neoplasms. Alternate transcriptional splice variants of this gene have been observed but have not been thoroughly characterized.</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">7157</field>
+		<field name="hugo_symbol">TP53</field>
+		<field name="name">tumor protein p53</field>
+		<field name="summary">This gene encodes a tumor suppressor protein containing transcriptional activation, DNA binding, and oligomerization domains. The encoded protein responds to diverse cellular stresses to regulate expression of target genes, thereby inducing cell cycle arrest, apoptosis, senescence, DNA repair, or changes in metabolism. Mutations in this gene are associated with a variety of human cancers, including hereditary cancers such as Li-Fraumeni syndrome. Alternative splicing of this gene and the use of alternate promoters result in multiple transcript variants and isoforms. Additional isoforms have also been shown to result from the use of alternate translation initiation codons (PMIDs: 12032546, 20937277).</field>
+	</row>
+
+	<row>
+		<field name="entrez_gene_id">55294</field>
+		<field name="hugo_symbol">FBXW7</field>
+		<field name="name">F-box and WD repeat domain containing 7, E3 ubiquitin protein ligase</field>
+		<field name="summary">This gene encodes a member of the F-box protein family which is characterized by an approximately 40 amino acid motif, the F-box. The F-box proteins constitute one of the four subunits of ubiquitin protein ligase complex called SCFs (SKP1-cullin-F-box), which function in phosphorylation-dependent ubiquitination. The F-box proteins are divided into 3 classes: Fbws containing WD-40 domains, Fbls containing leucine-rich repeats, and Fbxs containing either different protein-protein interaction modules or no recognizable motifs. The protein encoded by this gene was previously referred to as FBX30, and belongs to the Fbws class; in addition to an F-box, this protein contains 7 tandem WD40 repeats. This protein binds directly to cyclin E and probably targets cyclin E for ubiquitin-mediated degradation. Mutations in this gene are detected in ovarian and breast cancer cell lines, implicating the gene's potential role in the pathogenesis of human cancers. Multiple transcript variants encoding different isoforms have been found for this gene.</field>
+	</row>
+
+	</table_data>
+
+</database>
+</mysqldump>

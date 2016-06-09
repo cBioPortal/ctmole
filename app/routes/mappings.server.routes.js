@@ -66,6 +66,9 @@ module.exports = function(app) {
 	app.route('/deleteAlteration/:trialID/:gene/:alteration/:type')
 		.get(users.requiresLogin, mappings.deleteAlteration);
 
+	app.route('/deleteAlterationByTumor/:trialID/:gene/:alteration/:type/:tumor')
+		.get(users.requiresLogin, mappings.deleteAlterationByTumor);
+
 	app.route('/convertLog/:trialID')
 		.get(users.requiresLogin, mappings.convertLog);
 
@@ -75,10 +78,11 @@ module.exports = function(app) {
 	app.route('/curationStatusCounts')
 		.get(users.requiresLogin, mappings.curationStatusCounts);
 
-	app.route('/API/genAlt/:gene/:alterations')
-		.get(users.requiresLogin, mappings.overlappingTrials);
+	app.route('/addTumor/:trialID/:tumor/:predictedTumors')
+		.get(users.requiresLogin, mappings.addTumor);
 
-
+	app.route('/deleteTumor/:trialID/:tumor')
+		.get(users.requiresLogin, mappings.deleteTumor);
 
 	// Finish by binding the Mapping middleware
 	//app.param('Idvalue', mappings.mappingBynctId);

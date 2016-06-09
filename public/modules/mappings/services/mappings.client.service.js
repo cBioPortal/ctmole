@@ -105,6 +105,21 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					method: 'GET',
 					isArray: true
 				}
+			}),
+			deleteAlterationByTumor: $resource('deleteAlterationByTumor/:trialID/:gene/:alteration/:type/:tumor', {trialID: '@nctId'}, {
+				deleteAlterationByTumor: {
+					method: 'GET'
+				}
+			}),
+			addTumor: $resource('addTumor/:trialID/:tumor/:predictedTumors', {trialID: '@nctId',tumor: '@oncoTreeTumors'}, {
+				get: {
+					method: 'GET'
+				}
+			}),
+			deleteTumor: $resource('deleteTumor/:trialID/:tumor', {trialID: '@nctId',tumor: '@oncoTreeTumors'}, {
+				get: {
+					method: 'GET'
+				}
 			})
 		};
 

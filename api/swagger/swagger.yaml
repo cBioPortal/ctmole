@@ -143,6 +143,64 @@ paths:
             description: Error
             schema:
               $ref: "#/definitions/ErrorResponse"
+  /addtrialsByMutationCancer:
+      # binds a127 app logic to a route
+      x-swagger-router-controller: trialsByMutations
+      get:
+        description: Returns clinical trials list
+        # used as the method name of the controller
+        operationId: trialsByMutationsGET
+        parameters:
+          - name: gene
+            in: query
+            description: The gene name we want to search for
+            required: true
+            type: string
+          - name: alterations
+            in: query
+            description: The mutation list we want to search for
+            required: true
+            type: string
+        responses:
+          "200":
+            description: Success
+            schema:
+              # a pointer to a definition
+              $ref: "#/definitions/SuccessResponse"
+          # responses may fall through to errors
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+      post:
+        description: Returns clinical trials list
+        # used as the method name of the controller
+        operationId: trialsByMutationsPOST
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              properties:
+                gene:
+                  type: string
+                  minLength: 1
+                  maxLength: 256
+                alterations:
+                  type: string
+                  minLength: 1
+                  maxLength: 256
+        responses:
+          "200":
+            description: Success
+            schema:
+              # a pointer to a definition
+              $ref: "#/definitions/SuccessResponse"
+          # responses may fall through to errors
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions

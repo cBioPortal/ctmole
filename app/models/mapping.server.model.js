@@ -59,21 +59,11 @@ var MappingSchema = new Schema({
 	},
 	comments: {
 		type: Array
-	}
-	/*,
-	predictedGenes: {
+	},
+	oncoTreeTumors: {
 		type: Array
 	}
 
-	created: {
-		type: Date,
-		default: Date.now
-	},
-	user: {
-		type: Schema.ObjectId,
-		ref: 'User'
-	},
-	,*/
 
 });
 

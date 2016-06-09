@@ -160,7 +160,7 @@ exports.hasAuthorization = function(req, res, next) {
 
 exports.cancertypeCount = function(req, res) {
 	var cancertypesCount = [], validStatusTrials = [], overlappingNctIds = [], tempIndex = -1;
-	Trial.find({$and:[{countries: {$in: ["United States"]}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
+	Trial.find({$and:[{countries: {$in: ['United States']}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
 		.on('data', function(trial){
 			validStatusTrials.push(trial.nctId);
 		})
@@ -194,10 +194,10 @@ exports.cancertypeCount = function(req, res) {
 
 exports.cancerTypeInfo = function(req, res){
 	var cancerTypes = [];
-	Cancertype.find({}).stream()
-		.on('data', function(cancerType){
-			if(cancerType.nctIds.indexOf(req.params.nctId) !== -1){
-				cancerTypes.push({cancer: cancerType.cancer});
+	Cancertype.find({nctIds: {$in: [req.params.nctId]}}).stream()
+		.on('data', function(cancer){
+			if(cancer.OncoKBCancerType !== undefined){
+				cancerTypes.push(cancer.OncoKBCancerType);
 			}
 		})
 		.on('error', function(err){
@@ -208,4 +208,4 @@ exports.cancerTypeInfo = function(req, res){
 			// final callback
 			return res.jsonp(cancerTypes);
 		});
-}
+};

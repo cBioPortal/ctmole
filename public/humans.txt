@@ -1,15 +1,1 @@
-# humanstxt.org/
-# The humans responsible & technology colophon
-
-# TEAM
-
-    <name> -- <role> -- <twitter>
-
-# THANKS
-
-    <name>
-
-# TECHNOLOGY COLOPHON
-
-    HTML5, CSS3
-    jQuery, Modernizr
+Adrenocortical Carcinoma','Ampullary Carcinoma','Anal Cancer','Appendiceal Cancer','Biliary Cancer','Bladder Cancer','Blastic Plasmacytoid Dendritic Cell Neoplasm','Breast Carcinoma','Breast Sarcoma','Cancer of Unknown Primary','Cervical Cancer','Chondroblastoma','Chordoma','Choroid Plexus Tumor','Colorectal Cancer','Embryonal Tumor','Endometrial Cancer','Ependymomal Tumor','Esophagogastric Carcinoma','Ewing Sarcoma','Gastrointestinal Neuroendocrine Tumor','Gastrointestinal Stromal Tumor','Germ Cell Tumor','Gestational Trophoblastic Disease','Giant Cell Tumor','Glioma','Head and Neck Carcinoma','Hepatocellular Carcinoma','Histiocytic Disorder','Histiocytosis','Hodgkin Lymphoma','Leukemia','Mastocytosis','Melanoma','Meningothelial Tumor','Mesothelioma','Miscellaneous Brain Tumor','Miscellaneous Neuroepithelial Tumor','Multiple Myeloma','Myelodysplasia','Myeloproliferative Neoplasm','Nerve Sheath Tumor','Non-Hodgkin Lymphoma','Non-Small Cell Lung Cancer','Osteosarcoma','Ovarian Cancer','Pancreatic Cancer','Penile Cancer','Pheochromocytoma','Pineal Tumor','Prostate Cancer','Renal Cell Carcinoma','Retinoblastoma','Salivary Carcinoma','Sellar Tumor','Sex Cord Stromal Tumor','Skin Cancer, Non-Melanoma','Small Bowel Cancer','Small Cell Lung Cancer','Soft Tissue Sarcoma','Thymic Tumor','Thyroid Cancer','Uterine Sarcoma','Vaginal Cancer','Vulvar Carcinoma','Wilms Tumor','','','','
