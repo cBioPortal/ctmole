@@ -50,7 +50,7 @@ module.exports = function(app) {
 		.get(mappings.mappingBynctIdAlt)
 		.post(users.requiresLogin, mappings.create);
 
-	app.route('/mappingStatus/:status')
+	app.route('/mappingStatus')
 		.get(mappings.fetchByStatus);
 
 	app.route('/mappingSave/:nctId')
@@ -83,7 +83,9 @@ module.exports = function(app) {
 
 	app.route('/deleteTumor/:trialID/:tumor')
 		.get(users.requiresLogin, mappings.deleteTumor);
-
+        
+        app.route('/preciseSearchEngine/:gene/:alteration/:tumorType')
+		.get(users.requiresLogin, mappings.preciseSearch);
 	// Finish by binding the Mapping middleware
 	//app.param('Idvalue', mappings.mappingBynctId);
 

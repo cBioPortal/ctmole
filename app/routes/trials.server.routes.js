@@ -50,8 +50,8 @@ module.exports = function(app) {
 		.get(trials.read)
 		.put(trials.updateTrial);
 
-	app.route('/trials/search/:searchEngineKeyword')
-		.get(trials.generalSearch);
+	app.route('/searchTrials/:gene/:alteration/:tumorType/:otherContent')
+		.get(trials.searchTrials);
 
 	app.route('/trials/search/:keyword')
 		.get(trials.search);

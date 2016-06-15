@@ -53,7 +53,7 @@ angular.module('trials').factory('Trials', ['$resource',
 				},
 				updateStatus:{method: 'POST'}
 			}),
-			searchEngine: $resource('trials/search/:searchEngineKeyword', {
+			searchEngine: $resource('searchTrials/:gene/:alteration/:tumorType/:otherContent', {
 			}, {
 				'query':  {method:'GET', isArray:true}
 			}),
