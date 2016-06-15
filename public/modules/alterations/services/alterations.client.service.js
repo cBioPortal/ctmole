@@ -50,7 +50,10 @@ angular.module('alterations').factory('Alterations', ['$resource',
 				'query':  {method:'GET', isArray:true}
 			}),
 			addAlteration: $resource('addAlteration/:alteration/:gene/:nctId/:type', { alteration: '@alteration',gene: '@gene'
-			}, {})
+			}, {}),
+                        allAlterations: $resource('alterations/', {}, {
+				'get':  {method:'GET', isArray:true}
+			})
 
 
 		};

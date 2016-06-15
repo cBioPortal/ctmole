@@ -2,130 +2,145 @@
 <section data-ng-controller="HomeController" data-ng-init="find()">
 
 
-	<div class="col-md-2" ng-show="showRefine" style="position:fixed;left:10px;top:50px;height:100%">
+    <div class="col-md-2" ng-show="showResult" style="position:absolute;left:10px;top:50px;height:100%">
 
-		<h4>Curation Status</h4>
+        <h4>Curation Status</h4>
 
-                <div class="radio">
-                <label><input type="radio" ng-model="status" value="4" ng-change="getCriteria('all', status, 'status')">All</label><br/>
-                <label><input type="radio" ng-model="status" value="1" ng-change="getCriteria(false, status, 'status')">Not Curated</label><br/>
-                <label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(true, status, 'status')">In Progress</label><br/>
-                <label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, status, 'status')">Completed</label>
+        <div class="radio">
+            <label><input type="radio" ng-model="status" value="4" ng-change="getCriteria('all', status, 'status')">All</label><br/>
+            <label><input type="radio" ng-model="status" value="1" ng-change="getCriteria(false, status, 'status')">Not Curated</label><br/>
+            <label><input type="radio" ng-model="status" value="2" ng-change="getCriteria(true, status, 'status')">In Progress</label><br/>
+            <label><input type="radio" ng-model="status" value="3" ng-change="getCriteria(true, status, 'status')">Completed</label>
+        </div>
+        <h4>Recruit Status</h4>
+        <div class="">
+            <div class="checkbox" ng-repeat="a in recruitingStatus">
+                <input id="{{a}}" ng-model="recruit" ng-change="getCriteria(recruit, a, 'recruit')" type="checkbox" ng-checked="chosenRecruits.indexOf(a) !== - 1"><label for="{{a}}"> {{a}}</label>
+            </div>
+        </div>
+        <h4>Location</h4>
+
+        <div ng-show="allCountries">
+            <select chosen multiple ng-options="x as x for x in countries" class="multiSelect" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
+            </select>
+
+        </div>
+
+        <h4>Tumor Types</h4>
+        <select chosen multiple ng-options="m as m for m in tumorTypes" class="multiSelect" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
+        </select>
+
+
+
+        <h4>Gene</h4>
+        <div style="max-height:300px;overflow-y: scroll">
+            <div class="checkbox"  ng-repeat="y in genes">
+                <input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="false"><label for="{{y}}"> {{y}}</label>
+            </div>
+        </div>
+
+        <h4>Mutation</h4>
+        <div style="max-height:300px;overflow-y: scroll">
+            <div class="checkbox" ng-repeat="z in mutations">
+                <input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="false"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
+            </div>
+        </div>
+        <br/>
+        <small>
+            <em class="text-muted">
+                Powered by OncoKB
+            </em>
+        </small>
+        <br/><br/>
+    </div>
+    <div class="container col-md-10" style="float:right">
+        <div class="text-center">
+            Gene:
+            <select chosen
+                    ng-model="searchValues.gene"
+                    ng-options="m as m for m in HUGOgenes"
+                    ng-change="updateInputAlterations()"
+                    class="chosen-select"
+                    data-placeholder="Enter A Gene">
+                <option value=""></option>
+            </select>
+            Alteration:  
+            <select chosen
+                    ng-model="searchValues.alteration"
+                    ng-options="m as m for m in inputAlterations"
+                    class="chosen-select"
+                    data-placeholder="Enter An Alteration">
+                <option value=""></option>
+            </select>
+            Tumor Type: <input ng-model="searchValues.tumorType">
+            <br/><br/>
+            Other Content: <input ng-model="searchValues.otherContent" size="50">
+            <button type="button" ng-click="searchTrials()" class="btn btn-default">Search</button>
+        </div>
+
+        <br/><br/>
+        <div ng-if="loading">
+            <img class="loadingLogo" src="modules/core/img/loaders/loading.gif">
+        </div>
+
+        <div ng-if="showResult" class="well list-group">
+            <h2>MATCHING TRIALS | {{filteredTrials.length}}</h2><br/>
+            <a data-ng-repeat="trial in filteredTrials = (trials| filter: searchCriteria())  | limitTo: countNum  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
+                <div>
+                    <h3>{{trial.title}}</h3>
+                    <h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/> {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
+                    <div >
+                        <div ng-if="trial.fetchedAlterations.length > 0" style="max-width:100%;overflow-x: scroll">
+                            <h1><small>
+                                    <span ng-class="{true:'label-success', false:'label-warning'}[x.curationMethod === 'manually' || x.status === 'confirmed']" class="label floatStyle" ng-repeat="x in trial.fetchedAlterations">{{x.gene + "     " + x.alteration}}</span>
+                                </small></h1>         
+                        </div>
+                    </div>
+                    <div ng-if="trial.fetchedAlterations.length === 0" >
+                        <p>No Alteration Info Available at this time</p>
+                    </div>
+                    <br/><br/><br/> 
+
                 </div>
-		<h4>Recruit Status</h4>
-		<div class="">
-		<div class="checkbox" ng-repeat="a in recruitingStatus">
-			<input id="{{a}}" ng-model="recruit" ng-change="getCriteria(recruit, a, 'recruit')" type="checkbox" ng-checked="chosenRecruits.indexOf(a) !== -1"><label for="{{a}}"> {{a}}</label>
-		</div>
-		</div>
-		<h4>Location</h4>
+            </a>
 
-		<div ng-show="allCountries">
-			<select chosen multiple ng-options="x as x for x in countries" class="multiSelect" data-placeholder="Select Countries" ng-model="country" ng-change="getCriteria(country, country, 'country')">
-			</select>
+        </div>
 
-		</div>
+    </div>
+    <br/><br/><br/>
 
-		<h4>Tumor Types</h4>
-		<select chosen multiple ng-options="m as m for m in tumorTypes" class="multiSelect" data-placeholder="Select Tumor Types" ng-model="tumor" ng-change="getCriteria(tumor, tumor, 'tumor')">
-		</select>
+    <div ng-show="!showResult">
+        <div class="panel panel-default plotlyChart">
+            <div class="panel-heading">Total # of Genomically Defined Clinical Trails: {{trialsMappingCount}}</div>
+            <div class="panel-body chartOverflow"  id="geneTrails" >
+                <img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingGeneData">
+            </div>
 
+            <br/>
+        </div>
 
+        <div class="panel panel-default plotlyChart">
+            <div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: {{cancerTypeCounts}}</div>
+            <div class="panel-body chartOverflow" id="oncoKBtumorTypeTrials">
+                <img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingTumorData">
+            </div>
+            <br/>
+        </div>
+        <div class="panel panel-default plotlyChart">
+            <div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
+            <div class="panel-body pieChartStyle"  id="USTrials">
+                <img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingStatusData">
+            </div>
+            <br/>
+        </div>
+        <div class="panel panel-default plotlyChart">
+            <div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
+            <div class="panel-body pieChartStyle" id="curationStatus">
+                <img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingCurationStatusData">
+            </div>
+            <br/>
+        </div>
 
-		<h4>Gene</h4>
-		<div class="filterStyle">
-		<div class="checkbox"  ng-repeat="y in genes">
-			<input id="{{y}}" ng-model="gene" ng-change="getCriteria(gene, y, 'gene')" type="checkbox" ng-checked="chosenGenes.indexOf(y) !== -1"><label for="{{y}}"> {{y}}</label>
-		</div>
-		</div>
-
-		<h4>Mutation</h4>
-		<div class="filterStyle">
-		<div class="checkbox" ng-repeat="z in mutations">
-			<input id="{{z}}" ng-model="mutation" ng-change="getCriteria(mutation, z, 'mutation')" type="checkbox" ng-checked="chosenMutations.indexOf(z.gene+','+z.alteration) !== -1"><label for="{{z}}"> {{z.gene + '   ' + z.alteration}}</label>
-		</div>
-		</div>
-		<br/>
-		<small>
-			<em class="text-muted">
-				Powered by OncoKB
-			</em>
-		</small>
-		<br/><br/>
-	</div>
-	<div class="container col-md-10" style="float:right">
-
-		<div class="input-group input-group-lg" style="width:90%">
-			<input type="text" class="form-control" ng-model="searchKeyword" name="keywordInputBox" size="20" placeholder="Enter the type of cancer to begin your search" aria-describedby="sizing-addon1">
-			<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search fa-lg searchIcon" ng-click="search()"></i></span>
-		</div>
-		<br/><br/>
-		<div ng-if="loading">
-			<img class="loadingLogo" src="modules/core/img/loaders/loading.gif">
-		</div>
-
-		<div ng-show="showResult" class="well list-group">
-			<h2>MATCHING TRIALS | {{filteredTrials.length}}</h2><br/>
-			<a data-ng-repeat="trial in filteredTrials = (trials | filter: searchCriteria())  | limitTo: countNum  " data-ng-href="#!/trials/{{trial.nctId}}" class="list-group-item">
-				<div>
-					<h3>{{trial.title}}</h3>
-					<h3><small><p class="lead">{{trial.nctId}} <br/> {{trial.phase}}<br/> {{trial.recruitingStatus}}<br/> {{trial.countries.join(', ')}}</p></small></h3>
-
-					<div ng-if="trial.fetchedAlterations.length > 0" ng-repeat="x in trial.fetchedAlterations" >
-						<h1><small>
-							<span class="label label-warning floatStyle"  ng-if="x.status === 'unconfirmed'" >{{x.gene+ "     " + x.alteration}}</span>
-							<span class="label label-success floatStyle" ng-if="x.curationMethod === 'manually' || x.status === 'confirmed'">{{x.gene + "     " + x.alteration}}</span>
-
-						</small></h1>
-
-					</div>
-					<br/><br/><br/>
-					<div ng-if="trial.fetchedAlterations.length === 0" >
-						<p>No Alteration Info Available at this time</p>
-					</div>
-
-
-				</div>
-			</a>
-
-		</div>
-
-	</div>
-<br/><br/><br/>
-
-
-	<div ng-show="!showRefine">
-	<div class="panel panel-default plotlyChart">
-		<div class="panel-heading">Total # of Genomically Defined Clinical Trails: {{trialsMappingCount}}</div>
-		<div class="panel-body chartOverflow"  id="geneTrails">
-			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingGeneData">
-		</div>
-
-		<br/>
-	</div>
-
-	<div class="panel panel-default plotlyChart">
-		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: {{cancerTypeCounts}}</div>
-		<div class="panel-body chartOverflow" id="oncoKBtumorTypeTrials">
-			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingTumorData">
-		</div>
-		<br/>
-	</div>
-	<div class="panel panel-default plotlyChart">
-		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body pieChartStyle"  id="USTrials">
-			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingStatusData">
-		</div>
-		<br/>
-	</div>
-	<div class="panel panel-default plotlyChart">
-		<div class="panel-heading">Total # of Cancer Associated Clinical Trials in the US: 15, 014</div>
-		<div class="panel-body pieChartStyle" id="curationStatus">
-			<img src="modules/core/img/loaders/loading.gif" class="loadingLogo" ng-if="loadingCurationStatusData">
-		</div>
-		<br/>
-	</div>
-
-</div>
+    </div>
 
 </section>

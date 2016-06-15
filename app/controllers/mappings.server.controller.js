@@ -36,10 +36,12 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    errorHandler = require('./errors'),
-    Mapping = mongoose.model('Mapping'),
-    Trial = mongoose.model('clinicaltrial'),
-    _ = require('lodash');
+        errorHandler = require('./errors'),
+        Mapping = mongoose.model('Mapping'),
+        Trial = mongoose.model('clinicaltrial'),
+        MMTrial = mongoose.model('MMTrial'),
+        Cancertype = mongoose.model('Cancertype'),
+        _ = require('lodash');
 
 
 var Alteration = mongoose.model('Alteration');
@@ -58,7 +60,7 @@ exports.create = function (req, res) {
         nctId: req.params.nctId,
         alteration: [{alteration_Id: req.params.alteration, status: 'manually'}],
         completeStatus: '1',
-        log: [{date: rightNow, user: req.user._id, operationType:'add', alteration_Id: req.params.alteration}]
+        log: [{date: rightNow, user: req.user._id, operationType: 'add', alteration_Id: req.params.alteration}]
     });
     mapping.user = req.user;
     mapping.save(function (err) {
@@ -90,7 +92,7 @@ exports.update = function (req, res) {
     var rightNow = new Date();
     rightNow = rightNow.toString();
 
-    req.body.log.push({date: rightNow, user: req.user._id, operationType:'add', alteration_Id: req.params.Idvalue});
+    req.body.log.push({date: rightNow, user: req.user._id, operationType: 'add', alteration_Id: req.params.Idvalue});
 
     Mapping.update({nctId: req.body.nctId}, {$set: {alteration: alterationArray, log: req.body.log}}).populate('user', 'displayName').exec(function (err, mappings) {
         if (err) {
@@ -141,8 +143,10 @@ exports.list = function (req, res) {
  */
 exports.mappingByID = function (req, res, next, id) {
     Mapping.findById(id).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) return next(err);
-        if (!mapping) return next(new Error('Failed to load Mapping ' + id));
+        if (err)
+            return next(err);
+        if (!mapping)
+            return next(new Error('Failed to load Mapping ' + id));
         req.mapping = mapping;
         next();
     });
@@ -170,8 +174,7 @@ exports.mappingBynctId = function (req, res) {
         if (!mapping) {
             console.log('No Mapping Record Exist');
             res.jsonp();
-        }
-        else
+        } else
         {
             res.jsonp(mapping);
         }
@@ -189,30 +192,30 @@ function compare(a, b) {
 
 exports.convertLog = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
+        if (err)
+            console.log('error happened when searching ', err);
         if (!mapping) {
             console.log('No Mapping Record Exist');
             res.jsonp();
-        }
-        else
+        } else
         {
 
             var records = [];
             var count = 0;
 
-            _.each(mapping.log, function(item){
+            _.each(mapping.log, function (item) {
 
                 User.findOne({_id: new ObjectId(item.user)}).populate('user', 'displayName').exec(function (err, user) {
-                    if (err) console.log('error happened when searching ',err);
+                    if (err)
+                        console.log('error happened when searching ', err);
                     if (!user) {
                         console.log('No User Record Exist');
-                    }
-                    else
+                    } else
                     {
                         records.push({user: user.displayName, changetoStatus: item.changetoStatus, date: item.date, operationType: item.operationType, alteration: item.alteration, gene: item.gene});
 
                         count++;
-                        if(count === mapping.log.length){
+                        if (count === mapping.log.length) {
                             records.sort(compare);
                             res.jsonp(records);
                         }
@@ -251,7 +254,7 @@ exports.completeTrial = function (req, res) {
     var rightNow = new Date();
     rightNow = rightNow.toString();
 
-    req.body.log.push({date: rightNow, user: req.user._id, operationType:'changeStatus', changetoStatus: req.params.Idvalue});
+    req.body.log.push({date: rightNow, user: req.user._id, operationType: 'changeStatus', changetoStatus: req.params.Idvalue});
 
     Mapping.update({nctId: req.body.nctId}, {$set: {completeStatus: req.params.Idvalue, log: req.body.log}}).exec(function (err, mapping) {
         if (err) {
@@ -268,7 +271,7 @@ exports.completeTrial = function (req, res) {
 
 exports.fetchByStatus = function (req, res) {
 
-    Mapping.find({completeStatus: req.params.status}).exec(function (err, mappings) {
+    Mapping.find({},{nctId:1,completeStatus:1,alterations:1}).exec(function (err, mappings) {
 
         if (err) {
             return res.status(400).send({
@@ -303,7 +306,8 @@ exports.saveMapping = function (req, res) {
 
 exports.saveComments = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
+        if (err)
+            console.log('error happened when searching ', err);
         if (!mapping) {
             console.log('No Mapping Record Exist');
 
@@ -325,12 +329,11 @@ exports.saveComments = function (req, res) {
             });
 
 
-        }
-        else
+        } else
         {
             req.mapping = mapping;
             mapping.comments.push(req.params.comment);
-            if(mapping.completeStatus === '1')
+            if (mapping.completeStatus === '1')
             {
                 mapping.completeStatus = '2';
             }
@@ -352,20 +355,21 @@ exports.saveComments = function (req, res) {
 
 exports.confirmAlteration = function (req, res) {
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
+        if (err)
+            console.log('error happened when searching ', err);
         req.mapping = mapping;
 
-        _.each(mapping.alterations, function(item){
-            if(item.alteration === req.params.alteration && item.gene === req.params.gene && item.type === req.params.type){
+        _.each(mapping.alterations, function (item) {
+            if (item.alteration === req.params.alteration && item.gene === req.params.gene && item.type === req.params.type) {
                 item.status = 'confirmed';
             }
         });
         var rightNow = new Date();
         rightNow = rightNow.toString();
 
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'confirm', alteration_Id: req.params.alteration_Id});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType: 'confirm', alteration_Id: req.params.alteration_Id});
 
-        if(mapping.completeStatus === '1')
+        if (mapping.completeStatus === '1')
         {
             mapping.completeStatus = '2';
         }
@@ -387,7 +391,8 @@ exports.confirmAlteration = function (req, res) {
 exports.deleteAlteration = function (req, res) {
 
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
+        if (err)
+            console.log('error happened when searching ', err);
         req.mapping = mapping;
 
         for (var i = 0; i < mapping.alterations.length; i++) {
@@ -400,14 +405,14 @@ exports.deleteAlteration = function (req, res) {
         var rightNow = new Date();
         rightNow = rightNow.toString();
 
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', alteration: req.params.alteration, gene: req.params.gene});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType: 'delete', alteration: req.params.alteration, gene: req.params.gene});
 
-        if(mapping.completeStatus === '1')
+        if (mapping.completeStatus === '1')
         {
             mapping.completeStatus = '2';
         }
 
-        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus }}).exec(function (err, mapping) {
+        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -426,15 +431,16 @@ exports.deleteAlteration = function (req, res) {
 exports.deleteAlterationByTumor = function (req, res) {
 
     Mapping.findOne({nctId: req.params.trialID}).populate('user', 'displayName').exec(function (err, mapping) {
-        if (err) console.log('error happened when searching ',err);
+        if (err)
+            console.log('error happened when searching ', err);
         req.mapping = mapping;
 
         for (var i = 0; i < mapping.alterations.length; i++) {
             if ((req.params.alteration === 'unspecified' || mapping.alterations[i].alteration === req.params.alteration) && mapping.alterations[i].type === req.params.type && mapping.alterations[i].gene === req.params.gene)
             {
-                for(var j = 0;j < mapping.alterations[i].tumors.length;j++){
+                for (var j = 0; j < mapping.alterations[i].tumors.length; j++) {
 
-                    if(mapping.alterations[i].tumors[j] === req.params.tumor){
+                    if (mapping.alterations[i].tumors[j] === req.params.tumor) {
 
                         mapping.alterations[i].tumors.splice(j, 1);
 
@@ -448,14 +454,14 @@ exports.deleteAlterationByTumor = function (req, res) {
         var rightNow = new Date();
         rightNow = rightNow.toString();
 
-        mapping.log.push({date: rightNow, user: req.user._id, operationType:'delete', alteration: req.params.alteration, gene: req.params.gene, tumor: req.params.tumor});
+        mapping.log.push({date: rightNow, user: req.user._id, operationType: 'delete', alteration: req.params.alteration, gene: req.params.gene, tumor: req.params.tumor});
 
-        if(mapping.completeStatus === '1')
+        if (mapping.completeStatus === '1')
         {
             mapping.completeStatus = '2';
         }
 
-        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus }}).exec(function (err, mapping) {
+        Mapping.update({nctId: req.params.trialID}, {$set: {alterations: mapping.alterations, log: mapping.log, completeStatus: mapping.completeStatus}}).exec(function (err, mapping) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -470,104 +476,151 @@ exports.deleteAlterationByTumor = function (req, res) {
 
 };
 
-function compare(a, b) {
-    return a.predicted + a.curated - b.predicted + b.curated;
+function compareAmount(a, b) {
+    return a.predicted.length + a.curated.length - b.predicted.length + b.curated.length;
 }
 
-exports.geneTrialCounts = function(req, res){
+exports.geneTrialCounts = function (req, res) {
     var geneTrialCountArr = [];
     var validStatusTrials = [];
-    Trial.find({$and:[{countries: {$in: ['United States']}},  {$or:[{recruitingStatus: 'Recruiting'},{recruitingStatus: 'Active, not recruiting'}]} ]}).stream()
-        .on('data', function(trial){
-            validStatusTrials.push(trial.nctId);
-        })
-        .on('error', function(){
-            console.log('error happened when searching valid status trials ');
-        })
-        .on('end', function(){
-            Mapping.find({nctId: {$in: validStatusTrials}}).stream()
-                .on('data', function(mapping){
-
-
-                    if(mapping.alterations !== undefined && mapping.alterations.length !== 0)
-                    {
-                        var countedGenes = [];
-                        _.each(mapping.alterations, function(item){
-                            //use geneIndex to make sure each gene only count once for each trial
-                            var currentGene = item.gene;
-
-                            var index = -1, geneIndex = countedGenes.indexOf(currentGene);
-                            for(var i = 0;i < geneTrialCountArr.length;i++)
+//    MMTrial.find({status: {$in: ["Active, not recruiting", "Approved", "Approved for marketing", "Recruiting", "Available", "Enrolling by invitation", "Open", "Enrolling"]}}).stream()
+//            .on('data', function (trial) {
+//                validStatusTrials.push(trial.id);
+//            })
+//            .on('error', function () {
+//                console.log('error happened when searching valid status trials ');
+//            })
+//            .on('end', function () {
+//                Mapping.find({nctId: {$in: validStatusTrials}}).stream()
+                    Mapping.find().stream()
+                        .on('data', function (mapping) {
+                            if (mapping.alterations !== undefined && mapping.alterations.length !== 0)
                             {
-                                if(geneTrialCountArr[i].gene === currentGene)
-                                {
-                                    index = i;
-                                    break;
-                                }
-                            }
-                            if(index === -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
-                            {
-                                geneTrialCountArr.push({gene: currentGene, predicted: 1, curated: 0});
-                            }
-                            else if(index === -1 && (item.curationMethod === 'manually' || item.status === 'confirmed') )
-                            {
-                                geneTrialCountArr.push({gene: currentGene, predicted: 0, curated: 1});
-                            }
-                            else if(geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
-                            {
-                                geneTrialCountArr[index].predicted++;
-                            }
-                            else if(geneIndex === -1 && index !== -1 && (item.curationMethod === 'manually' || item.status === 'confirmed'))
-                            {
-                                geneTrialCountArr[index].curated++;
-                            }
+                                var countedGenes = [];
+                                _.each(mapping.alterations, function (item) {
+                                    //use geneIndex to make sure each gene only count once for each trial
+                                    var currentGene = item.gene;  
+                                    var index = -1, geneIndex = countedGenes.indexOf(currentGene);
+                                    for (var i = 0; i < geneTrialCountArr.length; i++)
+                                    {
+                                        if (geneTrialCountArr[i].gene === currentGene)
+                                        {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    if (index === -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
+                                    {
+                                        geneTrialCountArr.push({gene: currentGene, predicted: [mapping.nctId], curated: []});
+                                    } else if (index === -1 && (item.curationMethod === 'manually' || item.status === 'confirmed'))
+                                    {
+                                        geneTrialCountArr.push({gene: currentGene, predicted: [], curated: [mapping.nctId]});
+                                    } else if (geneIndex === -1 && index !== -1 && item.curationMethod === 'predicted' && item.status === 'unconfirmed')
+                                    {
+                                        geneTrialCountArr[index].predicted.push(mapping.nctId);
+                                    } else if (geneIndex === -1 && index !== -1 && (item.curationMethod === 'manually' || item.status === 'confirmed'))
+                                    {
+                                        geneTrialCountArr[index].curated.push(mapping.nctId);
+                                    }
 
-                            countedGenes.push(currentGene);
+                                    countedGenes.push(currentGene);
 
+                                });
+                            }
+                        })
+                        .on('error', function (err) {
+                            // handle error
+                            console.log('error happened');
+                        })
+                        .on('end', function () {
+                            // final callback
+                            geneTrialCountArr.sort(compareAmount);
+                            return res.jsonp(geneTrialCountArr);
                         });
-                    }
-                })
-                .on('error', function(err){
-                    // handle error
-                    console.log('error happened');
-                })
-                .on('end', function(){
-                    // final callback
-                    geneTrialCountArr.sort(compare);
-                    return res.jsonp(geneTrialCountArr);
-                });
-        });
+//            });
 
 
 
 };
+exports.preciseSearch = function (req, res) {
+    
+    var nctIds = [];
+    var alterationInput = (req.params.alteration === " " ? false : true);
+    var tumorTypeInput = (req.params.tumorType === " " ? false : true); 
+ 
+    Mapping.find().stream()
+            .on('data', function (mapping) {
+                if (mapping.alterations !== undefined && mapping.alterations.length !== 0)
+                {
+                    for(var i = 0; i < mapping.alterations.length;i++){
+                        if(alterationInput){
+                            if(mapping.alterations[i].gene.toUpperCase() === req.params.gene.toUpperCase() && mapping.alterations[i].alteration.toUpperCase() === req.params.alteration.toUpperCase()){
+                                nctIds.push(mapping.nctId);
+                                break;
+                            }
+                        }else{
+                            if(mapping.alterations[i].gene.toUpperCase() === req.params.gene.toUpperCase()){
+                                nctIds.push(mapping.nctId);
+                                break;
+                            }
+                        }
+                    }
+                     
+                }
+            })
+            .on('error', function (err) {
+                // handle error
+                console.log('error happened');
+            })
+            .on('end', function () { 
+                if(tumorTypeInput){
+                    var nctIdsFromTumorType = [];
+                    var finalExp = new RegExp(req.params.tumorType, 'i');
+                    //keep searching cancertype table
+                    Cancertype.find({cancer: { $regex: finalExp }}).stream()
+                            .on('data', function(item){  
+                                nctIdsFromTumorType = nctIdsFromTumorType.concat(item.nctIds);
+                            })
+                            .on('error', function(error){
+                                console.log('Error happened when searching for tumor type ', error);
+                            })
+                            .on('end', function(){ 
+                                nctIds = _.intersection(nctIds, nctIdsFromTumorType);
+                                return res.jsonp(nctIds);
+                            });
+                }else{
+                    return res.jsonp(nctIds);
+                } 
+                
+            });
+
+};
 
 
-exports.curationStatusCounts = function(req, res){
+exports.curationStatusCounts = function (req, res) {
     var curationStatusCountArr = [0, 0, 0];
 
-        Mapping.find({}).stream()
-            .on('data', function(mapping){
+    Mapping.find({}).stream()
+            .on('data', function (mapping) {
                 //var countFlag = true;
-                if(mapping.completeStatus !== undefined)
+                if (mapping.completeStatus !== undefined)
                 {
-                    if(mapping.completeStatus === '2')
+                    if (mapping.completeStatus === '2')
                     {
                         curationStatusCountArr[1]++;
-                    }
-                    else if(mapping.completeStatus === '3')
+                    } else if (mapping.completeStatus === '3')
                     {
                         curationStatusCountArr[2]++;
                     }
                 }
             })
-            .on('error', function(err){
+            .on('error', function (err) {
                 // handle error
                 console.log('error happened');
             })
-            .on('end', function(){
+            .on('end', function () {
                 // final callback
-                Trial.find({countries: {$in: ['United States']}}).count().exec(function(err, countResult){
+                Trial.find({countries: {$in: ['United States']}}).count().exec(function (err, countResult) {
                     curationStatusCountArr[0] = countResult - curationStatusCountArr[1] - curationStatusCountArr[2];
                     return res.jsonp(curationStatusCountArr);
                 });
@@ -576,50 +629,48 @@ exports.curationStatusCounts = function(req, res){
 
 };
 
-exports.overlappingTrials = function(req, res){
+exports.overlappingTrials = function (req, res) {
     var filteredNctIds = [], tempArr = [], firstFlag = true, count = 0;
     var gene = req.params.gene;
     var alterations = req.params.alterations;
-    _.each(alterations, function(item){
+    _.each(alterations, function (item) {
         tempArr = [];
         Mapping.find({alterations: {$in: [{gene: gene, alteration: item, curationMethod: 'manually', type: 'inclusion'},
-            {gene: gene, alteration: item, curationMethod: 'manually', type: 'exclusion'},
-            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'unconfirmed'},
-            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'confirmed'},
-            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'unconfirmed'},
-            {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'confirmed'} ]}}).stream()
-            .on('data', function(mapping){
-                tempArr.push(mapping.nctId);
-            })
-            .on('error', function(err){
-                console.log('error happened when searching ', err);
-            })
-            .on('end', function(){
-                count++;
-                if(firstFlag){
-                    filteredNctIds = tempArr;
-                    firstFlag = false;
-                }
-                else{
-                    filteredNctIds = _.intersection(tempArr, filteredNctIds);
-                }
+                    {gene: gene, alteration: item, curationMethod: 'manually', type: 'exclusion'},
+                    {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'unconfirmed'},
+                    {gene: gene, alteration: item, curationMethod: 'predicted', type: 'inclusion', status: 'confirmed'},
+                    {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'unconfirmed'},
+                    {gene: gene, alteration: item, curationMethod: 'predicted', type: 'exclusion', status: 'confirmed'}]}}).stream()
+                .on('data', function (mapping) {
+                    tempArr.push(mapping.nctId);
+                })
+                .on('error', function (err) {
+                    console.log('error happened when searching ', err);
+                })
+                .on('end', function () {
+                    count++;
+                    if (firstFlag) {
+                        filteredNctIds = tempArr;
+                        firstFlag = false;
+                    } else {
+                        filteredNctIds = _.intersection(tempArr, filteredNctIds);
+                    }
 
-                if(count === alterations.length){
-                    console.log('here is the mapping info ', filteredNctIds);
-                  return res.jsonp(filteredNctIds);
-                }
-            });
+                    if (count === alterations.length) {
+                        console.log('here is the mapping info ', filteredNctIds);
+                        return res.jsonp(filteredNctIds);
+                    }
+                });
     });
 };
 
-exports.addTumor = function(req, res){
-    Mapping.findOne({nctId: req.params.trialID}).exec(function(error, mapping){
+exports.addTumor = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).exec(function (error, mapping) {
         if (!mapping) {
             console.log('No Mapping Record Exist');
-            if(req.params.predictedTumors === 'emptyTumorsStored'){
+            if (req.params.predictedTumors === 'emptyTumorsStored') {
                 req.params.predictedTumors = [];
-            }
-            else{
+            } else {
                 req.params.predictedTumors = req.params.predictedTumors.split(",");
             }
             req.params.predictedTumors.push(req.params.tumor);
@@ -643,15 +694,15 @@ exports.addTumor = function(req, res){
             });
 
 
-        }
-        else{
-            if(mapping.oncoTreeTumors === undefined)mapping.oncoTreeTumors = req.params.predictedTumors;
+        } else {
+            if (mapping.oncoTreeTumors === undefined)
+                mapping.oncoTreeTumors = req.params.predictedTumors;
             mapping.oncoTreeTumors.push(req.params.tumor);
-            Mapping.update({nctId: req.params.trialID}, {$set: {oncoTreeTumors: mapping.oncoTreeTumors}}).exec(function(err){
-                if(err){
+            Mapping.update({nctId: req.params.trialID}, {$set: {oncoTreeTumors: mapping.oncoTreeTumors}}).exec(function (err) {
+                if (err) {
                     console.log('error happened!');
-                }else{
-                     res.jsonp(mapping);
+                } else {
+                    res.jsonp(mapping);
                 }
             });
         }
@@ -661,8 +712,8 @@ exports.addTumor = function(req, res){
 
 }
 
-exports.deleteTumor = function(req, res){
-    Mapping.findOne({nctId: req.params.trialID}).exec(function(error, mapping){
+exports.deleteTumor = function (req, res) {
+    Mapping.findOne({nctId: req.params.trialID}).exec(function (error, mapping) {
         if (!mapping) {
             console.log('No Mapping Record Exist');
 
@@ -686,19 +737,19 @@ exports.deleteTumor = function(req, res){
             });
 
 
-        }
-        else{
-            if(mapping.oncoTreeTumors === undefined)mapping.oncoTreeTumors = [];
-            else{
-                mapping.oncoTreeTumors = mapping.oncoTreeTumors.filter(function(item){
+        } else {
+            if (mapping.oncoTreeTumors === undefined)
+                mapping.oncoTreeTumors = [];
+            else {
+                mapping.oncoTreeTumors = mapping.oncoTreeTumors.filter(function (item) {
                     return item !== req.params.tumor;
                 });
 
             }
-            Mapping.update({nctId: req.params.trialID}, {$set: {oncoTreeTumors: mapping.oncoTreeTumors}}).exec(function(err){
-                if(err){
+            Mapping.update({nctId: req.params.trialID}, {$set: {oncoTreeTumors: mapping.oncoTreeTumors}}).exec(function (err) {
+                if (err) {
                     console.log('error happened!');
-                }else{
+                } else {
                     res.jsonp(mapping);
                 }
             });

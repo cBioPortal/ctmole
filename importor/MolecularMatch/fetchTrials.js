@@ -39,7 +39,7 @@ function fetchTrials() {
                 console.log('Fetching page ', body.page, '...');
                 saveTrial(0);
             } else {
-                console.log('Page ', pageIndex, ' is undefined and we wait here for 10 seconds to fetch same page again');
+                console.log('Page ', pageIndex + 1, ' is undefined and we wait here for 10 seconds to fetch same page again');
                 setTimeout(function () {
                     fetchTrials();
                 }, 5000);

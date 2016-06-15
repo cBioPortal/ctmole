@@ -66,8 +66,7 @@ angular.module('mappings').factory('Mappings', ['$resource',
 					}
 				}
 			),
-			searchByStatus: $resource('mappingStatus/:status', {status: '@completeStatus'
-			}, {
+			searchByStatus: $resource('mappingStatus', {}, {
 				'query':  {method:'GET', isArray:true}
 			}),
 			mappingSave: $resource('mappingSave/:nctId', {nctId: '@nctId'}, {
@@ -120,6 +119,9 @@ angular.module('mappings').factory('Mappings', ['$resource',
 				get: {
 					method: 'GET'
 				}
+			}),
+                        preciseSearchEngine: $resource('preciseSearchEngine/:gene/:alteration/:tumorType', {}, {
+				'query':  {method:'GET', isArray:true}
 			})
 		};
 
