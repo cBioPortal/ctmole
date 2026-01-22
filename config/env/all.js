@@ -50,6 +50,7 @@ module.exports = {
 				'public/lib/fontawesome/css/font-awesome.css',
 				'public/lib/animate.css/animate.css',
 				'public/lib/datatables/media/css/jquery.dataTables.css',
+				'public/lib/simplemde/simplemde.min.css',
 				'public/lib/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css'
 			],
 			js: [
@@ -76,7 +77,8 @@ module.exports = {
 				'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js',
 				'public/lib/bootbox/bootbox.js',
 				'https://cdn.plot.ly/plotly-latest.min.js',
-				'public/lib/angularUtils-pagination/dirPagination.js'
+				'public/lib/angularUtils-pagination/dirPagination.js',
+				'public/lib/simplemde/simplemde.min.js'
 				//,
 				//'public/lib/color/index.js',
 				//'public/lib/gradient/gradient.min.js'
